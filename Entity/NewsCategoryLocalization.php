@@ -14,7 +14,7 @@
  * @description Model / Entity class.
  *
  */
-namespace BiberLtd\Core\Bundles\NewsManagementBundle\Entity;
+namespace BiberLtd\Bundle\NewsManagementBundle\Entity;
 use Doctrine\ORM\Mapping AS ORM;
 use BiberLtd\Core\CoreEntity;
 
@@ -44,7 +44,7 @@ class NewsCategoryLocalization extends CoreEntity
     /** 
      * @ORM\Id
      * @ORM\ManyToOne(
-     *     targetEntity="BiberLtd\Core\Bundles\NewsManagementBundle\Entity\NewsCategory",
+     *     targetEntity="BiberLtd\Bundle\NewsManagementBundle\Entity\NewsCategory",
      *     inversedBy="localizations"
      * )
      * @ORM\JoinColumn(name="category", referencedColumnName="id", nullable=false, onDelete="CASCADE")
@@ -53,7 +53,7 @@ class NewsCategoryLocalization extends CoreEntity
 
     /** 
      * @ORM\Id
-     * @ORM\ManyToOne(targetEntity="BiberLtd\Core\Bundles\MultiLanguageSupportBundle\Entity\Language")
+     * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language")
      * @ORM\JoinColumn(name="language", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     private $language;
