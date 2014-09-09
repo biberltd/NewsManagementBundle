@@ -1,16 +1,16 @@
 <?php
 
-namespace BiberLtd\Core\Bundles\NewsManagementBundle\Services;
+namespace BiberLtd\Bundle\NewsManagementBundle\Services;
 
 /** Extends CoreModel */
-use BiberLtd\Core\CoreModel;
+use BiberLtd\Bundle\CoreBundle\CoreModel;
 /** Entities to be used */
-use BiberLtd\Core\Bundles\NewsManagementBundle\Entity as BundleEntity;
+use BiberLtd\Bundle\NewsManagementBundle\Entity as BundleEntity;
 /** Helper Models */
-use BiberLtd\Core\Bundles\SiteManagementBundle\Services as SMMService;
-use BiberLtd\Core\Bundles\MultiLanguageSupportBundle\Services as MLSService;
+use BiberLtd\Bundle\SiteManagementBundle\Services as SMMService;
+use BiberLtd\Bundle\MultiLanguageSupportBundle\Services as MLSService;
 /** Core Service */
-use BiberLtd\Core\Services as CoreServices;
+use BiberLtd\Bundle\CoreBundle\Services as CoreServices;
 
 class NewsManagementModel extends CoreModel {
 

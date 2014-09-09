@@ -211,7 +211,7 @@
     </association>
     <comment caption="NewsManagementBundle Pricing" description="categories_of_news: 130 TL&#10;files_of_news: 195 TL&#10;news: 205 TL&#10;news_localization: 170 TL&#10;news_category: 105 TL&#10;news_category_localization: 130 TL&#10;&#10;toplam: 935 TL" uuid="1b3daafd-a6ff-48f0-b443-acbb218af5a3"/>
     <orm-attributes>
-      <attribute name="namespace">BiberLtd\Core\Bundles\NewsManagementBundle\Entity</attribute>
+      <attribute name="namespace">BiberLtd\Bundle\NewsManagementBundle\Entity</attribute>
       <attribute name="file-suffix">without-suffix</attribute>
       <attribute name="filename-format">entity-name-only</attribute>
     </orm-attributes>
