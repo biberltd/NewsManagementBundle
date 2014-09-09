@@ -1,0 +1,2 @@
+NewsManagementBundle
+====================
