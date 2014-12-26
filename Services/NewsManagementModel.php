@@ -16,13 +16,13 @@ class NewsManagementModel extends CoreModel {
 
     public $by_opts = array('entity', 'id', 'code', 'url_key', 'post');
     public $entity = array(
-            'news' => array('name' => 'NewsManagementBundle:News', 'alias' => 'n'),
-            'news_localization' => array('name' => 'NewsManagementBundle:NewsLocalization', 'alias' => 'nl'),
-            'news_category' => array('name' => 'NewsManagementBundle:NewsCategory', 'alias' => 'nc'),
-            'news_category_localization' => array('name' => 'NewsManagementBundle:NewsCategoryLocalization', 'alias' => 'ncl'),
-            'categories_of_news' => array('name' => 'NewsManagementBundle:CategoriesOfNews', 'alias' => 'con'),
-            'files_of_news' => array('name' => 'NewsManagementBundle:FilesOfNews', 'alias' => 'fon'),
-        );
+        'news' => array('name' => 'NewsManagementBundle:News', 'alias' => 'n'),
+        'news_localization' => array('name' => 'NewsManagementBundle:NewsLocalization', 'alias' => 'nl'),
+        'news_category' => array('name' => 'NewsManagementBundle:NewsCategory', 'alias' => 'nc'),
+        'news_category_localization' => array('name' => 'NewsManagementBundle:NewsCategoryLocalization', 'alias' => 'ncl'),
+        'categories_of_news' => array('name' => 'NewsManagementBundle:CategoriesOfNews', 'alias' => 'con'),
+        'files_of_news' => array('name' => 'NewsManagementBundle:FilesOfNews', 'alias' => 'fon'),
+    );
 
     /**
      * @name 		deleteNewsItem()
@@ -107,7 +107,7 @@ class NewsManagementModel extends CoreModel {
                  * Prepare & Return Response
                  */
                 $this->response = array(
-	    'rowCount' => $this->response['rowCount'],
+                    'rowCount' => $this->response['rowCount'],
                     'result' => array(
                         'set' => null,
                         'total_rows' => $delete_count,
@@ -129,13 +129,13 @@ class NewsManagementModel extends CoreModel {
         }
         if ($join_needed) {
             $q_str = 'DELETE ' . $this->entity['news']['alias']
-                    . ' FROM ' . $this->entity['news_localization']['name'] . ' ' . $this->entity['news_localization']['alias']
-                    . ' JOIN ' . $this->entity['news_localization']['name'] . ' ' . $this->entity['news_localization']['alias']
-                    . ' WHERE ' . $this->entity['news_localization']['alias'] . '.' . $by . ' IN(:values)';
+                . ' FROM ' . $this->entity['news_localization']['name'] . ' ' . $this->entity['news_localization']['alias']
+                . ' JOIN ' . $this->entity['news_localization']['name'] . ' ' . $this->entity['news_localization']['alias']
+                . ' WHERE ' . $this->entity['news_localization']['alias'] . '.' . $by . ' IN(:values)';
         } else {
             $q_str = 'DELETE ' . $this->entity['news']['alias']
-                    . ' FROM ' . $this->entity['news']['name'] . ' ' . $this->entity['form']['alias']
-                    . ' WHERE ' . $this->entity['news']['alias'] . '.' . $by . ' IN(:values)';
+                . ' FROM ' . $this->entity['news']['name'] . ' ' . $this->entity['form']['alias']
+                . ' WHERE ' . $this->entity['news']['alias'] . '.' . $by . ' IN(:values)';
         }
         /**
          * Create query object.
@@ -154,7 +154,7 @@ class NewsManagementModel extends CoreModel {
          * Prepare & Return Response
          */
         $this->response = array(
-	    'rowCount' => $this->response['rowCount'],
+            'rowCount' => $this->response['rowCount'],
             'result' => array(
                 'set' => $entries,
                 'total_rows' => count($entries),
@@ -171,7 +171,7 @@ class NewsManagementModel extends CoreModel {
      * List items of a given collection.
      *
      * @since		1.0.0
-     * @version         1.0.0
+     * @version         1.0.1
      * @author          Said Imamoglu
      *
      * @use             $this->resetResponse()
@@ -179,10 +179,10 @@ class NewsManagementModel extends CoreModel {
      * @use             $this->prepare_where()
      * @use             $this->createQuery()
      * @use             $this->getResult()
-     * 
+     *
      * @throws          InvalidSortOrderException
      * @throws          InvalidLimitException
-     * 
+     *
      *
      * @param           mixed           $filter                Multi dimensional array
      * @param           array           $sortorder              Array
@@ -218,11 +218,11 @@ class NewsManagementModel extends CoreModel {
         if (is_null($query_str)) {
             if ($localizable) {
                 $query_str = 'SELECT ' . $this->entity['news_localization']['alias'] .','. $this->entity['news']['alias']
-                        . ' FROM ' . $this->entity['news_localization']['name'] . ' ' . $this->entity['news_localization']['alias']
-                        . ' JOIN ' . $this->entity['news_localization']['alias'] . '.news ' . $this->entity['news']['alias'];
+                    . ' FROM ' . $this->entity['news_localization']['name'] . ' ' . $this->entity['news_localization']['alias']
+                    . ' JOIN ' . $this->entity['news_localization']['alias'] . '.news ' . $this->entity['news']['alias'];
             } else {
                 $query_str = 'SELECT ' . $this->entity['form']['alias']
-                        . ' FROM ' . $this->entity['form']['name'] . ' ' . $this->entity['form']['alias'];
+                    . ' FROM ' . $this->entity['form']['name'] . ' ' . $this->entity['form']['alias'];
             }
         }
         /*
@@ -242,7 +242,7 @@ class NewsManagementModel extends CoreModel {
             $order_str = ' ORDER BY ' . $order_str . ' ';
         }
 
-        /*
+        /**
          * Prepare WHERE section of query
          */
 
@@ -254,16 +254,15 @@ class NewsManagementModel extends CoreModel {
 
 
         $query_str .= $where_str . $group_str . $order_str;
-
-
         $query = $this->em->createQuery($query_str);
 
-        /*
+
+        /**
          * Prepare LIMIT section of query
          */
 
         if (!is_null($limit) && is_numeric($limit)) {
-            /*
+            /**
              * if limit is set
              */
             if (isset($limit['start']) && isset($limit['count'])) {
@@ -272,15 +271,18 @@ class NewsManagementModel extends CoreModel {
                 $this->createException('InvalidLimitException', '', 'err.invalid.limit');
             }
         }
-        //print_r($query->getSql()); die;
-        /*
+        /**
          * Prepare and Return Response
          */
-        //echo $query_str; die;
         $newsItems = $query->getResult();
         $newsCollection = array();
+        $unique = array();
         foreach ($newsItems as $news) {
-            $newsCollection[] = $news->getNews();
+            $id = $news->getNews()->getId();
+            if (!isset($unique[$id])) {
+                $newsCollection[$id] = $news->getNews();
+                $unique[$id] = $news->getNews();
+            }
         }
         unset($newsItems);
 
@@ -293,7 +295,7 @@ class NewsManagementModel extends CoreModel {
         }
 
         $this->response = array(
-	    'rowCount' => $this->response['rowCount'],
+            'rowCount' => $this->response['rowCount'],
             'result' => array(
                 'set' => $newsCollection,
                 'total_rows' => $total_rows,
@@ -339,7 +341,7 @@ class NewsManagementModel extends CoreModel {
              * Prepare & Return Response
              */
             $this->response = array(
-	    'rowCount' => $this->response['rowCount'],
+                'rowCount' => $this->response['rowCount'],
                 'result' => array(
                     'set' => $form,
                     'total_rows' => 1,
@@ -369,7 +371,7 @@ class NewsManagementModel extends CoreModel {
          * Prepare & Return Response
          */
         $this->response = array(
-	    'rowCount' => $this->response['rowCount'],
+            'rowCount' => $this->response['rowCount'],
             'result' => array(
                 'set' => $collection[0],
                 'total_rows' => 1,
@@ -419,7 +421,7 @@ class NewsManagementModel extends CoreModel {
          * Prepare & Return Response
          */
         $this->response = array(
-	    'rowCount' => $this->response['rowCount'],
+            'rowCount' => $this->response['rowCount'],
             'result' => array(
                 'set' => $exist,
                 'total_rows' => 1,
@@ -486,7 +488,7 @@ class NewsManagementModel extends CoreModel {
              */
             if ($sub_response['process'] == 'stop') {
                 $this->response = array(
-	    'rowCount' => $this->response['rowCount'],
+                    'rowCount' => $this->response['rowCount'],
                     'result' => array(
                         'set' => $sub_response['entries']['valid'],
                         'total_rows' => $sub_response['item_count'],
@@ -569,7 +571,7 @@ class NewsManagementModel extends CoreModel {
             $this->em->flush();
 
             $this->response = array(
-	    'rowCount' => $this->response['rowCount'],
+                'rowCount' => $this->response['rowCount'],
                 'result' => array(
                     'set' => $collection,
                     'total_rows' => count($collection),
@@ -583,7 +585,7 @@ class NewsManagementModel extends CoreModel {
         }
     }
 
-    /*
+    /**
      * @name            updateNewsItem()
      * Updates single item. The item must be either a post data (array) or an entity
      * 
@@ -605,7 +607,7 @@ class NewsManagementModel extends CoreModel {
         return $this->updateNewsItems(array($form));
     }
 
-    /*
+    /**
      * @name            updateNewsItems()
      * Updates one or more item details in database.
      * 
@@ -636,7 +638,7 @@ class NewsManagementModel extends CoreModel {
              */
             if ($sub_response['process'] == 'stop') {
                 $this->response = array(
-	    'rowCount' => $this->response['rowCount'],
+                    'rowCount' => $this->response['rowCount'],
                     'result' => array(
                         'set' => $sub_response['entries']['valid'],
                         'total_rows' => $sub_response['item_count'],
@@ -697,3 +699,12 @@ class NewsManagementModel extends CoreModel {
     }
 
 }
+
+/**
+ * Change Log
+ * **************************************
+ * v1.0.1                      Said İmamoğlu
+ * 26.12.2014
+ * **************************************
+ * U listNewsItems()
+ **/
