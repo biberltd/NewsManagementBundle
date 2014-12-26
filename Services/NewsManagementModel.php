@@ -280,7 +280,7 @@ class NewsManagementModel extends CoreModel {
         foreach ($newsItems as $news) {
             $id = $news->getNews()->getId();
             if (!isset($unique[$id])) {
-                $newsCollection[$id] = $news->getNews();
+                $newsCollection[] = $news->getNews();
                 $unique[$id] = $news->getNews();
             }
         }
