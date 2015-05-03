@@ -3,10 +3,11 @@
  * @name        CategoriesOfNews
  * @package		BiberLtd\Bundle\CoreBundle\NewsManagementBundle
  *
+ * @author		Can  Berkol
  * @author		Murat Ünal
  *
- * @version     1.0.0
- * @date        12.09.2013
+ * @version     1.0.1
+ * @date        03.05.2015
  *
  * @copyright   Biber Ltd. (http://www.biberltd.com)
  * @license     GPL v3.0
@@ -18,13 +19,13 @@ namespace BiberLtd\Bundle\NewsManagementBundle\Entity;
 use Doctrine\ORM\Mapping AS ORM;
 use BiberLtd\Bundle\CoreBundle\CoreEntity;
 
-/** 
+/**
  * @ORM\Entity
  * @ORM\Table(
  *     name="categories_of_news",
  *     options={"charset":"utf8","collate":"utf8_turkish_ci","engine":"innodb"},
- *     indexes={@ORM\Index(name="idx_n_categories_of_news_date_added", columns={"date_added"})},
- *     uniqueConstraints={@ORM\UniqueConstraint(name="idx_u_category_of_news", columns={"category","news"})}
+ *     indexes={@ORM\Index(name="idxNCategoriesOfNewsDateAdded", columns={"date_added"})},
+ *     uniqueConstraints={@ORM\UniqueConstraint(name="idxUCategoryOfNews", columns={"category","news"})}
  * )
  */
 class CategoriesOfNews extends CoreEntity
@@ -46,18 +47,16 @@ class CategoriesOfNews extends CoreEntity
      */
     private $news;
 
-    /** 
-     * @ORM\Id
-     * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\NewsManagementBundle\Entity\NewsCategory")
-     * @ORM\JoinColumn(name="category", referencedColumnName="id", nullable=false, onDelete="CASCADE")
-     */
-    private $news_category;
+	/**
+	 * @ORM\Id
+	 * @ORM\ManyToOne(targetEntity="BiberLtd\Core\Bundles\NewsManagementBundle\Entity\NewsCategory")
+	 * @ORM\JoinColumn(name="category", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+	 */
+	private $category;
 
     /**
-     * @name                  setNews ()
-     *                                Sets the news property.
-     *                                Updates the data only if stored value and value to be set are different.
-     *
+     * @name            setNews ()
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -79,8 +78,7 @@ class CategoriesOfNews extends CoreEntity
 
     /**
      * @name            getNews ()
-     *                          Returns the value of news property.
-     *
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -93,42 +91,39 @@ class CategoriesOfNews extends CoreEntity
     }
 
     /**
-     * @name                  setNewsCategory ()
-     *                                        Sets the news_category property.
-     *                                        Updates the data only if stored value and value to be set are different.
-     *
+     * @name            setCategory ()
+	 *
      * @author          Can Berkol
      *
-     * @since           1.0.0
-     * @version         1.0.0
+     * @since           1.0.1
+     * @version         1.0.1
      *
      * @use             $this->setModified()
      *
-     * @param           mixed $news_category
+     * @param           mixed 	$category
      *
      * @return          object                $this
      */
-    public function setNewsCategory($news_category) {
-        if(!$this->setModified('news_category', $news_category)->isModified()) {
+    public function setCategory($category) {
+        if(!$this->setModified('category', $category)->isModified()) {
             return $this;
         }
-		$this->news_category = $news_category;
+		$this->category = $category;
 		return $this;
     }
 
     /**
-     * @name            getNewsCategory ()
-     *                                  Returns the value of news_category property.
-     *
+     * @name            getCategory ()
+	 *
      * @author          Can Berkol
      *
-     * @since           1.0.0
-     * @version         1.0.0
+     * @since           1.0.1
+     * @version         1.0.1
      *
-     * @return          mixed           $this->news_category
+     * @return          mixed           $this->category
      */
-    public function getNewsCategory() {
-        return $this->news_category;
+    public function getCategory() {
+        return $this->category;
     }
 
     /**
@@ -169,13 +164,15 @@ class CategoriesOfNews extends CoreEntity
     public function getSortOrder() {
         return $this->sort_order;
     }
-    /******************************************************************
-     * PUBLIC SET AND GET FUNCTIONS                                   *
-     ******************************************************************/
-
 }
 /**
  * Change Log:
+ * **************************************
+ * v1.0.1                      03.05.2015
+ * Can Berkol
+ * **************************************
+ * CR :: ORM updates.
+ *
  * **************************************
  * v1.0.0                      Murat Ünal
  * 12.09.2013

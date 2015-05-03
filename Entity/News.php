@@ -3,10 +3,11 @@
  * @name        News
  * @package		BiberLtd\Bundle\CoreBundle\NewsManagementBundle
  *
+ * @author		Can Berkol
  * @author		Murat Ünal
  *
- * @version     1.0.0
- * @date        12.09.2013
+ * @version     1.0.2
+ * @date        03.05.2015
  *
  * @copyright   Biber Ltd. (http://www.biberltd.com)
  * @license     GPL v3.0
@@ -18,17 +19,17 @@ namespace BiberLtd\Bundle\NewsManagementBundle\Entity;
 use Doctrine\ORM\Mapping AS ORM;
 use BiberLtd\Bundle\CoreBundle\CoreLocalizableEntity;
 
-/** 
+/**
  * @ORM\Entity
  * @ORM\Table(
  *     name="news",
  *     options={"charset":"utf8","collate":"utf8_turkish_ci","engine":"innodb"},
  *     indexes={
- *         @ORM\Index(name="idx_n_news_date_added", columns={"date_added"}),
- *         @ORM\Index(name="idx_n_news_date_published", columns={"date_published"}),
- *         @ORM\Index(name="idx_n_news_date_unpublished", columns={"date_unpublished"})
+ *         @ORM\Index(name="idxNNewsDateAdded", columns={"date_added"}),
+ *         @ORM\Index(name="idxNNewsDatePublished", columns={"date_published"}),
+ *         @ORM\Index(name="idxNNewsDateUnPublished", columns={"date_unpublished"})
  *     },
- *     uniqueConstraints={@ORM\UniqueConstraint(name="idx_u_news_id", columns={"id"})}
+ *     uniqueConstraints={@ORM\UniqueConstraint(name="idxUNewsId", columns={"id"})}
  * )
  */
 class News extends CoreLocalizableEntity
@@ -337,6 +338,12 @@ class News extends CoreLocalizableEntity
 }
 /**
  * Change Log:
+ * **************************************
+ * v1.0.2                      03.05.2015
+ * Can Berkol
+ * **************************************
+ * CR :: ORM updates.
+ *
  * * ************************************
  * v1.0.1                      Murat Ünal
  * 11.10.2013

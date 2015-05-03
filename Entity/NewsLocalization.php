@@ -3,10 +3,11 @@
  * @name        NewsLocalization
  * @package		BiberLtd\Bundle\CoreBundle\NewsManagementBundle
  *
+ * @author		Can Berkol
  * @author		Murat Ünal
  *
- * @version     1.0.0
- * @date        12.09.2013
+ * @version     1.0.1
+ * @date        03.05.2015
  *
  * @copyright   Biber Ltd. (http://www.biberltd.com)
  * @license     GPL v3.0
@@ -18,14 +19,14 @@ namespace BiberLtd\Bundle\NewsManagementBundle\Entity;
 use Doctrine\ORM\Mapping AS ORM;
 use BiberLtd\Bundle\CoreBundle\CoreEntity;
 
-/** 
+/**
  * @ORM\Entity
  * @ORM\Table(
  *     name="news_localization",
  *     options={"charset":"utf8","collate":"utf8_turkish_ci","engine":"innodb"},
  *     uniqueConstraints={
- *         @ORM\UniqueConstraint(name="idx_u_news_localization", columns={"news","language"}),
- *         @ORM\UniqueConstraint(name="idx_u_news_localization_url_key", columns={"news","language","url_key"})
+ *         @ORM\UniqueConstraint(name="idxUNewsLocalization", columns={"news","language"}),
+ *         @ORM\UniqueConstraint(name="idxUNewsUrlKey", columns={"news","language","url_key"})
  *     }
  * )
  */
@@ -69,10 +70,8 @@ class NewsLocalization extends CoreEntity
     private $language;
 
     /**
-     * @name                  setContent ()
-     *                                   Sets the content property.
-     *                                   Updates the data only if stored value and value to be set are different.
-     *
+     * @name            setContent ()
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -94,8 +93,7 @@ class NewsLocalization extends CoreEntity
 
     /**
      * @name            getContent ()
-     *                             Returns the value of content property.
-     *
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -108,10 +106,8 @@ class NewsLocalization extends CoreEntity
     }
 
     /**
-     * @name                  setLanguage ()
-     *                                    Sets the language property.
-     *                                    Updates the data only if stored value and value to be set are different.
-     *
+     * @name            setLanguage ()
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -133,8 +129,7 @@ class NewsLocalization extends CoreEntity
 
     /**
      * @name            getLanguage ()
-     *                              Returns the value of language property.
-     *
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -147,10 +142,8 @@ class NewsLocalization extends CoreEntity
     }
 
     /**
-     * @name                  setNews ()
-     *                                Sets the news property.
-     *                                Updates the data only if stored value and value to be set are different.
-     *
+     * @name            setNews ()
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -172,8 +165,7 @@ class NewsLocalization extends CoreEntity
 
     /**
      * @name            getNews ()
-     *                          Returns the value of news property.
-     *
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -186,10 +178,8 @@ class NewsLocalization extends CoreEntity
     }
 
     /**
-     * @name                  setSummary ()
-     *                                   Sets the summary property.
-     *                                   Updates the data only if stored value and value to be set are different.
-     *
+     * @name            setSummary ()
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -211,8 +201,7 @@ class NewsLocalization extends CoreEntity
 
     /**
      * @name            getSummary ()
-     *                             Returns the value of summary property.
-     *
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -225,10 +214,8 @@ class NewsLocalization extends CoreEntity
     }
 
     /**
-     * @name                  setTitle ()
-     *                                 Sets the title property.
-     *                                 Updates the data only if stored value and value to be set are different.
-     *
+     * @name            setTitle ()
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -250,8 +237,7 @@ class NewsLocalization extends CoreEntity
 
     /**
      * @name            getTitle ()
-     *                           Returns the value of title property.
-     *
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -264,10 +250,8 @@ class NewsLocalization extends CoreEntity
     }
 
     /**
-     * @name                  setUrlKey ()
-     *                                  Sets the url_key property.
-     *                                  Updates the data only if stored value and value to be set are different.
-     *
+     * @name            setUrlKey ()
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -289,8 +273,7 @@ class NewsLocalization extends CoreEntity
 
     /**
      * @name            getUrlKey ()
-     *                            Returns the value of url_key property.
-     *
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -301,13 +284,15 @@ class NewsLocalization extends CoreEntity
     public function getUrlKey() {
         return $this->url_key;
     }
-    /******************************************************************
-     * PUBLIC SET AND GET FUNCTIONS                                   *
-     ******************************************************************/
-
 }
 /**
  * Change Log:
+ * **************************************
+ * v1.0.1                      03.05.2015
+ * Can Berkol
+ * **************************************
+ * CR :: ORM updates.
+ *
  * **************************************
  * v1.0.0                      Murat Ünal
  * 12.09.2013

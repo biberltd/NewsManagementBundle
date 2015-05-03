@@ -5,8 +5,8 @@
  *
  * @author		Murat Ünal
  *
- * @version     1.0.0
- * @date        12.09.2013
+ * @version     1.0.1
+ * @date        03.05.2015
  *
  * @copyright   Biber Ltd. (http://www.biberltd.com)
  * @license     GPL v3.0
@@ -18,14 +18,14 @@ namespace BiberLtd\Bundle\NewsManagementBundle\Entity;
 use Doctrine\ORM\Mapping AS ORM;
 use BiberLtd\Bundle\CoreBundle\CoreEntity;
 
-/** 
+/**
  * @ORM\Entity
  * @ORM\Table(
  *     name="news_category_localization",
  *     options={"charset":"utf8","collate":"utf8_turkish_ci","engine":"innodb"},
  *     uniqueConstraints={
- *         @ORM\UniqueConstraint(name="idx_u_news_category_localization", columns={"language","category"}),
- *         @ORM\UniqueConstraint(name="idx_u_news_category_localization_url_key", columns={"language","category","url_key"})
+ *         @ORM\UniqueConstraint(name="idxUNewsCategoryLocalization", columns={"language","category"}),
+ *         @ORM\UniqueConstraint(name="idxUNewsCategoryUrlKey", columns={"language","category","url_key"})
  *     }
  * )
  */
@@ -41,15 +41,15 @@ class NewsCategoryLocalization extends CoreEntity
      */
     private $url_key;
 
-    /** 
-     * @ORM\Id
-     * @ORM\ManyToOne(
-     *     targetEntity="BiberLtd\Bundle\NewsManagementBundle\Entity\NewsCategory",
-     *     inversedBy="localizations"
-     * )
-     * @ORM\JoinColumn(name="category", referencedColumnName="id", nullable=false, onDelete="CASCADE")
-     */
-    private $news_category;
+	/**
+	 * @ORM\Id
+	 * @ORM\ManyToOne(
+	 *     targetEntity="BiberLtd\Core\Bundles\NewsManagementBundle\Entity\NewsCategory",
+	 *     inversedBy="localizations"
+	 * )
+	 * @ORM\JoinColumn(name="category", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+	 */
+	private $category;
 
     /** 
      * @ORM\Id
@@ -59,10 +59,8 @@ class NewsCategoryLocalization extends CoreEntity
     private $language;
 
     /**
-     * @name                  setLanguage ()
-     *                                    Sets the language property.
-     *                                    Updates the data only if stored value and value to be set are different.
-     *
+     * @name            setLanguage ()
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -84,8 +82,7 @@ class NewsCategoryLocalization extends CoreEntity
 
     /**
      * @name            getLanguage ()
-     *                              Returns the value of language property.
-     *
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -98,10 +95,8 @@ class NewsCategoryLocalization extends CoreEntity
     }
 
     /**
-     * @name                  setName ()
-     *                                Sets the name property.
-     *                                Updates the data only if stored value and value to be set are different.
-     *
+     * @name            setName ()
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -123,8 +118,7 @@ class NewsCategoryLocalization extends CoreEntity
 
     /**
      * @name            getName ()
-     *                          Returns the value of name property.
-     *
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -137,10 +131,8 @@ class NewsCategoryLocalization extends CoreEntity
     }
 
     /**
-     * @name                  setNewsCategory ()
-     *                                        Sets the news_category property.
-     *                                        Updates the data only if stored value and value to be set are different.
-     *
+     * @name            setCategory ()
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -148,38 +140,35 @@ class NewsCategoryLocalization extends CoreEntity
      *
      * @use             $this->setModified()
      *
-     * @param           mixed $news_category
+     * @param           mixed $category
      *
      * @return          object                $this
      */
-    public function setNewsCategory($news_category) {
-        if(!$this->setModified('news_category', $news_category)->isModified()) {
+    public function setCategory($category) {
+        if(!$this->setModified('category', $category)->isModified()) {
             return $this;
         }
-		$this->news_category = $news_category;
+		$this->category = $category;
 		return $this;
     }
 
     /**
-     * @name            getNewsCategory ()
-     *                                  Returns the value of news_category property.
-     *
+     * @name            getCategory ()
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
      * @version         1.0.0
      *
-     * @return          mixed           $this->news_category
+     * @return          mixed           $this->category
      */
-    public function getNewsCategory() {
-        return $this->news_category;
+    public function getCategory() {
+        return $this->category;
     }
 
     /**
-     * @name                  setUrlKey ()
-     *                                  Sets the url_key property.
-     *                                  Updates the data only if stored value and value to be set are different.
-     *
+     * @name            setUrlKey ()
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -201,8 +190,7 @@ class NewsCategoryLocalization extends CoreEntity
 
     /**
      * @name            getUrlKey ()
-     *                            Returns the value of url_key property.
-     *
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -213,13 +201,15 @@ class NewsCategoryLocalization extends CoreEntity
     public function getUrlKey() {
         return $this->url_key;
     }
-    /******************************************************************
-     * PUBLIC SET AND GET FUNCTIONS                                   *
-     ******************************************************************/
-
 }
 /**
  * Change Log:
+ * **************************************
+ * v1.0.1                      03.05.2015
+ * Can Berkol
+ * **************************************
+ * CR :: ORM updates.
+ *
  * **************************************
  * v1.0.0                      Murat Ünal
  * 12.09.2013

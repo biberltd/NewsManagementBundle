@@ -3,10 +3,11 @@
  * @name        FilesOfnews
  * @package		BiberLtd\Bundle\CoreBundle\NewsManagementBundle
  *
+ * @author		Can Berkol
  * @author		Murat Ünal
  *
- * @version     1.0.0
- * @date        12.09.2013
+ * @version     1.0.1
+ * @date        03.05.2015
  *
  * @copyright   Biber Ltd. (http://www.biberltd.com)
  * @license     GPL v3.0
@@ -18,12 +19,12 @@ namespace BiberLtd\Bundle\NewsManagementBundle\Entity;
 use Doctrine\ORM\Mapping AS ORM;
 use BiberLtd\Bundle\CoreBundle\CoreEntity;
 
-/** 
+/**
  * @ORM\Entity
  * @ORM\Table(
  *     name="files_of_news",
  *     options={"charset":"utf8","collate":"utf8_turkish_ci","engine":"innodb"},
- *     uniqueConstraints={@ORM\UniqueConstraint(name="idx_u_files_of_news", columns={"news","file"})}
+ *     uniqueConstraints={@ORM\UniqueConstraint(name="idxUFilesOfNews", columns={"news","file"})}
  * )
  */
 class FilesOfNews extends CoreEntity
@@ -32,11 +33,6 @@ class FilesOfNews extends CoreEntity
      * @ORM\Column(type="datetime", nullable=false)
      */
     public $date_added;
-
-    /** 
-     * @ORM\Column(type="integer", length=10, nullable=false)
-     */
-    private $count_view;
 
     /** 
      * @ORM\Column(type="integer", length=10, nullable=false)
@@ -62,45 +58,6 @@ class FilesOfNews extends CoreEntity
      * @ORM\JoinColumn(name="language", referencedColumnName="id", onDelete="CASCADE")
      */
     private $language;
-
-    /**
-     * @name                  setCountView ()
-     *                                     Sets the count_view property.
-     *                                     Updates the data only if stored value and value to be set are different.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $count_view
-     *
-     * @return          object                $this
-     */
-    public function setCountView($count_view) {
-        if(!$this->setModified('count_view', $count_view)->isModified()) {
-            return $this;
-        }
-		$this->count_view = $count_view;
-		return $this;
-    }
-
-    /**
-     * @name            getCountView ()
-     *                               Returns the value of count_view property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->count_view
-     */
-    public function getCountView() {
-        return $this->count_view;
-    }
 
     /**
      * @name                  setFile ()
@@ -257,13 +214,16 @@ class FilesOfNews extends CoreEntity
     public function getSortOrder() {
         return $this->sort_order;
     }
-    /******************************************************************
-     * PUBLIC SET AND GET FUNCTIONS                                   *
-     ******************************************************************/
-
 }
 /**
  * Change Log:
+ * Change Log:
+ * **************************************
+ * v1.0.1                      03.05.2015
+ * Can Berkol
+ * **************************************
+ * CR :: ORM updates.
+ *
  * **************************************
  * v1.0.0                      Murat Ünal
  * 12.09.2013

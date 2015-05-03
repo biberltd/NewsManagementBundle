@@ -3,10 +3,11 @@
  * @name        NewsCategory
  * @package		BiberLtd\Bundle\CoreBundle\NewsManagementBundle
  *
+ * @author		Can Berkol
  * @author		Murat Ünal
  *
- * @version     1.0.1
- * @date        11.10.2013
+ * @version     1.0.2
+ * @date        01.05.2015
  *
  * @copyright   Biber Ltd. (http://www.biberltd.com)
  * @license     GPL v3.0
@@ -18,12 +19,17 @@ namespace BiberLtd\Bundle\NewsManagementBundle\Entity;
 use Doctrine\ORM\Mapping AS ORM;
 use BiberLtd\Bundle\CoreBundle\CoreLocalizableEntity;
 
-/** 
+/**
  * @ORM\Entity
  * @ORM\Table(
  *     name="news_category",
  *     options={"charset":"utf8","collate":"utf8_turkish_ci","engine":"innodb"},
- *     uniqueConstraints={@ORM\UniqueConstraint(name="idx_u_news_category_id", columns={"id"})}
+ *     indexes={
+ *         @ORM\Index(name="idxNNewsCategoryDateAdded", columns={"date_added"}),
+ *         @ORM\Index(name="idxNNewsCategoryDateUpdated", columns={"date_updated"}),
+ *         @ORM\Index(name="idxNNewsCategoryDateRemoved", columns={"date_removed"})
+ *     },
+ *     uniqueConstraints={@ORM\UniqueConstraint(name="idxUNewsCategoryId", columns={"id"})}
  * )
  */
 class NewsCategory extends CoreLocalizableEntity
@@ -35,15 +41,20 @@ class NewsCategory extends CoreLocalizableEntity
      */
     private $id;
 
-    /** 
-     * @ORM\Column(type="integer", length=10, nullable=false)
-     */
-    private $count_view;
+	/**
+	 * @ORM\Column(type="datetime", nullable=false)
+	 */
+	public $date_added;
 
-    /** 
-     * @ORM\Column(type="integer", length=10, nullable=false)
-     */
-    private $count_news;
+	/**
+	 * @ORM\Column(type="datetime", nullable=false)
+	 */
+	public $date_updated;
+
+	/**
+	 * @ORM\Column(type="datetime", nullable=true)
+	 */
+	public $date_removed;
 
     /** 
      * @ORM\OneToMany(
@@ -76,88 +87,8 @@ class NewsCategory extends CoreLocalizableEntity
     }
 
     /**
-     * @name                  setCountNews ()
-     *                                     Sets the count_news property.
-     *                                     Updates the data only if stored value and value to be set are different.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $count_news
-     *
-     * @return          object                $this
-     */
-    public function setCountNews($count_news) {
-        if(!$this->setModified('count_news', $count_news)->isModified()) {
-            return $this;
-        }
-		$this->count_news = $count_news;
-		return $this;
-    }
-
-    /**
-     * @name            getCountNews ()
-     *                               Returns the value of count_news property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->count_news
-     */
-    public function getCountNews() {
-        return $this->count_news;
-    }
-
-    /**
-     * @name                  setCountView ()
-     *                                     Sets the count_view property.
-     *                                     Updates the data only if stored value and value to be set are different.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $count_view
-     *
-     * @return          object                $this
-     */
-    public function setCountView($count_view) {
-        if(!$this->setModified('count_view', $count_view)->isModified()) {
-            return $this;
-        }
-		$this->count_view = $count_view;
-		return $this;
-    }
-
-    /**
-     * @name            getCountView ()
-     *                               Returns the value of count_view property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->count_view
-     */
-    public function getCountView() {
-        return $this->count_view;
-    }
-
-    /**
-     * @name                  setSite ()
-     *                                Sets the site property.
-     *                                Updates the data only if stored value and value to be set are different.
-     *
+     * @name            setSite ()
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -179,8 +110,7 @@ class NewsCategory extends CoreLocalizableEntity
 
     /**
      * @name            getSite ()
-     *                          Returns the value of site property.
-     *
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -194,7 +124,13 @@ class NewsCategory extends CoreLocalizableEntity
 }
 /**
  * Change Log:
- * * ************************************
+ * **************************************
+ * v1.0.2                      03.05.2015
+ * Can Berkol
+ * **************************************
+ * CR :: ORM updates.
+ *
+ * **************************************
  * v1.0.1                      Murat Ünal
  * 11.10.2013
  * **************************************
