@@ -72,7 +72,7 @@ class NewsManagementModel extends CoreModel {
 			}
 			$file = $response->result->set;
 			if (!$this->isFileOfNewsItem($item, $file, true)) {
-				$toAdd[] = $files;
+				$toAdd[] = $file;
 			}
 		}
 		$now = new \DateTime('now', new \DateTimezone($this->kernel->getContainer()->getParameter('app_timezone')));
