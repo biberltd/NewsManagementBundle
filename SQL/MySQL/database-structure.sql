@@ -1,3 +1,18 @@
+/*
+Navicat MySQL Data Transfer
+
+Source Server         : localhost
+Source Server Version : 50505
+Source Host           : localhost:3306
+Source Database       : bod_core
+
+Target Server Type    : MYSQL
+Target Server Version : 50505
+File Encoding         : 65001
+
+Date: 2015-05-26 00:01:37
+*/
+
 SET FOREIGN_KEY_CHECKS=0;
 
 -- ----------------------------
@@ -13,8 +28,8 @@ CREATE TABLE `categories_of_news` (
   KEY `idxFNewsOfCategory` (`news`) USING BTREE,
   KEY `idxFCategoryOfNews` (`category`) USING BTREE,
   KEY `idxNCategoriesoFNewsDateAdded` (`date_added`) USING BTREE,
-  CONSTRAINT `idxFNewsOfCategory` FOREIGN KEY (`news`) REFERENCES `news` (`id`),
-  CONSTRAINT `idxFCategoryOfNews` FOREIGN KEY (`category`) REFERENCES `news_categoy` (`id`)
+  CONSTRAINT `idxFCategoryOfNews` FOREIGN KEY (`category`) REFERENCES `news_category` (`id`),
+  CONSTRAINT `idxFNewsOfCategory` FOREIGN KEY (`news`) REFERENCES `news` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_turkish_ci ROW_FORMAT=COMPACT;
 
 -- ----------------------------
@@ -71,15 +86,15 @@ CREATE TABLE `news_category_localization` (
   UNIQUE KEY `idxUNewsCategoryUrlKey` (`url_key`,`language`,`category`) USING BTREE,
   KEY `idxFLocalizedNewsCategory` (`category`) USING BTREE,
   KEY `idxFNewsCategoryLocalizationLanguage` (`language`) USING BTREE,
-  CONSTRAINT `idxFNewsCategoryLocalizationLanguage` FOREIGN KEY (`language`) REFERENCES `language` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `idxFLocalizedNewsCategory` FOREIGN KEY (`category`) REFERENCES `news_categoy` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `idxFLocalizedNewsCategory` FOREIGN KEY (`category`) REFERENCES `news_category` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `idxFNewsCategoryLocalizationLanguage` FOREIGN KEY (`language`) REFERENCES `language` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_turkish_ci ROW_FORMAT=COMPACT;
 
 -- ----------------------------
--- Table structure for news_categoy
+-- Table structure for news_category
 -- ----------------------------
-DROP TABLE IF EXISTS `news_categoy`;
-CREATE TABLE `news_categoy` (
+DROP TABLE IF EXISTS `news_category`;
+CREATE TABLE `news_category` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'System given id.',
   `site` int(10) unsigned DEFAULT NULL COMMENT 'Site that news category belongs to.',
   `date_added` datetime NOT NULL COMMENT 'Date when the entry is first added.',
