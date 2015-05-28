@@ -44,7 +44,7 @@ class NewsCategoryLocalization extends CoreEntity
 	/**
 	 * @ORM\Id
 	 * @ORM\ManyToOne(
-	 *     targetEntity="BiberLtd\Core\Bundles\NewsManagementBundle\Entity\NewsCategory",
+	 *     targetEntity="BiberLtd\Bundle\NewsManagementBundle\Entity\NewsCategory",
 	 *     inversedBy="localizations"
 	 * )
 	 * @ORM\JoinColumn(name="category", referencedColumnName="id", nullable=false, onDelete="CASCADE")

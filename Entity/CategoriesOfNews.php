@@ -49,7 +49,7 @@ class CategoriesOfNews extends CoreEntity
 
 	/**
 	 * @ORM\Id
-	 * @ORM\ManyToOne(targetEntity="BiberLtd\Core\Bundles\NewsManagementBundle\Entity\NewsCategory")
+	 * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\NewsManagementBundle\Entity\NewsCategory")
 	 * @ORM\JoinColumn(name="category", referencedColumnName="id", nullable=false, onDelete="CASCADE")
 	 */
 	private $category;
