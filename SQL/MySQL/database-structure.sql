@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50505
 File Encoding         : 65001
 
-Date: 2015-05-26 00:01:37
+Date: 2015-06-08 00:19:16
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -74,6 +74,28 @@ CREATE TABLE `news` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_turkish_ci ROW_FORMAT=COMPACT;
 
 -- ----------------------------
+-- Table structure for news_category
+-- ----------------------------
+DROP TABLE IF EXISTS `news_category`;
+CREATE TABLE `news_category` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'System given id.',
+  `site` int(10) unsigned DEFAULT NULL COMMENT 'Site that news category belongs to.',
+  `date_added` datetime NOT NULL COMMENT 'Date when the entry is first added.',
+  `date_updated` datetime NOT NULL COMMENT 'Date when the entry is last updated.',
+  `date_removed` datetime DEFAULT NULL COMMENT 'Date when the entry is marked as removed.',
+  `parent` int(10) unsigned DEFAULT NULL COMMENT 'Parent news category.',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idxUNewsCategoryId` (`id`) USING BTREE,
+  KEY `idxFSiteOfNewsCategory` (`site`) USING BTREE,
+  KEY `idxNNewsCategoryDateAdded` (`date_added`),
+  KEY `idxNNewsCategoryDateUpdated` (`date_updated`),
+  KEY `idxNNewsCategoryDateRemoed` (`date_removed`),
+  KEY `idxFParentNewsCategory` (`parent`),
+  CONSTRAINT `idxFParentNewsCategory` FOREIGN KEY (`parent`) REFERENCES `news` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `idxFSiteOfNewsCategory` FOREIGN KEY (`site`) REFERENCES `site` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_turkish_ci ROW_FORMAT=COMPACT;
+
+-- ----------------------------
 -- Table structure for news_category_localization
 -- ----------------------------
 DROP TABLE IF EXISTS `news_category_localization`;
@@ -91,25 +113,6 @@ CREATE TABLE `news_category_localization` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_turkish_ci ROW_FORMAT=COMPACT;
 
 -- ----------------------------
--- Table structure for news_category
--- ----------------------------
-DROP TABLE IF EXISTS `news_category`;
-CREATE TABLE `news_category` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'System given id.',
-  `site` int(10) unsigned DEFAULT NULL COMMENT 'Site that news category belongs to.',
-  `date_added` datetime NOT NULL COMMENT 'Date when the entry is first added.',
-  `date_updated` datetime NOT NULL COMMENT 'Date when the entry is last updated.',
-  `date_removed` datetime DEFAULT NULL COMMENT 'Date when the entry is marked as removed.',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `idxUNewsCategoryId` (`id`) USING BTREE,
-  KEY `idxFSiteOfNewsCategory` (`site`) USING BTREE,
-  KEY `idxNNewsCategoryDateAdded` (`date_added`),
-  KEY `idxNNewsCategoryDateUpdated` (`date_updated`),
-  KEY `idxNNewsCategoryDateRemoed` (`date_removed`),
-  CONSTRAINT `idxFSiteOfNewsCategory` FOREIGN KEY (`site`) REFERENCES `site` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_turkish_ci ROW_FORMAT=COMPACT;
-
--- ----------------------------
 -- Table structure for news_localization
 -- ----------------------------
 DROP TABLE IF EXISTS `news_localization`;
@@ -120,6 +123,9 @@ CREATE TABLE `news_localization` (
   `url_key` varchar(255) COLLATE utf8_turkish_ci DEFAULT NULL COMMENT 'Localized url key.',
   `summary` varchar(255) COLLATE utf8_turkish_ci DEFAULT NULL COMMENT 'Localized summary.',
   `content` text COLLATE utf8_turkish_ci COMMENT 'Localized content.',
+  `meta_title` varchar(155) COLLATE utf8_turkish_ci DEFAULT NULL COMMENT 'Localized meta title.',
+  `meta_description` varchar(255) COLLATE utf8_turkish_ci DEFAULT NULL COMMENT 'Localized meta description.',
+  `meta_keywords` text COLLATE utf8_turkish_ci COMMENT 'Localized meta keywords.',
   UNIQUE KEY `idxUNewsLocalization` (`news`,`language`) USING BTREE,
   UNIQUE KEY `idxUNewsUrlKey` (`news`,`language`,`url_key`) USING BTREE,
   KEY `idxFLocalizedNews` (`news`) USING BTREE,

@@ -24,14 +24,14 @@ use BiberLtd\Bundle\CoreBundle\CoreEntity;
  * @ORM\Table(
  *     name="categories_of_news",
  *     options={"charset":"utf8","collate":"utf8_turkish_ci","engine":"innodb"},
- *     indexes={@ORM\Index(name="idxNCategoriesOfNewsDateAdded", columns={"date_added"})},
- *     uniqueConstraints={@ORM\UniqueConstraint(name="idxUCategoryOfNews", columns={"category","news"})}
+ *     indexes={@ORM\Index(name="idxNDateNewsCategoryAdded", columns={"date_added"})},
+ *     uniqueConstraints={@ORM\UniqueConstraint(name="idxUCategoriesOfNews", columns={"category","news"})}
  * )
  */
 class CategoriesOfNews extends CoreEntity
 {
     /** 
-     * @ORM\Column(type="integer", length=10, nullable=false)
+     * @ORM\Column(type="integer", length=10, nullable=false, options={"default":1})
      */
     private $sort_order;
 
@@ -46,6 +46,7 @@ class CategoriesOfNews extends CoreEntity
      * @ORM\JoinColumn(name="news", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     private $news;
+
 
 	/**
 	 * @ORM\Id

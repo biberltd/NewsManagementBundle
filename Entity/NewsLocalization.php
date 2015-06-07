@@ -52,12 +52,24 @@ class NewsLocalization extends CoreEntity
      */
     private $content;
 
+    /**
+     * @ORM\Column(type="string", length=155, nullable=true)
+     */
+    private $meta_title;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $meta_description;
+
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $meta_keywords;
+
     /** 
      * @ORM\Id
-     * @ORM\ManyToOne(
-     *     targetEntity="BiberLtd\Bundle\NewsManagementBundle\Entity\News",
-     *     inversedBy="localizations"
-     * )
+     * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\NewsManagementBundle\Entity\News", inversedBy="localizations")
      * @ORM\JoinColumn(name="news", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     private $news;

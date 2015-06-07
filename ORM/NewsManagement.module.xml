@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<skipper version="3.0.0.1104" mvc="Symfony2" orm="Doctrine2">
-  <module name="NewsManagementBundle" import-format="Doctrine2Php" import-path="../Entity" uuid="e9ba8e51-c287-4e06-88bf-e1088ae9d7e7">
-    <entity name="News" description="Stores a list of news definitions." uuid="008e5e0d-d97b-4c91-b5b5-38b3f0d509c0">
+<skipper version="3.2.1.1226" mvc="Symfony2" orm="Doctrine2">
+  <module name="\NewsManagementBundle" local-name="NewsManagementBundle" namespace="\BiberLtd\Bundle\NewsManagementBundle\Entity" local-namespace="BiberLtd\Bundle\NewsManagementBundle\Entity" export-format="Doctrine2Php" export-path="../Entity" uuid="e9ba8e51-c287-4e06-88bf-e1088ae9d7e7">
+    <entity name="\BiberLtd\Bundle\NewsManagementBundle\Entity\News" local-name="News" namespace="\BiberLtd\Bundle\NewsManagementBundle\Entity" description="Stores a list of news definitions." uuid="008e5e0d-d97b-4c91-b5b5-38b3f0d509c0">
       <field name="id" description="System given id." type="integer" size="10" required="true" unique="true" primary="true" auto-increment="true" uuid="ee17df6c-5b04-4267-8dc7-8c9161d64a83"/>
       <field name="date_added" description="Date when the news is added." type="datetime" required="true" uuid="50822a37-47de-4508-aedf-9dd789869bd7"/>
       <field name="date_published" description="Date when the news is published." type="datetime" required="true" uuid="8d7f9983-7905-45bf-9c7a-20f46f9f77a2"/>
@@ -10,16 +10,16 @@
       <field name="url" description="URL of the news." type="text" uuid="d576e115-620f-4464-94f4-eaa59a3cc0ae"/>
       <field name="sort_order" description="Custom sort order." type="integer" size="10" default="1" required="true" uuid="9e2b05e4-6bd7-4383-9bc6-073cfc72583e"/>
       <field name="site" description="Site that news belongs to." type="integer" size="10" uuid="3bf31bd2-45db-4d5e-a589-c4c6189496dd"/>
-      <index name="idx_u_news_id" unique="true">
+      <index name="idxUNewsId" unique="true">
         <index-field name="id"/>
       </index>
-      <index name="idx_n_news_date_added">
+      <index name="idxNDateAdded">
         <index-field name="date_added"/>
       </index>
-      <index name="idx_n_news_date_published">
+      <index name="idxNDatePublished">
         <index-field name="date_published"/>
       </index>
-      <index name="idx_n_news_date_unpublished">
+      <index name="idxNDateUnpublished">
         <index-field name="date_unpublished"/>
       </index>
       <orm-attributes>
@@ -32,24 +32,27 @@
         <attribute name="export-file-name">News.php</attribute>
       </orm-attributes>
     </entity>
-    <association from="News" to="Site" caption="idx_f_news_site" inverse-alias="site" uuid="1438b489-c2cf-4e2e-a581-888fdc9687e5">
+    <association from="\BiberLtd\Bundle\NewsManagementBundle\Entity\News" to="\BiberLtd\Bundle\SiteManagementBundle\Entity\Site" caption="idxFSiteOfNews" inverse-alias="site" many-owner="true" many-inverse="false" uuid="1438b489-c2cf-4e2e-a581-888fdc9687e5">
       <association-field from="site" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
       </orm-attributes>
     </association>
-    <entity name="NewsLocalization" description="Stores localization values for each news entry." uuid="898d3269-dbe4-4816-b740-e87b2fa2b525">
+    <entity name="\BiberLtd\Bundle\NewsManagementBundle\Entity\NewsLocalization" local-name="NewsLocalization" namespace="\BiberLtd\Bundle\NewsManagementBundle\Entity" description="Stores localization values for each news entry." uuid="898d3269-dbe4-4816-b740-e87b2fa2b525">
       <field name="news" description="Localized news." type="integer" size="10" required="true" primary="true" uuid="57a2757b-d08a-40a7-b14c-db1bd4e897ef"/>
       <field name="language" description="Localization language." type="integer" size="5" required="true" primary="true" uuid="2f0183a6-2eb4-4e1b-bba5-948f0dfc5122"/>
       <field name="title" description="Localized title." type="string" size="155" required="true" uuid="24a9c0ef-9b70-4fe2-b285-74bfacea6fb1"/>
       <field name="url_key" description="Localized url key." type="string" size="255" required="true" uuid="7361b4f2-8619-4e7e-8d6b-2de746b1e00c"/>
       <field name="summary" description="Localized summary of news." type="string" size="255" uuid="22cbc42d-0bfc-4ca7-8690-cd308de488e8"/>
       <field name="content" description="Localized content of news." type="text" uuid="903e21c3-dc35-4d74-90ac-eb81c6a7eee7"/>
-      <index name="idx_u_news_localization" unique="true">
+      <field name="meta_title" description="Localized meta title." type="string" size="155" uuid="14c3b3f0-aa60-41d0-a1bc-99b3be984f55"/>
+      <field name="meta_description" description="Localized meta description." type="string" size="255" uuid="ab8798d2-6811-420a-9fa0-84ee72812a25"/>
+      <field name="meta_keywords" description="Localized meta keywords." type="string" uuid="3f22b5e4-aeba-45dd-bb85-9a3d355ec3c2"/>
+      <index name="idxUNewsLocalization" unique="true">
         <index-field name="news"/>
         <index-field name="language"/>
       </index>
-      <index name="idx_u_news_localization_url_key" unique="true">
+      <index name="idxUNewsUrlKey" unique="true">
         <index-field name="news"/>
         <index-field name="language"/>
         <index-field name="url_key"/>
@@ -64,24 +67,25 @@
         <attribute name="export-file-name">NewsLocalization.php</attribute>
       </orm-attributes>
     </entity>
-    <association from="NewsLocalization" to="News" caption="idx_f_news_localization_news" owner-alias="localizations" inverse-alias="news" uuid="7c1bf9c3-fd61-436d-a701-08e2320d6264">
+    <association from="\BiberLtd\Bundle\NewsManagementBundle\Entity\NewsLocalization" to="\BiberLtd\Bundle\NewsManagementBundle\Entity\News" caption="idxFNewsLocalization" owner-alias="localizations" inverse-alias="news" many-owner="true" many-inverse="false" parent-required="true" uuid="7c1bf9c3-fd61-436d-a701-08e2320d6264">
       <association-field from="news" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
       </orm-attributes>
     </association>
-    <association from="NewsLocalization" to="Language" caption="idx_f_news_localization_language" inverse-alias="language" uuid="f7bdcce6-ee31-46ee-a69b-3a6eb82ea59a">
+    <association from="\BiberLtd\Bundle\NewsManagementBundle\Entity\NewsLocalization" to="\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language" caption="idxFNewsLocalizationLanguage" inverse-alias="language" many-owner="true" many-inverse="false" parent-required="true" uuid="f7bdcce6-ee31-46ee-a69b-3a6eb82ea59a">
       <association-field from="language" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
       </orm-attributes>
     </association>
-    <entity name="NewsCategory" description="Stores news category definitions." uuid="7d4fddbe-ebce-48d5-bebc-f4217207803d">
+    <entity name="\BiberLtd\Bundle\NewsManagementBundle\Entity\NewsCategory" local-name="NewsCategory" namespace="\BiberLtd\Bundle\NewsManagementBundle\Entity" description="Stores news category definitions." uuid="7d4fddbe-ebce-48d5-bebc-f4217207803d">
       <field name="id" description="System given id." type="integer" size="10" default=" " required="true" unique="true" primary="true" auto-increment="true" uuid="6d5eb4f5-048e-421c-98b8-6c8af8b22772"/>
       <field name="count_view" description="Number of views that this category obtained." type="integer" size="10" default="0" required="true" uuid="c5bc534c-76d3-4177-8c83-6e741175d405"/>
       <field name="count_news" description="Number of news that are associeted with this category." type="integer" size="10" default="0" required="true" uuid="48b059d1-4166-4498-bd36-486f42cc5939"/>
       <field name="site" description="Site that category belongs to." type="integer" size="10" uuid="0774899f-69f7-459b-b0c0-b78393e93cb5"/>
-      <index name="idx_u_news_category_id" unique="true">
+      <field name="parent" type="integer" size="10" uuid="6113d7c9-3a37-4b99-89be-0cb7c3e7f65c"/>
+      <index name="idxUNewsCategoryId" unique="true">
         <index-field name="id"/>
       </index>
       <orm-attributes>
@@ -94,22 +98,28 @@
         <attribute name="export-file-name">NewsCategory.php</attribute>
       </orm-attributes>
     </entity>
-    <association from="NewsCategory" to="Site" caption="idx_f_news_category_site" inverse-alias="site" uuid="11529b9d-648e-471d-aec6-48e53a583b84">
+    <association from="\BiberLtd\Bundle\NewsManagementBundle\Entity\NewsCategory" to="\BiberLtd\Bundle\SiteManagementBundle\Entity\Site" caption="idxFSiteOfNewsCategory" inverse-alias="site" many-owner="true" many-inverse="false" uuid="11529b9d-648e-471d-aec6-48e53a583b84">
       <association-field from="site" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
       </orm-attributes>
     </association>
-    <entity name="NewsCategoryLocalization" description="Stores localization values of news categ&#x131;ry entries." uuid="bea4e4de-bea1-4b68-8232-5da918a6317d">
+    <association from="\BiberLtd\Bundle\NewsManagementBundle\Entity\NewsCategory" to="\BiberLtd\Bundle\NewsManagementBundle\Entity\NewsCategory" caption="idxFParentNewsCategory" inverse-alias="parent" many-owner="true" many-inverse="false" uuid="85deb9d9-d513-437d-b9f8-265bffe29035">
+      <association-field from="parent" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+      </orm-attributes>
+    </association>
+    <entity name="\BiberLtd\Bundle\NewsManagementBundle\Entity\NewsCategoryLocalization" local-name="NewsCategoryLocalization" namespace="\BiberLtd\Bundle\NewsManagementBundle\Entity" description="Stores localization values of news categ&#x131;ry entries." uuid="bea4e4de-bea1-4b68-8232-5da918a6317d">
       <field name="category" description="Localized news category." type="integer" size="10" required="true" primary="true" uuid="43b07ed4-c763-48f5-86da-8e007e09fd8a"/>
       <field name="language" description="Localization language." type="integer" size="5" required="true" primary="true" uuid="5c03b82e-a431-46e1-ba24-302a1ca34a88"/>
       <field name="name" description="Localized name of news category." type="string" size="45" required="true" uuid="85c550e7-7a1f-431b-8082-1111e84550f9"/>
       <field name="url_key" description="Localized URL key of news category." type="string" size="155" required="true" uuid="ed88b7fa-2bb6-428e-9c1d-92fd6e4d78da"/>
-      <index name="idx_u_news_category_localization" unique="true">
+      <index name="idxUNewsCategoryLocalization" unique="true">
         <index-field name="language"/>
         <index-field name="category"/>
       </index>
-      <index name="idx_u_news_category_localization_url_key" unique="true">
+      <index name="idxUNewsCategoryUrlKey" unique="true">
         <index-field name="language"/>
         <index-field name="category"/>
         <index-field name="url_key"/>
@@ -124,26 +134,26 @@
         <attribute name="export-file-name">NewsCategoryLocalization.php</attribute>
       </orm-attributes>
     </entity>
-    <association from="NewsCategoryLocalization" to="NewsCategory" caption="idx_f_news_category_localization_news_category" owner-alias="localizations" inverse-alias="news_category" uuid="0f88ca3e-2aa7-4a35-8083-758f17fc3367">
+    <association from="\BiberLtd\Bundle\NewsManagementBundle\Entity\NewsCategoryLocalization" to="\BiberLtd\Bundle\NewsManagementBundle\Entity\NewsCategory" caption="idxFNewsCategoryLocalization" owner-alias="localizations" inverse-alias="news_category" many-owner="true" many-inverse="false" parent-required="true" uuid="0f88ca3e-2aa7-4a35-8083-758f17fc3367">
       <association-field from="category" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
       </orm-attributes>
     </association>
-    <association from="NewsCategoryLocalization" to="Language" caption="idx_f_news_category_localizaton_language" inverse-alias="language" uuid="e342889c-d745-4c7f-a230-018ad095f446">
+    <association from="\BiberLtd\Bundle\NewsManagementBundle\Entity\NewsCategoryLocalization" to="\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language" caption="idx_f_news_category_localizaton_language" inverse-alias="language" many-owner="true" many-inverse="false" parent-required="true" uuid="e342889c-d745-4c7f-a230-018ad095f446">
       <association-field from="language" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
       </orm-attributes>
     </association>
-    <entity name="FilesOfNews" description="Associates files with news." uuid="afdd170d-df8b-48eb-bcb9-39bd1bfcb346">
+    <entity name="\BiberLtd\Bundle\NewsManagementBundle\Entity\FilesOfNews" local-name="FilesOfNews" namespace="\BiberLtd\Bundle\NewsManagementBundle\Entity" description="Associates files with news." uuid="afdd170d-df8b-48eb-bcb9-39bd1bfcb346">
       <field name="news" description="Associated news." type="integer" size="10" required="true" primary="true" uuid="3d0090dc-87cd-4008-bd2d-3265d2c55e04"/>
       <field name="file" description="Associated files." type="integer" size="15" required="true" primary="true" uuid="1f711f84-8a0d-4f82-87a4-eed9c655ab75"/>
       <field name="language" description="Language of associated file." type="integer" size="5" uuid="2f13137e-a8db-4625-a637-c52a8cb64e59"/>
       <field name="date_added" description="Date when the  file is associated with news." type="datetime" required="true" uuid="ef983509-b72a-461e-99ce-24305c650712"/>
       <field name="count_view" description="View count of file." type="integer" size="10" default="0" required="true" uuid="61fa43d1-e8bb-4b9d-8910-7780a2ae8a30"/>
       <field name="sort_order" description="Custom sort order." type="integer" size="10" default="1" required="true" uuid="57cd1f34-7384-41ed-8a75-db1549abc30f"/>
-      <index name="idx_u_files_of_news" unique="true">
+      <index name="idxUFilesOfNews" unique="true">
         <index-field name="news"/>
         <index-field name="file"/>
       </index>
@@ -157,34 +167,34 @@
         <attribute name="export-file-name">FilesOfNews.php</attribute>
       </orm-attributes>
     </entity>
-    <association from="FilesOfNews" to="News" caption="idx_f_files_of_news_news" inverse-alias="news" uuid="a18093d4-9212-4b0c-8599-4fc007d614bc">
+    <association from="\BiberLtd\Bundle\NewsManagementBundle\Entity\FilesOfNews" to="\BiberLtd\Bundle\NewsManagementBundle\Entity\News" caption="idxFFilesOfNews" inverse-alias="news" many-owner="true" many-inverse="false" parent-required="true" uuid="a18093d4-9212-4b0c-8599-4fc007d614bc">
       <association-field from="news" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
       </orm-attributes>
     </association>
-    <association from="FilesOfNews" to="File" caption="idx_f_files_of_news_file" inverse-alias="file" uuid="a9989c18-9e94-43be-ba48-4c72058599cb">
+    <association from="\BiberLtd\Bundle\NewsManagementBundle\Entity\FilesOfNews" to="\BiberLtd\Bundle\FileManagementBundle\Entity\File" caption="idxFilesOfNews" inverse-alias="file" many-owner="true" many-inverse="false" parent-required="true" uuid="a9989c18-9e94-43be-ba48-4c72058599cb">
       <association-field from="file" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
       </orm-attributes>
     </association>
-    <association from="FilesOfNews" to="Language" caption="idx_f_files_of_news_language" inverse-alias="language" uuid="5ec5e43c-069b-4e87-909d-cfdc0fc2055e">
+    <association from="\BiberLtd\Bundle\NewsManagementBundle\Entity\FilesOfNews" to="\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language" caption="idxFLanguageOfFile" inverse-alias="language" many-owner="true" many-inverse="false" uuid="5ec5e43c-069b-4e87-909d-cfdc0fc2055e">
       <association-field from="language" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
       </orm-attributes>
     </association>
-    <entity name="CategoriesOfNews" description="Associates news with news categories" uuid="0de9ac78-91fb-4eaf-b1e9-a30d1ed28caa">
+    <entity name="\BiberLtd\Bundle\NewsManagementBundle\Entity\CategoriesOfNews" local-name="CategoriesOfNews" namespace="\BiberLtd\Bundle\NewsManagementBundle\Entity" description="Associates news with news categories" uuid="0de9ac78-91fb-4eaf-b1e9-a30d1ed28caa">
       <field name="category" description="Associated news category." type="integer" size="10" required="true" primary="true" uuid="9490336f-89d8-43c3-92e8-760060f5a722"/>
       <field name="news" description="Associated news." type="integer" size="10" required="true" primary="true" uuid="7fee2e20-0cb4-4bbd-9e13-b5d4da5099f4"/>
       <field name="sort_order" description="Custom sort order." type="integer" size="10" default="1" required="true" uuid="b213b313-c1a2-4afe-8ac6-00cc3c999439"/>
       <field name="date_added" description="Date when news added to category." type="datetime" required="true" uuid="aa1b5d26-158a-4102-8f81-f3a76ba9fc1b"/>
-      <index name="idx_u_category_of_news" unique="true">
+      <index name="idxUCategoriesOfNews" unique="true">
         <index-field name="category"/>
         <index-field name="news"/>
       </index>
-      <index name="idx_n_categories_of_news_date_added">
+      <index name="idxNDateNewsCategoryAdded">
         <index-field name="date_added"/>
       </index>
       <orm-attributes>
@@ -197,19 +207,18 @@
         <attribute name="export-file-name">CategoriesOfNews.php</attribute>
       </orm-attributes>
     </entity>
-    <association from="CategoriesOfNews" to="News" caption="idx_f_categories_of_news_news" inverse-alias="news" uuid="d6716744-3527-401d-9f79-908ebd83aa70">
+    <association from="\BiberLtd\Bundle\NewsManagementBundle\Entity\CategoriesOfNews" to="\BiberLtd\Bundle\NewsManagementBundle\Entity\News" caption="idxFCategoriesOfNews" inverse-alias="news" many-owner="true" many-inverse="false" parent-required="true" uuid="d6716744-3527-401d-9f79-908ebd83aa70">
       <association-field from="news" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
       </orm-attributes>
     </association>
-    <association from="CategoriesOfNews" to="NewsCategory" caption="idx_f_categories_of_news_news_category" inverse-alias="news_category" uuid="824677a4-5952-40ec-b301-891c447c0145">
+    <association from="\BiberLtd\Bundle\NewsManagementBundle\Entity\CategoriesOfNews" to="\BiberLtd\Bundle\NewsManagementBundle\Entity\NewsCategory" caption="idxFCategoriesOfNews" inverse-alias="category" many-owner="true" many-inverse="false" parent-required="true" uuid="824677a4-5952-40ec-b301-891c447c0145">
       <association-field from="category" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
       </orm-attributes>
     </association>
-    <comment caption="NewsManagementBundle Pricing" description="categories_of_news: 130 TL&#10;files_of_news: 195 TL&#10;news: 205 TL&#10;news_localization: 170 TL&#10;news_category: 105 TL&#10;news_category_localization: 130 TL&#10;&#10;toplam: 935 TL" uuid="1b3daafd-a6ff-48f0-b443-acbb218af5a3"/>
     <orm-attributes>
       <attribute name="namespace">BiberLtd\Bundle\NewsManagementBundle\Entity</attribute>
       <attribute name="file-suffix">without-suffix</attribute>
@@ -217,13 +226,12 @@
     </orm-attributes>
   </module>
   <visual-data>
-    <entity uuid="008e5e0d-d97b-4c91-b5b5-38b3f0d509c0" bg-color="4294967295" hdr-color="4292006610" position-x="237" position-y="57" size-x="0" size-x2="142" size-y="0" size-y2="129"/>
-    <entity uuid="0de9ac78-91fb-4eaf-b1e9-a30d1ed28caa" bg-color="4294967295" hdr-color="4292006610" position-x="687" position-y="184" size-x="0" size-x2="120" size-y="0" size-y2="73"/>
-    <comment uuid="1b3daafd-a6ff-48f0-b443-acbb218af5a3" bg-color="4294941861" position-x="41" position-y="41" size-x="4" size-x2="157" size-y="0" size-y2="116" txt-color="4278190080"/>
-    <entity uuid="7d4fddbe-ebce-48d5-bebc-f4217207803d" bg-color="4294967295" hdr-color="4292006610" position-x="114" position-y="278" size-x="0" size-x2="75" size-y="0" size-y2="20"/>
-    <entity uuid="898d3269-dbe4-4816-b740-e87b2fa2b525" bg-color="4294967295" hdr-color="4292006610" position-x="487" position-y="57" size-x="0" size-x2="118" size-y="0" size-y2="101"/>
-    <entity uuid="afdd170d-df8b-48eb-bcb9-39bd1bfcb346" bg-color="4294967295" hdr-color="4292006610" position-x="569" position-y="331" size-x="0" size-x2="125" size-y="0" size-y2="101"/>
-    <entity uuid="bea4e4de-bea1-4b68-8232-5da918a6317d" bg-color="4294967295" hdr-color="4292006610" position-x="404" position-y="295" size-x="0" size-x2="133" size-y="0" size-y2="73"/>
-    <module uuid="e9ba8e51-c287-4e06-88bf-e1088ae9d7e7" bg-color="4292728527" size-x="-37" size-x2="837" size-y="2" size-y2="457"/>
+    <entity uuid="008e5e0d-d97b-4c91-b5b5-38b3f0d509c0" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="237" position-y="57" size-x="0" size-x2="142" size-y="0" size-y2="129"/>
+    <entity uuid="0de9ac78-91fb-4eaf-b1e9-a30d1ed28caa" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="687" position-y="184" size-x="0" size-x2="120" size-y="0" size-y2="73"/>
+    <entity uuid="7d4fddbe-ebce-48d5-bebc-f4217207803d" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="114" position-y="278" size-x="0" size-x2="75" size-y="0" size-y2="20"/>
+    <entity uuid="898d3269-dbe4-4816-b740-e87b2fa2b525" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="487" position-y="57" size-x="0" size-x2="118" size-y="0" size-y2="101"/>
+    <entity uuid="afdd170d-df8b-48eb-bcb9-39bd1bfcb346" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="569" position-y="331" size-x="0" size-x2="125" size-y="0" size-y2="101"/>
+    <entity uuid="bea4e4de-bea1-4b68-8232-5da918a6317d" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="404" position-y="295" size-x="0" size-x2="133" size-y="0" size-y2="73"/>
+    <module uuid="e9ba8e51-c287-4e06-88bf-e1088ae9d7e7" bg-color="#DDD6CF" size-x="-37" size-x2="964" size-y="2" size-y2="550"/>
   </visual-data>
 </skipper>

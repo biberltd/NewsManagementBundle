@@ -24,11 +24,6 @@ use BiberLtd\Bundle\CoreBundle\CoreLocalizableEntity;
  * @ORM\Table(
  *     name="news_category",
  *     options={"charset":"utf8","collate":"utf8_turkish_ci","engine":"innodb"},
- *     indexes={
- *         @ORM\Index(name="idxNNewsCategoryDateAdded", columns={"date_added"}),
- *         @ORM\Index(name="idxNNewsCategoryDateUpdated", columns={"date_updated"}),
- *         @ORM\Index(name="idxNNewsCategoryDateRemoved", columns={"date_removed"})
- *     },
  *     uniqueConstraints={@ORM\UniqueConstraint(name="idxUNewsCategoryId", columns={"id"})}
  * )
  */
@@ -36,23 +31,33 @@ class NewsCategory extends CoreLocalizableEntity
 {
     /** 
      * @ORM\Id
-     * @ORM\Column(type="integer", length=10)
+     * @ORM\Column(type="integer", length=10, options={"default":" "})
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
 
+    /**
+     * @ORM\Column(type="integer", length=10, nullable=false, options={"default":0})
+     */
+    private $count_view;
+
+    /**
+     * @ORM\Column(type="integer", length=10, nullable=false, options={"default":0})
+     */
+    private $count_news;
+
 	/**
-	 * @ORM\Column(type="datetime", nullable=false)
+	 * 
 	 */
 	public $date_added;
 
 	/**
-	 * @ORM\Column(type="datetime", nullable=false)
+	 * 
 	 */
 	public $date_updated;
 
 	/**
-	 * @ORM\Column(type="datetime", nullable=true)
+	 * 
 	 */
 	public $date_removed;
 
@@ -69,6 +74,12 @@ class NewsCategory extends CoreLocalizableEntity
      * @ORM\JoinColumn(name="site", referencedColumnName="id", onDelete="CASCADE")
      */
     private $site;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\NewsManagementBundle\Entity\NewsCategory")
+     * @ORM\JoinColumn(name="parent", referencedColumnName="id", onDelete="CASCADE")
+     */
+    private $parent;
     /******************************************************************
      * PUBLIC SET AND GET FUNCTIONS                                   *
      ******************************************************************/

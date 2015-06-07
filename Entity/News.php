@@ -25,9 +25,9 @@ use BiberLtd\Bundle\CoreBundle\CoreLocalizableEntity;
  *     name="news",
  *     options={"charset":"utf8","collate":"utf8_turkish_ci","engine":"innodb"},
  *     indexes={
- *         @ORM\Index(name="idxNNewsDateAdded", columns={"date_added"}),
- *         @ORM\Index(name="idxNNewsDatePublished", columns={"date_published"}),
- *         @ORM\Index(name="idxNNewsDateUnPublished", columns={"date_unpublished"})
+ *         @ORM\Index(name="idxNDateAdded", columns={"date_added"}),
+ *         @ORM\Index(name="idxNDatePublished", columns={"date_published"}),
+ *         @ORM\Index(name="idxNDateUnpublished", columns={"date_unpublished"})
  *     },
  *     uniqueConstraints={@ORM\UniqueConstraint(name="idxUNewsId", columns={"id"})}
  * )
@@ -57,7 +57,7 @@ class News extends CoreLocalizableEntity
     private $date_unpublished;
 
     /** 
-     * @ORM\Column(type="string", length=1, nullable=false)
+     * @ORM\Column(type="string", length=1, nullable=false, options={"default":"p"})
      */
     private $status;
 
@@ -67,15 +67,12 @@ class News extends CoreLocalizableEntity
     private $url;
 
     /** 
-     * @ORM\Column(type="integer", length=10, nullable=false)
+     * @ORM\Column(type="integer", length=10, nullable=false, options={"default":1})
      */
     private $sort_order;
 
     /** 
-     * @ORM\OneToMany(
-     *     targetEntity="BiberLtd\Bundle\NewsManagementBundle\Entity\NewsLocalization",
-     *     mappedBy="news"
-     * )
+     * @ORM\OneToMany(targetEntity="BiberLtd\Bundle\NewsManagementBundle\Entity\NewsLocalization", mappedBy="news")
      */
     protected $localizations;
 
