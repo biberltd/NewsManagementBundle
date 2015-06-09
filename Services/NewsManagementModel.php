@@ -1,19 +1,17 @@
 <?php
 /**
- * FileManagementModel
- *
  * @vendor      BiberLtd
- * @package		Core\Bundles\FileManagementBundle
+ * @package		Core\Bundles\NewsManagementBundle
  * @subpackage	Services
- * @name	    FileManagementModel
+ * @name	    NewsManagementModel
  *
  * @author		Can Berkol
  * @author      Said Imamoglu
  *
  * @copyright   Biber Ltd. (www.biberltd.com)
  *
- * @version     1.0.2
- * @date        03.05.2015
+ * @version     1.0.3
+ * @date        09.06.2015
  *
  */
 namespace BiberLtd\Bundle\NewsManagementBundle\Services;
@@ -21,6 +19,7 @@ namespace BiberLtd\Bundle\NewsManagementBundle\Services;
 /** Extends CoreModel */
 use BiberLtd\Bundle\CoreBundle\CoreModel;
 /** Entities to be used */
+use BiberLtd\Bundle\CoreBundle\Responses\ModelResponse;
 use BiberLtd\Bundle\NewsManagementBundle\Entity as BundleEntity;
 /** Helper Models */
 use BiberLtd\Bundle\SiteManagementBundle\Services as SMMService;
@@ -909,6 +908,125 @@ class NewsManagementModel extends CoreModel {
 		return new ModelResponse($entities, $totalRows, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
 	}
 	/**
+	 * @name 			listNewsOfCategory()
+	 *
+	 * @since			1.0.3
+	 * @version         1.0.3
+	 *
+	 * @author          Can Berkol
+	 *
+	 * @use             $this->listNews()
+	 *
+	 * @param   		mixed   $category
+	 * @param   		array	$filter
+	 * @param   		array   $sortOrder
+	 * @param   		array   $limit
+	 *
+	 * @return   		BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function listNewsOfCategory($category, $filter = null, $sortOrder = null, $limit = null){
+		$timeStamp = time();
+		$response = $this->getNewsCategory($category);
+		if($response->error->exist){
+			return $response;
+		}
+
+		$category = $response->result->set;
+
+		$qStr = 'SELECT '.$this->entity['con']['alias'].', '.$this->entity['n']['alias']
+			.' FROM '.$this->entity['con']['name'].' '.$this->entity['con']['alias']
+			.' WHERE '.$this->entity['con']['alias'].'.category = '.$category->getId();
+
+		$q = $this->em->createQuery($qStr);
+
+		$result = $q->getResult();
+		if(count($result) < 1 || $result == false){
+			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, time());
+		}
+		$newsIds = array();
+		foreach($result as $conEntity){
+			$newsIds[] = $conEntity->getNews()->getId();
+		}
+		$filter[] = array(
+			'glue' => 'and',
+			'condition' => array(
+				array(
+					'glue' => 'and',
+					'condition' => array('column' => $this->entity['n']['alias'].'.id', 'comparison' => 'in', 'value' => $newsIds),
+				)
+			)
+		);
+		$response = $this->listNewsItems($filter, $sortOrder, $limit);
+
+		$response->stats->execution->start = $timeStamp;
+		$response->stats->execution->end = time();
+
+		return $response;
+	}
+	/**
+	 * @name 			listNewsOfCategory()
+	 *
+	 * @since			1.0.3
+	 * @version         1.0.3
+	 *
+	 * @author          Can Berkol
+	 *
+	 * @use             $this->listNews()
+	 *
+	 * @param   		mixed   $category
+	 * @param   		mixed   $site
+	 * @param   		array   $filter
+	 * @param   		array   $sortOrder
+	 * @param   		array   $limit
+	 *
+	 * @return   		BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function listNewsOfCategoryAndSite($category, $site, $filter = null, $sortOrder = null, $limit = null){
+		$timeStamp = time();
+		$response = $this->getNewsCategory($category);
+		if($response->error->exist){
+			return $response;
+		}
+		$category = $response->result->set;
+
+		$sModel = new SMMService\SiteManagementModel($this->kernel, $this->dbConnection, $this->orm);
+		$response = $sModel->getSite($site);
+		if($response->error->exist){
+			return $response;
+		}
+		$site = $response->result->set;
+		$qStr = 'SELECT '.$this->entity['con']['alias'].', '.$this->entity['n']['alias']
+			.' FROM '.$this->entity['con']['name'].' '.$this->entity['con']['alias']
+			.' WHERE '.$this->entity['con']['alias'].'.category = '.$category->getId()
+			.' AND '.$this->entity['con']['alias'].'.site = '.$site->getId();
+
+		$q = $this->em->createQuery($qStr);
+
+		$result = $q->getResult();
+		if(count($result) < 1 || $result == false){
+			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, time());
+		}
+		$newsIds = array();
+		foreach($result as $conEntity){
+			$newsIds[] = $conEntity->getNews()->getId();
+		}
+		$filter[] = array(
+			'glue' => 'and',
+			'condition' => array(
+				array(
+					'glue' => 'and',
+					'condition' => array('column' => $this->entity['n']['alias'].'.id', 'comparison' => 'in', 'value' => $newsIds),
+				)
+			)
+		);
+		$response = $this->listNewsItems($filter, $sortOrder, $limit);
+
+		$response->stats->execution->start = $timeStamp;
+		$response->stats->execution->end = time();
+
+		return $response;
+	}
+	/**
 	 * @name 			removeCategoriesFromNewsItem()
 	 *
 	 * @since			1.0.2
@@ -1279,9 +1397,16 @@ class NewsManagementModel extends CoreModel {
 		return new ModelResponse(null, 0, 0, null, true, 'E:D:004', 'One or more entities cannot be updated within database.', $timeStamp, time());
 	}
 }
-
 /**
  * Change Log
+ * **************************************
+ * v1.0.3                      09.06.2015
+ * Can Berkol
+ * **************************************
+ * BF :: ModelResponse added in use statement.
+ * FR :: listNewsOfCategory()
+ * FR :: listNewsOfCategoryAndSite()
+ *
  * **************************************
  * v1.0.2                      03.05.2015
  * Can Berkol
