@@ -908,6 +908,127 @@ class NewsManagementModel extends CoreModel {
 		return new ModelResponse($entities, $totalRows, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
 	}
 	/**
+	 * @name 			listRecentNewsOfCategory()
+	 *
+	 * @since			1.0.3
+	 * @version         1.0.3
+	 *
+	 * @author          Can Berkol
+	 *
+	 * @use             $this->listNews()
+	 *
+	 * @param   		mixed   $category
+	 * @param   		integer $count
+	 * @param   		array	$filter
+	 * @param   		array   $sortOrder
+	 *
+	 * @return   		BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function listRecentNewsOfCategory($category, $count = 10, $filter = null, $sortOrder = null){
+		$timeStamp = time();
+		$response = $this->getNewsCategory($category);
+		if($response->error->exist){
+			return $response;
+		}
+
+		$category = $response->result->set;
+
+		$qStr = 'SELECT '.$this->entity['con']['alias'].', '.$this->entity['n']['alias']
+			.' FROM '.$this->entity['con']['name'].' '.$this->entity['con']['alias']
+			.' WHERE '.$this->entity['con']['alias'].'.category = '.$category->getId();
+
+		$q = $this->em->createQuery($qStr);
+
+		$result = $q->getResult();
+		if(count($result) < 1 || $result == false){
+			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, time());
+		}
+		$newsIds = array();
+		foreach($result as $conEntity){
+			$newsIds[] = $conEntity->getNews()->getId();
+		}
+		$filter[] = array(
+			'glue' => 'and',
+			'condition' => array(
+				array(
+					'glue' => 'and',
+					'condition' => array('column' => $this->entity['n']['alias'].'.id', 'comparison' => 'in', 'value' => $newsIds),
+				)
+			)
+		);
+		$sortOrder['date_published'] = 'desc';
+		$response = $this->listNewsItems($filter, $sortOrder, array('start' => 0, 'count' => $count));
+
+		$response->stats->execution->start = $timeStamp;
+		$response->stats->execution->end = time();
+
+		return $response;
+	}
+	/**
+	 * @name 			listRecentNewsOfCategoryAndSite()
+	 *
+	 * @since			1.0.3
+	 * @version         1.0.3
+	 *
+	 * @author          Can Berkol
+	 *
+	 * @use             $this->listNews()
+	 *
+	 * @param   		mixed   $category
+	 * @param   		mixed   $site
+	 * @param   		integer $count
+	 * @param   		array   $filter
+	 * @param   		array   $sortOrder
+	 *
+	 * @return   		BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function listRecentNewsOfCategoryAndSite($category, $site, $count = 10, $filter = null, $sortOrder = null){
+		$timeStamp = time();
+		$response = $this->getNewsCategory($category);
+		if($response->error->exist){
+			return $response;
+		}
+		$category = $response->result->set;
+
+		$sModel = new SMMService\SiteManagementModel($this->kernel, $this->dbConnection, $this->orm);
+		$response = $sModel->getSite($site);
+		if($response->error->exist){
+			return $response;
+		}
+		$site = $response->result->set;
+		$qStr = 'SELECT '.$this->entity['con']['alias'].', '.$this->entity['n']['alias']
+			.' FROM '.$this->entity['con']['name'].' '.$this->entity['con']['alias']
+			.' WHERE '.$this->entity['con']['alias'].'.category = '.$category->getId()
+			.' AND '.$this->entity['con']['alias'].'.site = '.$site->getId();
+
+		$q = $this->em->createQuery($qStr);
+
+		$result = $q->getResult();
+		if(count($result) < 1 || $result == false){
+			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, time());
+		}
+		$newsIds = array();
+		foreach($result as $conEntity){
+			$newsIds[] = $conEntity->getNews()->getId();
+		}
+		$filter[] = array(
+			'glue' => 'and',
+			'condition' => array(
+				array(
+					'glue' => 'and',
+					'condition' => array('column' => $this->entity['n']['alias'].'.id', 'comparison' => 'in', 'value' => $newsIds),
+				)
+			)
+		);
+		$sortOrder['date_published'] = 'desc';
+		$response = $this->listNewsItems($filter, $sortOrder, array('start' => 0, 'count' => $count));
+
+		$response->stats->execution->start = $timeStamp;
+		$response->stats->execution->end = time();
+
+		return $response;
+	}
+	/**
 	 * @name 			listNewsOfCategory()
 	 *
 	 * @since			1.0.3
@@ -964,7 +1085,7 @@ class NewsManagementModel extends CoreModel {
 		return $response;
 	}
 	/**
-	 * @name 			listNewsOfCategory()
+	 * @name 			listNewsOfCategoryAndSite()
 	 *
 	 * @since			1.0.3
 	 * @version         1.0.3
@@ -1404,6 +1525,8 @@ class NewsManagementModel extends CoreModel {
  * Can Berkol
  * **************************************
  * BF :: ModelResponse added in use statement.
+ * FR :: listRecentNewsOfCategory()
+ * FR :: listRecentNewsOfCategoryAndSite()
  * FR :: listNewsOfCategory()
  * FR :: listNewsOfCategoryAndSite()
  *
