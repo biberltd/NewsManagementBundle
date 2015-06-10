@@ -84,7 +84,7 @@
       <field name="count_view" description="Number of views that this category obtained." type="integer" size="10" default="0" required="true" uuid="c5bc534c-76d3-4177-8c83-6e741175d405"/>
       <field name="count_news" description="Number of news that are associeted with this category." type="integer" size="10" default="0" required="true" uuid="48b059d1-4166-4498-bd36-486f42cc5939"/>
       <field name="site" description="Site that category belongs to." type="integer" size="10" uuid="0774899f-69f7-459b-b0c0-b78393e93cb5"/>
-      <field name="parent" type="integer" size="10" uuid="6113d7c9-3a37-4b99-89be-0cb7c3e7f65c"/>
+      <field name="parent" description="Parent news cateogry." type="integer" size="10" uuid="6113d7c9-3a37-4b99-89be-0cb7c3e7f65c"/>
       <index name="idxUNewsCategoryId" unique="true">
         <index-field name="id"/>
       </index>
@@ -228,7 +228,7 @@
   <visual-data>
     <entity uuid="008e5e0d-d97b-4c91-b5b5-38b3f0d509c0" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="237" position-y="57" size-x="0" size-x2="142" size-y="0" size-y2="129"/>
     <entity uuid="0de9ac78-91fb-4eaf-b1e9-a30d1ed28caa" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="687" position-y="184" size-x="0" size-x2="120" size-y="0" size-y2="73"/>
-    <entity uuid="7d4fddbe-ebce-48d5-bebc-f4217207803d" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="114" position-y="278" size-x="0" size-x2="75" size-y="0" size-y2="20"/>
+    <entity uuid="7d4fddbe-ebce-48d5-bebc-f4217207803d" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="110" position-y="276" size-x="0" size-x2="127" size-y="0" size-y2="87"/>
     <entity uuid="898d3269-dbe4-4816-b740-e87b2fa2b525" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="487" position-y="57" size-x="0" size-x2="118" size-y="0" size-y2="101"/>
     <entity uuid="afdd170d-df8b-48eb-bcb9-39bd1bfcb346" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="569" position-y="331" size-x="0" size-x2="125" size-y="0" size-y2="101"/>
     <entity uuid="bea4e4de-bea1-4b68-8232-5da918a6317d" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="404" position-y="295" size-x="0" size-x2="133" size-y="0" size-y2="73"/>

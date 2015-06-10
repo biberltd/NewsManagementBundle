@@ -22,7 +22,7 @@
     <association uuid="71f15a54-6bc9-4510-84b1-2b2817781440" color="#969696"/>
     <association uuid="7c1bf9c3-fd61-436d-a701-08e2320d6264" color="#969696"/>
     <entity uuid="7ce99bbb-4d97-4ee5-8703-dfe82e965514" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="100" position-y="94" size-x="0" size-x2="109" size-y="0" size-y2="115"/>
-    <entity uuid="7d4fddbe-ebce-48d5-bebc-f4217207803d" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="114" position-y="278" size-x="0" size-x2="75" size-y="0" size-y2="20"/>
+    <entity uuid="7d4fddbe-ebce-48d5-bebc-f4217207803d" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="110" position-y="276" size-x="0" size-x2="127" size-y="0" size-y2="87"/>
     <association uuid="824677a4-5952-40ec-b301-891c447c0145" color="#969696"/>
     <association uuid="85deb9d9-d513-437d-b9f8-265bffe29035" caption1-position-x="0" caption1-position-y="0" center-position-x="0" center-position-y="-20" color="#969696"/>
     <module uuid="860bb986-ef71-4cef-9da2-f560e58c2569" bg-color="#7E7975" position-x="1408" position-y="50" size-x="0" size-x2="450" size-y="0" size-y2="227"/>

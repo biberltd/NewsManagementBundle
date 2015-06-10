@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50505
 File Encoding         : 65001
 
-Date: 2015-06-08 00:19:16
+Date: 2015-06-10 11:35:02
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -84,6 +84,8 @@ CREATE TABLE `news_category` (
   `date_updated` datetime NOT NULL COMMENT 'Date when the entry is last updated.',
   `date_removed` datetime DEFAULT NULL COMMENT 'Date when the entry is marked as removed.',
   `parent` int(10) unsigned DEFAULT NULL COMMENT 'Parent news category.',
+  `count_views` int(10) unsigned DEFAULT '0' COMMENT 'Number of views obtained.',
+  `count_news` int(10) unsigned DEFAULT '0' COMMENT 'Number of news in category.',
   PRIMARY KEY (`id`),
   UNIQUE KEY `idxUNewsCategoryId` (`id`) USING BTREE,
   KEY `idxFSiteOfNewsCategory` (`site`) USING BTREE,
