@@ -10,8 +10,8 @@
  *
  * @copyright   Biber Ltd. (www.biberltd.com)
  *
- * @version     1.0.3
- * @date        09.06.2015
+ * @version     1.0.4
+ * @date        10.06.2015
  *
  */
 namespace BiberLtd\Bundle\NewsManagementBundle\Services;
@@ -239,7 +239,7 @@ class NewsManagementModel extends CoreModel {
 	 * @name 			getNewsCategory()
 	 *
 	 * @since			1.0.2
-	 * @version         1.0.2
+	 * @version         1.0.4
 	 *
 	 * @author          Can Berkol
 	 * @author          Said İmamoğlu
@@ -257,9 +257,9 @@ class NewsManagementModel extends CoreModel {
 			return new ModelResponse($category, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
 		}
 		$result = null;
-		switch($news){
-			case is_numeric($news):
-				$result = $this->em->getRepository($this->entity['nc']['name'])->findOneBy(array('id' => $news));
+		switch($category){
+			case is_numeric($category):
+				$result = $this->em->getRepository($this->entity['nc']['name'])->findOneBy(array('id' => $category));
 				break;
 		}
 		if(is_null($result)){
@@ -1520,6 +1520,12 @@ class NewsManagementModel extends CoreModel {
 }
 /**
  * Change Log
+ * **************************************
+ * v1.0.4                      10.06.2015
+ * Can Berkol
+ * **************************************
+ * BF :: getNewsCategory() has copy/paste errors.
+ *
  * **************************************
  * v1.0.3                      09.06.2015
  * Can Berkol
