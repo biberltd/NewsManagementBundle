@@ -10,8 +10,8 @@
  *
  * @copyright   Biber Ltd. (www.biberltd.com)
  *
- * @version     1.0.4
- * @date        10.06.2015
+ * @version     1.0.5
+ * @date        11.06.2015
  *
  */
 namespace BiberLtd\Bundle\NewsManagementBundle\Services;
@@ -549,7 +549,7 @@ class NewsManagementModel extends CoreModel {
 	 * @name 			insertNewsCategoryLocalizations()
 	 *
 	 * @since			1.0.2
-	 * @version         1.0.2
+	 * @version         1.0.4
 	 * @author          Can Berkol
 	 *
 	 * @use             $this->createException()
@@ -572,34 +572,33 @@ class NewsManagementModel extends CoreModel {
 				$insertedItems[] = $entity;
 				$countInserts++;
 			}
-			else if(is_object($data)){
-				$entity = new BundleEntity\NewsCategoryLocalization();
-				foreach($data as $column => $value){
-					$set = 'set'.$this->translateColumnName($column);
-					switch($column){
-						case 'language':
-							$lModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
-							$response = $lModel->getLanguage($value);
-							if(!$response->error->exists){
-								$entity->$set($response->result->set);
-							}
-							unset($response, $lModel);
-							break;
-						case 'category':
-							$response = $this->getNewsCategory($value);
-							if(!$response->error->exists){
-								$entity->$set($response->result->set);
-							}
-							unset($response, $lModel);
-							break;
-						default:
-							$entity->$set($value);
-							break;
+			else{
+				$category = $data['entity'];
+				foreach($data['localizations'] as $locale => $translation){
+					$entity = new BundleEntity\NewsCategoryLocalization();
+					$lModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
+					$response = $lModel->getLanguage($locale);
+					if($response->error->exist){
+						return $response;
 					}
+					$entity->setLanguage($response->result->set);
+					unset($response);
+					$entity->setCategory($category);
+					foreach($translation as $column => $value){
+						$set = 'set'.$this->translateColumnName($column);
+						switch($column){
+							default:
+								if(is_object($value) || is_array($value)){
+									$value = json_encode($value);
+								}
+								$entity->$set($value);
+								break;
+						}
+					}
+					$this->em->persist($entity);
+					$insertedItems[] = $entity;
+					$countInserts++;
 				}
-				$this->em->persist($entity);
-				$insertedItems[] = $entity;
-				$countInserts++;
 			}
 		}
 		if($countInserts > 0){
@@ -635,34 +634,33 @@ class NewsManagementModel extends CoreModel {
 				$insertedItems[] = $entity;
 				$countInserts++;
 			}
-			else if(is_object($data)){
-				$entity = new BundleEntity\NewsLocalization();
-				foreach($data as $column => $value){
-					$set = 'set'.$this->translateColumnName($column);
-					switch($column){
-						case 'language':
-							$lModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
-							$response = $lModel->getLanguage($value);
-							if(!$response->error->exists){
-								$entity->$set($response->result->set);
-							}
-							unset($response, $lModel);
-							break;
-						case 'news':
-							$response = $this->getNewsItem($value);
-							if(!$response->error->exists){
-								$entity->$set($response->result->set);
-							}
-							unset($response, $lModel);
-							break;
-						default:
-							$entity->$set($value);
-							break;
+			else{
+				$news = $data['entity'];
+				foreach($data['localizations'] as $locale => $translation){
+					$entity = new BundleEntity\NewsLocalization();
+					$lModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
+					$response = $lModel->getLanguage($locale);
+					if($response->error->exist){
+						return $response;
 					}
+					$entity->setLanguage($response->result->set);
+					unset($response);
+					$entity->setNews($news);
+					foreach($translation as $column => $value){
+						$set = 'set'.$this->translateColumnName($column);
+						switch($column){
+							default:
+								if(is_object($value) || is_array($value)){
+									$value = json_encode($value);
+								}
+								$entity->$set($value);
+								break;
+						}
+					}
+					$this->em->persist($entity);
+					$insertedItems[] = $entity;
+					$countInserts++;
 				}
-				$this->em->persist($entity);
-				$insertedItems[] = $entity;
-				$countInserts++;
 			}
 		}
 		if($countInserts > 0){
@@ -1148,6 +1146,46 @@ class NewsManagementModel extends CoreModel {
 		return $response;
 	}
 	/**
+	 * @name            markNewsAsDeleted()
+	 *
+	 * @since           1.0.5
+	 * @version         1.0.5
+	 *
+	 * @author          Can Berkol
+	 *
+	 * @use             $this->createException()
+	 *
+	 * @param           array 			$collection
+	 *
+	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function markNewsAsDeleted($collection){
+		$timeStamp = time();
+		if (!is_array($collection)) {
+			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
+		}
+		$now = new \DateTime('now', new \DateTimeZone($this->kernel->getContainer()->getParameter('app_timezone')));
+		$toUpdate = array();
+		foreach ($collection as $news) {
+			if(!$news instanceof BundleEntity\News){
+				$response = $this->getNewsItem($news);
+				if($response->error->exist){
+					return $response;
+				}
+				$news = $response->result->set;
+				unset($response);
+			}
+			$news->setStatus('d');
+			$news->setDateRemoved($now);
+			$toUpdate[] = $news;
+		}
+		$response = $this->updateNewsItems($toUpdate);
+		$response->stats->execution->start = $timeStamp;
+		$response->stats->execution->end = time();
+
+		return $response;
+	}
+	/**
 	 * @name 			removeCategoriesFromNewsItem()
 	 *
 	 * @since			1.0.2
@@ -1520,6 +1558,14 @@ class NewsManagementModel extends CoreModel {
 }
 /**
  * Change Log
+ * **************************************
+ * v1.0.5                      11.06.2015
+ * Can Berkol
+ * **************************************
+ * BF :: insertNewsLocalizations() rewritten.
+ * BF :: insertNewsCategoryLocalizations() rewritten.
+ * FR :: markNewsAsDeleted() added.
+ *
  * **************************************
  * v1.0.4                      10.06.2015
  * Can Berkol
