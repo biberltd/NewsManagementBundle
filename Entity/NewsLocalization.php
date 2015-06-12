@@ -6,8 +6,8 @@
  * @author		Can Berkol
  * @author		Murat Ünal
  *
- * @version     1.0.1
- * @date        03.05.2015
+ * @version     1.0.2
+ * @date        12.06.2015
  *
  * @copyright   Biber Ltd. (http://www.biberltd.com)
  * @license     GPL v3.0
@@ -296,9 +296,123 @@ class NewsLocalization extends CoreEntity
     public function getUrlKey() {
         return $this->url_key;
     }
+
+	/**
+	 * @name        getMetaDescription ()
+	 *
+	 * @author      Can Berkol
+	 *
+	 * @since       1.0.0
+	 * @version     1.0.0
+	 *
+	 * @return      mixed
+	 */
+	public function getMetaDescription() {
+		return $this->meta_description;
+	}
+
+	/**
+	 * @name              setMetaDescription ()
+	 *
+	 * @author      Can Berkol
+	 *
+	 * @since       1.0.0
+	 * @version     1.0.0
+	 *
+	 * @param       mixed $meta_description
+	 *
+	 * @return      $this
+	 */
+	public function setMetaDescription($meta_description) {
+		if (!$this->setModified('meta_description', $meta_description)->isModified()) {
+			return $this;
+		}
+		$this->meta_description = $meta_description;
+
+		return $this;
+	}
+
+	/**
+	 * @name        getMetaKeywords ()
+	 *
+	 * @author      Can Berkol
+	 *
+	 * @since       1.0.0
+	 * @version     1.0.0
+	 *
+	 * @return      mixed
+	 */
+	public function getMetaKeywords() {
+		return $this->meta_keywords;
+	}
+
+	/**
+	 * @name        setMetaKeywords ()
+	 *
+	 * @author      Can Berkol
+	 *
+	 * @since       1.0.0
+	 * @version     1.0.0
+	 *
+	 * @param       mixed $meta_keywords
+	 *
+	 * @return      $this
+	 */
+	public function setMetaKeywords($meta_keywords) {
+		if (!$this->setModified('meta_keywords', $meta_keywords)->isModified()) {
+			return $this;
+		}
+		$this->meta_keywords = $meta_keywords;
+
+		return $this;
+	}
+
+	/**
+	 * @name        getMetaTitle ()
+	 *
+	 * @author      Can Berkol
+	 *
+	 * @since       1.0.0
+	 * @version     1.0.0
+	 *
+	 * @return      mixed
+	 */
+	public function getMetaTitle() {
+		return $this->meta_title;
+	}
+
+	/**
+	 * @name        setMetaTitle ()
+	 *
+	 * @author      Can Berkol
+	 *
+	 * @since       1.0.0
+	 * @version     1.0.0
+	 *
+	 * @param       mixed $meta_title
+	 *
+	 * @return      $this
+	 */
+	public function setMetaTitle($meta_title) {
+		if (!$this->setModified('meta_title', $meta_title)->isModified()) {
+			return $this;
+		}
+		$this->meta_title = $meta_title;
+
+		return $this;
+	}
+
 }
 /**
  * Change Log:
+ * **************************************
+ * v1.0.1                      12.06.2015
+ * Can Berkol
+ * **************************************
+ * FR :: get/set metaTitle() added.
+ * FR :: get/set metaDescription() added.
+ * FR :: get/set metaKeywords() added.
+ *
  * **************************************
  * v1.0.1                      03.05.2015
  * Can Berkol
