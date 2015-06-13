@@ -10,8 +10,8 @@
  *
  * @copyright   Biber Ltd. (www.biberltd.com)
  *
- * @version     1.0.5
- * @date        11.06.2015
+ * @version     1.0.6
+ * @date        13.06.2015
  *
  */
 namespace BiberLtd\Bundle\NewsManagementBundle\Services;
@@ -28,14 +28,14 @@ use BiberLtd\Bundle\MultiLanguageSupportBundle\Services as MLSService;
 use BiberLtd\Bundle\CoreBundle\Services as CoreServices;
 
 class NewsManagementModel extends CoreModel {
-    public $entity = array(
-        'n' => array('name' => 'NewsManagementBundle:News', 'alias' => 'n'),
-        'nl' => array('name' => 'NewsManagementBundle:NewsLocalization', 'alias' => 'nl'),
-        'nc' => array('name' => 'NewsManagementBundle:NewsCategory', 'alias' => 'nc'),
-        'ncl' => array('name' => 'NewsManagementBundle:NewsCategoryLocalization', 'alias' => 'ncl'),
-        'con' => array('name' => 'NewsManagementBundle:CategoriesOfNews', 'alias' => 'con'),
-        'fon' => array('name' => 'NewsManagementBundle:FilesOfNews', 'alias' => 'fon'),
-    );
+	public $entity = array(
+		'n' => array('name' => 'NewsManagementBundle:News', 'alias' => 'n'),
+		'nl' => array('name' => 'NewsManagementBundle:NewsLocalization', 'alias' => 'nl'),
+		'nc' => array('name' => 'NewsManagementBundle:NewsCategory', 'alias' => 'nc'),
+		'ncl' => array('name' => 'NewsManagementBundle:NewsCategoryLocalization', 'alias' => 'ncl'),
+		'con' => array('name' => 'NewsManagementBundle:CategoriesOfNews', 'alias' => 'con'),
+		'fon' => array('name' => 'NewsManagementBundle:FilesOfNews', 'alias' => 'fon'),
+	);
 	/**
 	 * @name 			addFilesToNewsItems()
 	 *
@@ -239,7 +239,7 @@ class NewsManagementModel extends CoreModel {
 	 * @name 			getNewsCategory()
 	 *
 	 * @since			1.0.2
-	 * @version         1.0.4
+	 * @version         1.0.6
 	 *
 	 * @author          Can Berkol
 	 * @author          Said İmamoğlu
@@ -261,12 +261,72 @@ class NewsManagementModel extends CoreModel {
 			case is_numeric($category):
 				$result = $this->em->getRepository($this->entity['nc']['name'])->findOneBy(array('id' => $category));
 				break;
+			case is_string($category):
+				$response = $this->getNewsCategoryByUrlKey($category);
+				if($response->error->exist){
+					return $response;
+				}
+				$result = $response->result->set;
+				unset($response);
+				break;
 		}
 		if(is_null($result)){
 			return new ModelResponse($result, 0, 0, null, true, 'E:D:002', 'Unable to find request entry in database.', $timeStamp, time());
 		}
 
 		return new ModelResponse($result, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+	}
+	/**
+	 * @name            getNewsCategoryByUrlKey()
+	 *
+	 * @since           1.0.6
+	 * @version         1.0.6
+	 * @author          Can Berkol
+	 *
+	 * @use             $this->listProducts()
+	 * @use             $this->createException()
+	 *
+	 * @param           mixed 			$urlKey
+	 * @param			mixed			$language
+	 *
+	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function getNewsCategoryByUrlKey($urlKey, $language = null){
+		$timeStamp = time();
+		if(!is_string($urlKey)){
+			return $this->createException('InvalidParameterValueException', '$urlKey must be a string.', 'E:S:007');
+		}
+		$filter[] = array(
+			'glue' => 'and',
+			'condition' => array(
+				array(
+					'glue' => 'and',
+					'condition' => array('column' => $this->entity['ncl']['alias'].'.url_key', 'comparison' => '=', 'value' => $urlKey),
+				)
+			)
+		);
+		if(!is_null($language)){
+			$mModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
+			$response = $mModel->getLanguage($language);
+			if(!$response->error->exists){
+				$filter[] = array(
+					'glue' => 'and',
+					'condition' => array(
+						array(
+							'glue' => 'and',
+							'condition' => array('column' => $this->entity['ncl']['alias'].'.language', 'comparison' => '=', 'value' => $response->result->set->getId()),
+						)
+					)
+				);
+			}
+		}
+		$response = $this->listNewsCategories($filter, null, array('start' => 0, 'count' => 1));
+
+		$response->result->set = $response->result->set[0];
+		$response->stats->execution->start = $timeStamp;
+		$response->stats->execution->end = time();
+
+		return $response;
 	}
 	/**
 	 * @name 			getNewsItem()
@@ -294,12 +354,71 @@ class NewsManagementModel extends CoreModel {
 			case is_numeric($news):
 				$result = $this->em->getRepository($this->entity['n']['name'])->findOneBy(array('id' => $news));
 				break;
+			case is_string($news):
+				$response = $this->getNewsItemByUrlKey($news);
+				if($response->error->exist){
+					return $response;
+				}
+				$result = $response->result->set;
+				unset($response);
+				break;
 		}
 		if(is_null($result)){
 			return new ModelResponse($result, 0, 0, null, true, 'E:D:002', 'Unable to find request entry in database.', $timeStamp, time());
 		}
 
 		return new ModelResponse($result, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+	}
+	/**
+	 * @name            getNewsItemByUrlKey()
+	 *
+	 * @since           1.0.6
+	 * @version         1.0.6
+	 * @author          Can Berkol
+	 *
+	 * @use             $this->listProducts()
+	 * @use             $this->createException()
+	 *
+	 * @param           mixed 			$urlKey
+	 * @param			mixed			$language
+	 *
+	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function getNewsItemByUrlKey($urlKey, $language = null){
+		$timeStamp = time();
+		if(!is_string($urlKey)){
+			return $this->createException('InvalidParameterValueException', '$urlKey must be a string.', 'E:S:007');
+		}
+		$filter[] = array(
+			'glue' => 'and',
+			'condition' => array(
+				array(
+					'glue' => 'and',
+					'condition' => array('column' => $this->entity['nl']['alias'].'.url_key', 'comparison' => '=', 'value' => $urlKey),
+				)
+			)
+		);
+		if(!is_null($language)){
+			$mModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
+			$response = $mModel->getLanguage($language);
+			if(!$response->error->exists){
+				$filter[] = array(
+					'glue' => 'and',
+					'condition' => array(
+						array(
+							'glue' => 'and',
+							'condition' => array('column' => $this->entity['nl']['alias'].'.language', 'comparison' => '=', 'value' => $response->result->set->getId()),
+						)
+					)
+				);
+			}
+		}
+		$response = $this->listNewsItems($filter, null, array('start' => 0, 'count' => 1));
+
+		$response->stats->execution->start = $timeStamp;
+		$response->stats->execution->end = time();
+
+		return $response;
 	}
 	/**
 	 * @name 			insertNewsCategory()
@@ -413,12 +532,12 @@ class NewsManagementModel extends CoreModel {
 	 *
 	 * @use             $this->insertNewsItems()
 	 *
-	 * @param           mixed           $member
+	 * @param           mixed           $item
 	 *
 	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function insertNewsItem($member) {
-		return $this->insertNewsItems(array($member));
+	public function insertNewsItem($item) {
+		return $this->insertNewsItems(array($item));
 	}
 	/**
 	 * @name 			insertNewsItems()
@@ -783,9 +902,9 @@ class NewsManagementModel extends CoreModel {
 		}
 		$oStr = $wStr = $gStr = $fStr = '';
 
-		$qStr = 'SELECT '.$this->entity['nc']['alias'].', '.$this->entity['nc']['alias']
+		$qStr = 'SELECT '.$this->entity['nc']['alias'].', '.$this->entity['ncl']['alias']
 			.' FROM '.$this->entity['ncl']['name'].' '.$this->entity['ncl']['alias']
-			.' JOIN '.$this->entity['ncl']['alias'].'.member '.$this->entity['nc']['alias'];
+			.' JOIN '.$this->entity['ncl']['alias'].'.category '.$this->entity['nc']['alias'];
 
 		if(!is_null($sortOrder)){
 			foreach($sortOrder as $column => $direction){
@@ -820,9 +939,9 @@ class NewsManagementModel extends CoreModel {
 
 		$entities = array();
 		foreach($result as $entry){
-			$id = $entry->getMember()->getId();
+			$id = $entry->getCategory()->getId();
 			if(!isset($unique[$id])){
-				$entities[] = $entry->getMember();
+				$entities[] = $entry->getCategory();
 			}
 		}
 		$totalRows = count($entities);
@@ -854,9 +973,9 @@ class NewsManagementModel extends CoreModel {
 		}
 		$oStr = $wStr = $gStr = $fStr = '';
 
-		$qStr = 'SELECT '.$this->entity['n']['alias'].', '.$this->entity['n']['alias']
+		$qStr = 'SELECT '.$this->entity['n']['alias'].', '.$this->entity['nl']['alias']
 			.' FROM '.$this->entity['nl']['name'].' '.$this->entity['nl']['alias']
-			.' JOIN '.$this->entity['nl']['alias'].'.member '.$this->entity['n']['alias'];
+			.' JOIN '.$this->entity['nl']['alias'].'.news '.$this->entity['n']['alias'];
 
 		if(!is_null($sortOrder)){
 			foreach($sortOrder as $column => $direction){
@@ -889,14 +1008,13 @@ class NewsManagementModel extends CoreModel {
 		$qStr .= $wStr.$gStr.$oStr;
 		$q = $this->em->createQuery($qStr);
 		$q = $this->addLimit($q, $limit);
-
 		$result = $q->getResult();
 
 		$entities = array();
 		foreach($result as $entry){
-			$id = $entry->getMember()->getId();
+			$id = $entry->getNews()->getId();
 			if(!isset($unique[$id])){
-				$entities[] = $entry->getMember();
+				$entities[] = $entry->getNews();
 			}
 		}
 		$totalRows = count($entities);
@@ -1052,7 +1170,7 @@ class NewsManagementModel extends CoreModel {
 
 		$category = $response->result->set;
 
-		$qStr = 'SELECT '.$this->entity['con']['alias'].', '.$this->entity['n']['alias']
+		$qStr = 'SELECT '.$this->entity['con']['alias']
 			.' FROM '.$this->entity['con']['name'].' '.$this->entity['con']['alias']
 			.' WHERE '.$this->entity['con']['alias'].'.category = '.$category->getId();
 
@@ -1107,17 +1225,15 @@ class NewsManagementModel extends CoreModel {
 			return $response;
 		}
 		$category = $response->result->set;
-
 		$sModel = new SMMService\SiteManagementModel($this->kernel, $this->dbConnection, $this->orm);
 		$response = $sModel->getSite($site);
 		if($response->error->exist){
 			return $response;
 		}
 		$site = $response->result->set;
-		$qStr = 'SELECT '.$this->entity['con']['alias'].', '.$this->entity['n']['alias']
+		$qStr = 'SELECT '.$this->entity['con']['alias']
 			.' FROM '.$this->entity['con']['name'].' '.$this->entity['con']['alias']
-			.' WHERE '.$this->entity['con']['alias'].'.category = '.$category->getId()
-			.' AND '.$this->entity['con']['alias'].'.site = '.$site->getId();
+			.' WHERE '.$this->entity['con']['alias'].'.category = '.$category->getId();
 
 		$q = $this->em->createQuery($qStr);
 
@@ -1135,7 +1251,11 @@ class NewsManagementModel extends CoreModel {
 				array(
 					'glue' => 'and',
 					'condition' => array('column' => $this->entity['n']['alias'].'.id', 'comparison' => 'in', 'value' => $newsIds),
-				)
+				),
+				array(
+					'glue' => 'and',
+					'condition' => array('column' => $this->entity['n']['alias'].'.site', 'comparison' => '=', 'value' => $site->getId()),
+				),
 			)
 		);
 		$response = $this->listNewsItems($filter, $sortOrder, $limit);
@@ -1216,8 +1336,8 @@ class NewsManagementModel extends CoreModel {
 		}
 		$in = ' IN (' . implode(',', $idsToRemove) . ')';
 		$qStr = 'DELETE FROM ' . $this->entity['con']['name'] . ' ' . $this->entity['con']['alias']
-					.' WHERE '.$this->entity['con']['alias'].'.news = '.$item->getId()
-					.' AND '.$this->entity['con']['alias'].'.category'.$in;
+			.' WHERE '.$this->entity['con']['alias'].'.news = '.$item->getId()
+			.' AND '.$this->entity['con']['alias'].'.category'.$in;
 
 		$q = $this->em->createQuery($qStr);
 		$result = $q->getResult();
@@ -1263,8 +1383,8 @@ class NewsManagementModel extends CoreModel {
 		}
 		$in = ' IN (' . implode(',', $idsToRemove) . ')';
 		$qStr = 'DELETE FROM ' . $this->entity['fon']['name'] . ' ' . $this->entity['fon']['alias']
-					.' WHERE '.$this->entity['fon']['alias'].'.news = '.$item->getId()
-					.' AND '.$this->entity['fon']['alias'].'.file '.$in;
+			.' WHERE '.$this->entity['fon']['alias'].'.news = '.$item->getId()
+			.' AND '.$this->entity['fon']['alias'].'.file '.$in;
 
 		$q = $this->em->createQuery($qStr);
 		$result = $q->getResult();
@@ -1310,8 +1430,8 @@ class NewsManagementModel extends CoreModel {
 		}
 		$in = ' IN (' . implode(',', $idsToRemove) . ')';
 		$qStr = 'DELETE FROM ' . $this->entity['con']['name'] . ' ' . $this->entity['con']['alias']
-					.' WHERE '.$this->entity['con']['alias'].'.category  = '.$category->getId()
-					.' AND '.$this->entity['con']['alias'].'.news '.$in;
+			.' WHERE '.$this->entity['con']['alias'].'.category  = '.$category->getId()
+			.' AND '.$this->entity['con']['alias'].'.news '.$in;
 
 		$q = $this->em->createQuery($qStr);
 		$result = $q->getResult();
@@ -1558,6 +1678,15 @@ class NewsManagementModel extends CoreModel {
 }
 /**
  * Change Log
+ * **************************************
+ * v1.0.6                      13.06.2015
+ * Can Berkol
+ * **************************************
+ * CR :: getNewsCategory() now can get category by url key..
+ * CR :: getNewsItem() now can get news item by url key..
+ * FR :: getNewsCategoryByUrlKey() added.
+ * FR :: getNewsItemByUrlKey() added.
+ *
  * **************************************
  * v1.0.5                      11.06.2015
  * Can Berkol

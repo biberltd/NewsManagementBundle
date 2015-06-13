@@ -41,20 +41,14 @@ class NewsCategoryLocalization extends CoreEntity
      */
     private $url_key;
 
-    /**
-     * @ORM\Id
-     * @ORM\ManyToOne(
-     *     targetEntity="BiberLtd\Bundle\NewsManagementBundle\Entity\NewsCategory",
-     *     inversedBy="localizations"
-     * )
-     * @ORM\JoinColumn(name="category", referencedColumnName="id", nullable=false, onDelete="CASCADE")
-     */
-    private $news_category;
 
 	/**
-	 * 
-	 * 
-	 * 
+	 * @ORM\Id
+	 * @ORM\ManyToOne(
+	 *     targetEntity="BiberLtd\Bundle\NewsManagementBundle\Entity\NewsCategory",
+	 *     inversedBy="localizations"
+	 * )
+	 * @ORM\JoinColumn(name="category", referencedColumnName="id", nullable=false, onDelete="CASCADE")
 	 */
 	private $category;
 

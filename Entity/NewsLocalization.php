@@ -69,7 +69,11 @@ class NewsLocalization extends CoreEntity
 
     /** 
      * @ORM\Id
-     * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\NewsManagementBundle\Entity\News", inversedBy="localizations")
+     * @ORM\ManyToOne(
+     *     targetEntity="BiberLtd\Bundle\NewsManagementBundle\Entity\News",
+     *     inversedBy="localizations",
+     *     cascade={"all"}
+     * )
      * @ORM\JoinColumn(name="news", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     private $news;

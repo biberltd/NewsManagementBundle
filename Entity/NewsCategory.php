@@ -47,24 +47,24 @@ class NewsCategory extends CoreLocalizableEntity
     private $count_news;
 
 	/**
-	 * 
+	 * @ORM\Column(type="datetime", nullable=false)
 	 */
 	public $date_added;
 
 	/**
-	 * 
+	 * @ORM\Column(type="datetime", nullable=false)
 	 */
 	public $date_updated;
 
 	/**
-	 * 
+	 * @ORM\Column(type="datetime", nullable=true)
 	 */
 	public $date_removed;
 
     /** 
      * @ORM\OneToMany(
      *     targetEntity="BiberLtd\Bundle\NewsManagementBundle\Entity\NewsCategoryLocalization",
-     *     mappedBy="news_category"
+     *     mappedBy="category"
      * )
      */
     protected $localizations;
@@ -132,6 +132,112 @@ class NewsCategory extends CoreLocalizableEntity
     public function getSite() {
         return $this->site;
     }
+
+	/**
+	 * @name        getCountView ()
+	 *
+	 * @author      Can Berkol
+	 *
+	 * @since       1.0.0
+	 * @version     1.0.0
+	 *
+	 * @return      mixed
+	 */
+	public function getCountView() {
+		return $this->count_view;
+	}
+
+	/**
+	 * @name        setCountView ()
+	 *
+	 * @author      Can Berkol
+	 *
+	 * @since       1.0.0
+	 * @version     1.0.0
+	 *
+	 * @param       mixed $count_view
+	 *
+	 * @return      $this
+	 */
+	public function setCountView($count_view) {
+		if (!$this->setModified('count_view', $count_view)->isModified()) {
+			return $this;
+		}
+		$this->count_view = $count_view;
+
+		return $this;
+	}
+
+	/**
+	 * @name        getCountNews ()
+	 *
+	 * @author      Can Berkol
+	 *
+	 * @since       1.0.0
+	 * @version     1.0.0
+	 *
+	 * @return      mixed
+	 */
+	public function getCountNews() {
+		return $this->count_news;
+	}
+
+	/**
+	 * @name        setCountNews ()
+	 *
+	 * @author      Can Berkol
+	 *
+	 * @since       1.0.0
+	 * @version     1.0.0
+	 *
+	 * @param       mixed $count_news
+	 *
+	 * @return      $this
+	 */
+	public function setCountNews($count_news) {
+		if (!$this->setModified('count_news', $count_news)->isModified()) {
+			return $this;
+		}
+		$this->count_news = $count_news;
+
+		return $this;
+	}
+
+	/**
+	 * @name        getParent ()
+	 *
+	 * @author      Can Berkol
+	 *
+	 * @since       1.0.0
+	 * @version     1.0.0
+	 *
+	 * @return      mixed
+	 */
+	public function getParent() {
+		return $this->parent;
+	}
+
+	/**
+	 * @name        setParent ()
+	 *
+	 * @author      Can Berkol
+	 *
+	 * @since       1.0.0
+	 * @version     1.0.0
+	 *
+	 * @param       mixed $parent
+	 *
+	 * @return      $this
+	 */
+	public function setParent($parent) {
+		if (!$this->setModified('parent', $parent)->isModified()) {
+			return $this;
+		}
+		$this->parent = $parent;
+
+		return $this;
+	}
+
 }
 /**
  * Change Log:

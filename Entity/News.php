@@ -6,8 +6,8 @@
  * @author		Can Berkol
  * @author		Murat Ünal
  *
- * @version     1.0.2
- * @date        03.05.2015
+ * @version     1.0.3
+ * @date        13.06.2015
  *
  * @copyright   Biber Ltd. (http://www.biberltd.com)
  * @license     GPL v3.0
@@ -335,6 +335,12 @@ class News extends CoreLocalizableEntity
 }
 /**
  * Change Log:
+ * **************************************
+ * v1.0.3                      13.06.2015
+ * Can Berkol
+ * **************************************
+ * CR :: , cascade={"persist"} added to localizations property.
+ *
  * **************************************
  * v1.0.2                      03.05.2015
  * Can Berkol

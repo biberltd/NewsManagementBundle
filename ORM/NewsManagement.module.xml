@@ -71,6 +71,11 @@
       <association-field from="news" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning">
+          <attribute name="cascade">
+            <attribute name="cascade-all">true</attribute>
+          </attribute>
+        </attribute>
       </orm-attributes>
     </association>
     <association from="\BiberLtd\Bundle\NewsManagementBundle\Entity\NewsLocalization" to="\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language" caption="idxFNewsLocalizationLanguage" inverse-alias="language" many-owner="true" many-inverse="false" parent-required="true" uuid="f7bdcce6-ee31-46ee-a69b-3a6eb82ea59a">
@@ -85,6 +90,9 @@
       <field name="count_news" description="Number of news that are associeted with this category." type="integer" size="10" default="0" required="true" uuid="48b059d1-4166-4498-bd36-486f42cc5939"/>
       <field name="site" description="Site that category belongs to." type="integer" size="10" uuid="0774899f-69f7-459b-b0c0-b78393e93cb5"/>
       <field name="parent" description="Parent news cateogry." type="integer" size="10" uuid="6113d7c9-3a37-4b99-89be-0cb7c3e7f65c"/>
+      <field name="date_added" description="Date when the news added." type="datetime" required="true" uuid="a526bf76-5923-4b6a-8b68-4441f8a8731b"/>
+      <field name="date_updated" description="Date when the news is updated." type="datetime" required="true" uuid="66245c20-845f-490d-adfe-ee1e7ca6631b"/>
+      <field name="date_removed" description="Date when the news is marked as removed." type="datetime" uuid="eaa74cb8-ac80-47b3-9609-680bb50d336c"/>
       <index name="idxUNewsCategoryId" unique="true">
         <index-field name="id"/>
       </index>
@@ -134,7 +142,7 @@
         <attribute name="export-file-name">NewsCategoryLocalization.php</attribute>
       </orm-attributes>
     </entity>
-    <association from="\BiberLtd\Bundle\NewsManagementBundle\Entity\NewsCategoryLocalization" to="\BiberLtd\Bundle\NewsManagementBundle\Entity\NewsCategory" caption="idxFNewsCategoryLocalization" owner-alias="localizations" inverse-alias="news_category" many-owner="true" many-inverse="false" parent-required="true" uuid="0f88ca3e-2aa7-4a35-8083-758f17fc3367">
+    <association from="\BiberLtd\Bundle\NewsManagementBundle\Entity\NewsCategoryLocalization" to="\BiberLtd\Bundle\NewsManagementBundle\Entity\NewsCategory" caption="idxFNewsCategoryLocalization" owner-alias="localizations" inverse-alias="category" many-owner="true" many-inverse="false" parent-required="true" uuid="0f88ca3e-2aa7-4a35-8083-758f17fc3367">
       <association-field from="category" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
