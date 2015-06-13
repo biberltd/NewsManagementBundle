@@ -131,7 +131,7 @@ class NewsManagementModel extends CoreModel {
 		$insertedItems = array();
 		foreach ($toAdd as $cat) {
 			$entity = new BundleEntity\CategoriesOfNews();
-			$entity->setCategory($cat)->setNews($item)->setDateAdded($now);
+			$entity->setCategory($cat)->setNews($item)->setDateAdded($now)->setSortOrder(1);
 			$this->em->persist($entity);
 			$insertedItems[] = $entity;
 		}
@@ -1266,6 +1266,37 @@ class NewsManagementModel extends CoreModel {
 		return $response;
 	}
 	/**
+	 * @name 			listNewsOfCategoryAndSiteWithStatuses()
+	 *
+	 * @since			1.0.6
+	 * @version         1.0.6
+	 *
+	 * @author          Can Berkol
+	 *
+	 * @use             $this->listNews()
+	 *
+	 * @param   		mixed   $category
+	 * @param   		mixed   $site
+	 * @param   		mixed   $statuses
+	 * @param   		array   $filter
+	 * @param   		array   $sortOrder
+	 * @param   		array   $limit
+	 *
+	 * @return   		BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function listNewsOfCategoryAndSiteWithStatuses($category, $site, $statuses, $filter = null, $sortOrder = null, $limit = null){
+		$filter[] = array(
+			'glue' => 'and',
+			'condition' => array(
+				array(
+					'glue' => 'and',
+					'condition' => array('column' => $this->entity['n']['alias'].'.status', 'comparison' => 'in', 'value' => $statuses),
+				)
+			)
+		);
+		return $this->listNewsOfCategoryAndSite($category, $site, $filter, $sortOrder, $limit);
+	}
+	/**
 	 * @name            markNewsAsDeleted()
 	 *
 	 * @since           1.0.5
@@ -1686,6 +1717,7 @@ class NewsManagementModel extends CoreModel {
  * CR :: getNewsItem() now can get news item by url key..
  * FR :: getNewsCategoryByUrlKey() added.
  * FR :: getNewsItemByUrlKey() added.
+ * FR :: listNewsOfCategoryAndSiteWithStatuses() added.
  *
  * **************************************
  * v1.0.5                      11.06.2015
