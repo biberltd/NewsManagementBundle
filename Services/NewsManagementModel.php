@@ -1094,11 +1094,10 @@ class NewsManagementModel extends CoreModel {
 	 * @param   		mixed   $site
 	 * @param   		integer $count
 	 * @param   		array   $filter
-	 * @param   		array   $sortOrder
 	 *
 	 * @return   		BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function listRecentNewsOfCategoryAndSite($category, $site, $count = 10, $filter = null, $sortOrder = null){
+	public function listRecentNewsOfCategoryAndSite($category, $site, $count = 10, $filter = null){
 		$timeStamp = time();
 		$response = $this->getNewsCategory($category);
 		if($response->error->exist){
@@ -1112,10 +1111,9 @@ class NewsManagementModel extends CoreModel {
 			return $response;
 		}
 		$site = $response->result->set;
-		$qStr = 'SELECT '.$this->entity['con']['alias'].', '.$this->entity['n']['alias']
+		$qStr = 'SELECT '.$this->entity['con']['alias']
 			.' FROM '.$this->entity['con']['name'].' '.$this->entity['con']['alias']
-			.' WHERE '.$this->entity['con']['alias'].'.category = '.$category->getId()
-			.' AND '.$this->entity['con']['alias'].'.site = '.$site->getId();
+			.' WHERE '.$this->entity['con']['alias'].'.category = '.$category->getId();
 
 		$q = $this->em->createQuery($qStr);
 
@@ -1133,16 +1131,50 @@ class NewsManagementModel extends CoreModel {
 				array(
 					'glue' => 'and',
 					'condition' => array('column' => $this->entity['n']['alias'].'.id', 'comparison' => 'in', 'value' => $newsIds),
+				),
+				array(
+					'glue' => 'and',
+					'condition' => array('column' => $this->entity['n']['alias'].'.site', 'comparison' => '=', 'value' => $site->getId()),
 				)
 			)
 		);
 		$sortOrder['date_published'] = 'desc';
-		$response = $this->listNewsItems($filter, $sortOrder, array('start' => 0, 'count' => $count));
+		$response = $this->listNewsItems($filter, array('date_published' => 'desc'), array('start' => 0, 'count' => $count));
 
 		$response->stats->execution->start = $timeStamp;
 		$response->stats->execution->end = time();
 
 		return $response;
+	}
+	/**
+	 * @name 			listRecentNewsOfCategoryAndSiteWithStatuses()
+	 *
+	 * @since			1.0.6
+	 * @version         1.0.6
+	 *
+	 * @author          Can Berkol
+	 *
+	 * @use             $this->listNews()
+	 *
+	 * @param   		mixed   $category
+	 * @param   		mixed   $site
+	 * @param   		mixed   $statuses
+	 * @param   		integer $count
+	 * @param   		array   $filter
+	 *
+	 * @return   		BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function listRecentNewsOfCategoryAndSiteWithStatuses($category, $site, $statuses, $count = 10, $filter = null){
+		$filter[] = array(
+			'glue' => 'and',
+			'condition' => array(
+				array(
+					'glue' => 'and',
+					'condition' => array('column' => $this->entity['n']['alias'].'.status', 'comparison' => 'in', 'value' => $statuses),
+				)
+			)
+		);
+		return $this->listRecentNewsOfCategoryAndSite($category, $site, $count, $filter);
 	}
 	/**
 	 * @name 			listNewsOfCategory()
@@ -1718,6 +1750,7 @@ class NewsManagementModel extends CoreModel {
  * FR :: getNewsCategoryByUrlKey() added.
  * FR :: getNewsItemByUrlKey() added.
  * FR :: listNewsOfCategoryAndSiteWithStatuses() added.
+ * FR :: listRecentNewsOfCategoryAndSiteWithStatuses() added.
  *
  * **************************************
  * v1.0.5                      11.06.2015
