@@ -10,8 +10,8 @@
  *
  * @copyright   Biber Ltd. (www.biberltd.com)
  *
- * @version     1.0.6
- * @date        13.06.2015
+ * @version     1.0.7
+ * @date        14.06.2015
  *
  */
 namespace BiberLtd\Bundle\NewsManagementBundle\Services;
@@ -1369,6 +1369,47 @@ class NewsManagementModel extends CoreModel {
 		return $response;
 	}
 	/**
+	 * @name            publishNews()
+	 *
+	 * @since           1.0.7
+	 * @version         1.0.7
+	 *
+	 * @author          Can Berkol
+	 *
+	 * @use             $this->createException()
+	 *
+	 * @param           array 			$collection
+	 *
+	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function publishNews($collection){
+		$timeStamp = time();
+		if (!is_array($collection)) {
+			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
+		}
+		$now = new \DateTime('now', new \DateTimeZone($this->kernel->getContainer()->getParameter('app_timezone')));
+		$toUpdate = array();
+		foreach ($collection as $news) {
+			if(!$news instanceof BundleEntity\News){
+				$response = $this->getNewsItem($news);
+				if($response->error->exist){
+					return $response;
+				}
+				$news = $response->result->set;
+				unset($response);
+			}
+			$news->setStatus('p');
+			$news->setDatePublished($now);
+			$news->setDateUnpublished(null);
+			$toUpdate[] = $news;
+		}
+		$response = $this->updateNewsItems($toUpdate);
+		$response->stats->execution->start = $timeStamp;
+		$response->stats->execution->end = time();
+
+		return $response;
+	}
+	/**
 	 * @name 			removeCategoriesFromNewsItem()
 	 *
 	 * @since			1.0.2
@@ -1508,7 +1549,46 @@ class NewsManagementModel extends CoreModel {
 		}
 		return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Unable to delete all or some of the selected entries.', $timeStamp, time());
 	}
+	/**
+	 * @name            unpublishNews()
+	 *
+	 * @since           1.0.7
+	 * @version         1.0.7
+	 *
+	 * @author          Can Berkol
+	 *
+	 * @use             $this->createException()
+	 *
+	 * @param           array 			$collection
+	 *
+	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function unpublishNews($collection){
+		$timeStamp = time();
+		if (!is_array($collection)) {
+			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
+		}
+		$now = new \DateTime('now', new \DateTimeZone($this->kernel->getContainer()->getParameter('app_timezone')));
+		$toUpdate = array();
+		foreach ($collection as $news) {
+			if(!$news instanceof BundleEntity\News){
+				$response = $this->getNewsItem($news);
+				if($response->error->exist){
+					return $response;
+				}
+				$news = $response->result->set;
+				unset($response);
+			}
+			$news->setStatus('u');
+			$news->setDateUnpublished($now);
+			$toUpdate[] = $news;
+		}
+		$response = $this->updateNewsItems($toUpdate);
+		$response->stats->execution->start = $timeStamp;
+		$response->stats->execution->end = time();
 
+		return $response;
+	}
 	/**
 	 * @name 			updateNewsCategory()
 	 *
@@ -1741,6 +1821,13 @@ class NewsManagementModel extends CoreModel {
 }
 /**
  * Change Log
+ * **************************************
+ * v1.0.7                      13.06.2015
+ * Can Berkol
+ * **************************************
+ * FR :: publishNews) added.
+ * FR :: unpublishNews() added.
+ *
  * **************************************
  * v1.0.6                      13.06.2015
  * Can Berkol
