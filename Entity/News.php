@@ -6,8 +6,8 @@
  * @author		Can Berkol
  * @author		Murat Ünal
  *
- * @version     1.0.3
- * @date        13.06.2015
+ * @version     1.0.4
+ * @date        15.06.2015
  *
  * @copyright   Biber Ltd. (http://www.biberltd.com)
  * @license     GPL v3.0
@@ -72,7 +72,7 @@ class News extends CoreLocalizableEntity
     private $sort_order;
 
     /** 
-     * @ORM\OneToMany(targetEntity="BiberLtd\Bundle\NewsManagementBundle\Entity\NewsLocalization", mappedBy="news")
+     * @ORM\OneToMany(targetEntity="BiberLtd\Bundle\NewsManagementBundle\Entity\NewsLocalization", mappedBy="news", cascade={"persist"})
      */
     protected $localizations;
 
@@ -81,6 +81,12 @@ class News extends CoreLocalizableEntity
      * @ORM\JoinColumn(name="site", referencedColumnName="id", onDelete="CASCADE")
      */
     private $site;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\MemberManagementBundle\Entity\Member")
+     * @ORM\JoinColumn(name="author", referencedColumnName="id")
+     */
+    private $author;
     /******************************************************************
      * PUBLIC SET AND GET FUNCTIONS                                   *
      ******************************************************************/
@@ -100,10 +106,8 @@ class News extends CoreLocalizableEntity
     }
 
     /**
-     * @name                  setDatePublished ()
-     *                                         Sets the date_published property.
-     *                                         Updates the data only if stored value and value to be set are different.
-     *
+     * @name            setDatePublished ()
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -125,8 +129,7 @@ class News extends CoreLocalizableEntity
 
     /**
      * @name            getDatePublished ()
-     *                                   Returns the value of date_published property.
-     *
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -139,10 +142,8 @@ class News extends CoreLocalizableEntity
     }
 
     /**
-     * @name                  setDateUnpublished ()
-     *                                           Sets the date_unpublished property.
-     *                                           Updates the data only if stored value and value to be set are different.
-     *
+     * @name            setDateUnpublished ()
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -164,7 +165,6 @@ class News extends CoreLocalizableEntity
 
     /**
      * @name            getDateUnpublished ()
-     *                                     Returns the value of date_unpublished property.
      *
      * @author          Can Berkol
      *
@@ -178,10 +178,8 @@ class News extends CoreLocalizableEntity
     }
 
     /**
-     * @name                  setSite ()
-     *                                Sets the site property.
-     *                                Updates the data only if stored value and value to be set are different.
-     *
+     * @name            setSite ()
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -203,8 +201,7 @@ class News extends CoreLocalizableEntity
 
     /**
      * @name            getSite ()
-     *                          Returns the value of site property.
-     *
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -217,10 +214,8 @@ class News extends CoreLocalizableEntity
     }
 
     /**
-     * @name                  setSortOrder ()
-     *                                     Sets the sort_order property.
-     *                                     Updates the data only if stored value and value to be set are different.
-     *
+     * @name            setSortOrder ()
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -242,8 +237,7 @@ class News extends CoreLocalizableEntity
 
     /**
      * @name            getSortOrder ()
-     *                               Returns the value of sort_order property.
-     *
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -256,10 +250,8 @@ class News extends CoreLocalizableEntity
     }
 
     /**
-     * @name                  setStatus ()
-     *                                  Sets the status property.
-     *                                  Updates the data only if stored value and value to be set are different.
-     *
+     * @name            setStatus ()
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -281,8 +273,7 @@ class News extends CoreLocalizableEntity
 
     /**
      * @name            getStatus ()
-     *                            Returns the value of status property.
-     *
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -295,10 +286,8 @@ class News extends CoreLocalizableEntity
     }
 
     /**
-     * @name                  setUrl ()
-     *                               Sets the url property.
-     *                               Updates the data only if stored value and value to be set are different.
-     *
+     * @name            setUrl ()
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -320,8 +309,7 @@ class News extends CoreLocalizableEntity
 
     /**
      * @name            getUrl ()
-     *                         Returns the value of url property.
-     *
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -332,9 +320,50 @@ class News extends CoreLocalizableEntity
     public function getUrl() {
         return $this->url;
     }
+
+	/**
+	 * @name        getAuthor ()
+	 *
+	 * @author      Can Berkol
+	 *
+	 * @since       1.0.4
+	 * @version     1.0.4
+	 *
+	 * @return      mixed
+	 */
+	public function getAuthor() {
+		return $this->author;
+	}
+
+	/**
+	 * @name        setAuthor ()
+	 *
+	 * @author      Can Berkol
+	 *
+	 * @since       1.0.4
+	 * @version     1.0.4
+	 *
+	 * @param       mixed $author
+	 *
+	 * @return      $this
+	 */
+	public function setAuthor($author) {
+		if (!$this->setModified('author', $author)->isModified()) {
+			return $this;
+		}
+		$this->author = $author;
+
+		return $this;
+	}
 }
 /**
  * Change Log:
+ * **************************************
+ * v1.0.4                      15.06.2015
+ * Can Berkol
+ * **************************************
+ * CR :: author property and related get/set methods added.
+ *
  * **************************************
  * v1.0.3                      13.06.2015
  * Can Berkol

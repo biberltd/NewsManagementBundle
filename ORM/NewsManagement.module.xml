@@ -10,6 +10,7 @@
       <field name="url" description="URL of the news." type="text" uuid="d576e115-620f-4464-94f4-eaa59a3cc0ae"/>
       <field name="sort_order" description="Custom sort order." type="integer" size="10" default="1" required="true" uuid="9e2b05e4-6bd7-4383-9bc6-073cfc72583e"/>
       <field name="site" description="Site that news belongs to." type="integer" size="10" uuid="3bf31bd2-45db-4d5e-a589-c4c6189496dd"/>
+      <field name="author" type="integer" size="10" uuid="1c9600b4-8ad2-4e08-a4ad-4c4fc8623bb6"/>
       <index name="idxUNewsId" unique="true">
         <index-field name="id"/>
       </index>
@@ -37,6 +38,9 @@
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
       </orm-attributes>
+    </association>
+    <association from="\BiberLtd\Bundle\NewsManagementBundle\Entity\News" to="\BiberLtd\Bundle\MemberManagementBundle\Entity\Member" caption="idxFAuthorOfMews" inverse-alias="author" many-owner="true" many-inverse="false" uuid="78a02ea0-9eff-4791-abd6-c3579256e7a0">
+      <association-field from="author" to="id"/>
     </association>
     <entity name="\BiberLtd\Bundle\NewsManagementBundle\Entity\NewsLocalization" local-name="NewsLocalization" namespace="\BiberLtd\Bundle\NewsManagementBundle\Entity" description="Stores localization values for each news entry." uuid="898d3269-dbe4-4816-b740-e87b2fa2b525">
       <field name="news" description="Localized news." type="integer" size="10" required="true" primary="true" uuid="57a2757b-d08a-40a7-b14c-db1bd4e897ef"/>

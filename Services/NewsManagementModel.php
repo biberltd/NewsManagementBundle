@@ -10,8 +10,8 @@
  *
  * @copyright   Biber Ltd. (www.biberltd.com)
  *
- * @version     1.0.7
- * @date        14.06.2015
+ * @version     1.0.8
+ * @date        15.06.2015
  *
  */
 namespace BiberLtd\Bundle\NewsManagementBundle\Services;
@@ -543,7 +543,7 @@ class NewsManagementModel extends CoreModel {
 	 * @name 			insertNewsItems()
 	 *
 	 * @since			1.0.0
-	 * @version         1.0.2
+	 * @version         1.0.8
 	 * @author          Can Berkol
 	 *
 	 * @use             $this->createException()
@@ -596,6 +596,14 @@ class NewsManagementModel extends CoreModel {
 							$localizations[$countInserts]['localizations'] = $value;
 							$localeSet = true;
 							$countLocalizations++;
+							break;
+						case 'author':
+							$mModel = $this->kernel->getContainer()->get('membermanagement.model');
+							$response = $mModel->getMember($value);
+							if(!$response->error->exist){
+								$entity->$set($response->result->set);
+							}
+							unset($response, $sModel);
 							break;
 						case 'site':
 							$sModel = $this->kernel->getContainer()->get('sitemanagement.model');
@@ -1821,6 +1829,12 @@ class NewsManagementModel extends CoreModel {
 }
 /**
  * Change Log
+ * **************************************
+ * v1.0.8                      15.06.2015
+ * Can Berkol
+ * **************************************
+ * CR :: insertNewsItems() now supports author field.
+ *
  * **************************************
  * v1.0.7                      13.06.2015
  * Can Berkol
