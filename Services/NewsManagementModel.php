@@ -10,8 +10,8 @@
  *
  * @copyright   Biber Ltd. (www.biberltd.com)
  *
- * @version     1.0.8
- * @date        15.06.2015
+ * @version     1.0.9
+ * @date        16.06.2015
  *
  */
 namespace BiberLtd\Bundle\NewsManagementBundle\Services;
@@ -44,7 +44,7 @@ class NewsManagementModel extends CoreModel {
 	 * @author          Can Berkol
 	 *
 	 * @use             $this->getNewsItem()
-	 * @use             $this->isFileOfNewsItem()
+	 * @use             $this->isFileOfNews()
 	 * @use             $this->createException()
 	 *
 	 * @param           mixed           $item
@@ -52,8 +52,15 @@ class NewsManagementModel extends CoreModel {
 	 *
 	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function addFilesToNewsItems($item, $files) {
+	public function addFilesToNewsItems($item, $files, $language) {
 		$timeStamp = time();
+		$lModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
+		$response = $lModel->getLanguage($language);
+		if($response->error->exist){
+			return $response;
+		}
+		$language = $response->result->set;
+		unset($response);
 		$response = $this->getNewsItem($item);
 		if($response->error->exist){
 			return $response;
@@ -70,15 +77,16 @@ class NewsManagementModel extends CoreModel {
 				break;
 			}
 			$file = $response->result->set;
-			if (!$this->isFileOfNewsItem($item, $file, true)) {
+			if (!$this->isFileOfNews($item, $file, true)) {
 				$toAdd[] = $file;
 			}
 		}
 		$now = new \DateTime('now', new \DateTimezone($this->kernel->getContainer()->getParameter('app_timezone')));
 		$insertedItems = array();
+		$i = 1;
 		foreach ($toAdd as $file) {
 			$entity = new BundleEntity\FilesOfNews();
-			$entity->setFile($file)->setNews($item)->setDateAdded($now);
+			$entity->setFile($file)->setNews($item)->setDateAdded($now)->setSortOrder($i)->setLanguage($language);
 			$this->em->persist($entity);
 			$insertedItems[] = $entity;
 		}
@@ -234,6 +242,54 @@ class NewsManagementModel extends CoreModel {
 			return $exist;
 		}
 		return new ModelResponse($exist, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+	}
+	/**
+	 * @name 			getLastAddedFileOfNews()
+	 *
+	 * @since			1.0.9
+	 * @version         1.0.9
+	 * @author          Can Berkol
+	 *
+	 * @use             $this->createException()
+	 *
+	 * @param           mixed           $item
+	 *
+	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function getLastAddedFileOfNews($item) {
+		$timeStamp = time();
+		$response = $this->getNewsItem($item);
+		if($response->error->exist){
+			return $response;
+		}
+		$item = $response->result->set;
+		$response = $this->getNewsItem($item);
+		if($response->error->exist){
+			return $response;
+		}
+		$item = $response->result->set;
+		$qStr = 'SELECT '.$this->entity['fon']['alias']
+			. ' FROM '.$this->entity['fon']['name'].' '.$this->entity['fon']['alias']
+			. ' WHERE '.$this->entity['fon']['alias'].'.news = '.$item->getId()
+			. ' ORDER BY '.$this->entity['fon']['alias'].'.date_added DESC';
+
+		$q = $this->em->createQuery($qStr);
+		$q = $this->addLimit($q, array('start' => 0, 'count' => 1));
+
+		$result = $q->getResult();
+
+		if(count($result) < 0){
+			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, time());
+		}
+		
+		$fModel = $this->kernel->getContainer()->get('filemanagement.model');
+		
+		$response = $fModel->getFile($result[0]->getFile());
+		
+		$response->stats->execution->start = $timeStamp;
+		$response->stats->execution->end = time();
+
+		return $response;
 	}
 	/**
 	 * @name 			getNewsCategory()
@@ -825,7 +881,7 @@ class NewsManagementModel extends CoreModel {
 		}
 		$item = $response->result->set;
 		$qStr = 'SELECT '.$this->entity['fon']['alias']
-			. ' FROM '.$this->entity['fon']['name'].' '.$this->entity['con']['alias']
+			. ' FROM '.$this->entity['fon']['name'].' '.$this->entity['fon']['alias']
 			. ' WHERE '.$this->entity['fon']['alias'].'.file = '.$file->getId()
 			. ' AND '.$this->entity['fon']['alias'].'.news = '.$item->getId();
 
@@ -886,6 +942,70 @@ class NewsManagementModel extends CoreModel {
 			return $exist;
 		}
 		return new ModelResponse($exist, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+	}
+	/**
+	 * @name 			listFilesOfNews()
+	 *
+	 * @since			1.0.9
+	 * @version         1.0.9
+	 * @author          Can Berkol
+	 *
+	 * @use             $this->createException()
+	 *
+	 * @param           mixed           $item
+	 * @param           array           $filter
+	 * @param           array           $sortOrder
+	 * @param           array           $limit
+	 *
+	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function listFilesOfNews($item, $filter = array(), $sortOrder = array(), $limit = array()) {
+		$timeStamp = time();
+		$response = $this->getNewsItem($item);
+		if($response->error->exist){
+			return $response;
+		}
+		$item = $response->result->set;
+		$response = $this->getNewsItem($item);
+		if($response->error->exist){
+			return $response;
+		}
+		$item = $response->result->set;
+		$qStr = 'SELECT '.$this->entity['fon']['alias']
+			. ' FROM '.$this->entity['fon']['name'].' '.$this->entity['fon']['alias']
+			. ' WHERE '.$this->entity['fon']['alias'].'.news = '.$item->getId();
+
+		$q = $this->em->createQuery($qStr);
+
+		$result = $q->getResult();
+		$totalRows = count($result);
+
+		$fileIds = array();
+		if($totalRows > 0){
+			foreach($result as $gm){
+				$fileIds[] = $gm->getFile()->getId();
+			}
+		}
+		else{
+			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, time());
+		}
+
+		$filter[] = array('glue' => 'and',
+		                  'condition' => array(
+			                  array(
+				                  'glue' => 'and',
+				                  'condition' => array('column' => 'f.id', 'comparison' => 'in', 'value' => $fileIds),
+			                  )
+		                  )
+		);
+		$fModel = $this->kernel->getContainer()->get('filemanagement.model');
+
+		$response = $fModel->listFiles($filter, $sortOrder, $limit);
+
+		$response->stats->execution->start = $timeStamp;
+		$response->stats->execution->end = time();
+
+		return $response;
 	}
 	/**
 	 * @name 			listNewsCategories()
@@ -1829,6 +1949,13 @@ class NewsManagementModel extends CoreModel {
 }
 /**
  * Change Log
+ * **************************************
+ * v1.0.9                      16.06.2015
+ * Can Berkol
+ * **************************************
+ * FR :: getLastAddedFileOfNews() added.
+ * FR :: listFilesOfNews() added.
+ *
  * **************************************
  * v1.0.8                      15.06.2015
  * Can Berkol

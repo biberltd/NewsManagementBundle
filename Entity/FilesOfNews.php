@@ -29,36 +29,31 @@ use BiberLtd\Bundle\CoreBundle\CoreEntity;
  */
 class FilesOfNews extends CoreEntity
 {
-    /** 
+    /**
      * @ORM\Column(type="datetime", nullable=false)
      */
     public $date_added;
 
     /**
-     * @ORM\Column(type="integer", length=10, nullable=false, options={"default":0})
-     */
-    private $count_view;
-
-    /** 
      * @ORM\Column(type="integer", length=10, nullable=false, options={"default":1})
      */
     private $sort_order;
 
-    /** 
+    /**
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\NewsManagementBundle\Entity\News")
      * @ORM\JoinColumn(name="news", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     private $news;
 
-    /** 
+    /**
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\FileManagementBundle\Entity\File")
      * @ORM\JoinColumn(name="file", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     private $file;
 
-    /** 
+    /**
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language")
      * @ORM\JoinColumn(name="language", referencedColumnName="id", onDelete="CASCADE")
      */
@@ -84,8 +79,8 @@ class FilesOfNews extends CoreEntity
         if(!$this->setModified('file', $file)->isModified()) {
             return $this;
         }
-		$this->file = $file;
-		return $this;
+        $this->file = $file;
+        return $this;
     }
 
     /**
@@ -123,8 +118,8 @@ class FilesOfNews extends CoreEntity
         if(!$this->setModified('language', $language)->isModified()) {
             return $this;
         }
-		$this->language = $language;
-		return $this;
+        $this->language = $language;
+        return $this;
     }
 
     /**
@@ -162,8 +157,8 @@ class FilesOfNews extends CoreEntity
         if(!$this->setModified('news', $news)->isModified()) {
             return $this;
         }
-		$this->news = $news;
-		return $this;
+        $this->news = $news;
+        return $this;
     }
 
     /**
@@ -201,8 +196,8 @@ class FilesOfNews extends CoreEntity
         if(!$this->setModified('sort_order', $sort_order)->isModified()) {
             return $this;
         }
-		$this->sort_order = $sort_order;
-		return $this;
+        $this->sort_order = $sort_order;
+        return $this;
     }
 
     /**
