@@ -944,6 +944,68 @@ class NewsManagementModel extends CoreModel {
 		return new ModelResponse($exist, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
 	}
 	/**
+	 * @name 			listCategoriesOfNews()
+	 *
+	 * @since			1.0.9
+	 * @version         1.0.9
+	 * @author          Can Berkol
+	 *
+	 * @use             $this->createException()
+	 *
+	 * @param           mixed           $item
+	 * @param           array           $filter
+	 * @param           array           $sortOrder
+	 * @param           array           $limit
+	 *
+	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function listCategoriesOfNews($item, $filter = null, $sortOrder = null, $limit = null) {
+		$timeStamp = time();
+		$response = $this->getNewsItem($item);
+		if($response->error->exist){
+			return $response;
+		}
+		$item = $response->result->set;
+		$response = $this->getNewsItem($item);
+		if($response->error->exist){
+			return $response;
+		}
+		$item = $response->result->set;
+		$qStr = 'SELECT '.$this->entity['con']['alias']
+			. ' FROM '.$this->entity['con']['name'].' '.$this->entity['con']['alias']
+			. ' WHERE '.$this->entity['con']['alias'].'.news = '.$item->getId();
+
+		$q = $this->em->createQuery($qStr);
+
+		$result = $q->getResult();
+		$totalRows = count($result);
+
+		$catIds = array();
+		if($totalRows > 0){
+			foreach($result as $gm){
+				$catIds[] = $gm->getCategory()->getId();
+			}
+		}
+		else{
+			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, time());
+		}
+		$filter[] = array('glue' => 'and',
+		                  'condition' => array(
+			                  array(
+				                  'glue' => 'and',
+				                  'condition' => array('column' => 'nc.id', 'comparison' => 'in', 'value' => $catIds),
+			                  )
+		                  )
+		);
+
+		$response = $this->listNewsCategories($filter, $sortOrder, $limit);
+
+		$response->stats->execution->start = $timeStamp;
+		$response->stats->execution->end = time();
+
+		return $response;
+	}
+	/**
 	 * @name 			listFilesOfNews()
 	 *
 	 * @since			1.0.9
@@ -1953,7 +2015,9 @@ class NewsManagementModel extends CoreModel {
  * v1.0.9                      16.06.2015
  * Can Berkol
  * **************************************
+ * FR :: addFilesToNews() added.
  * FR :: getLastAddedFileOfNews() added.
+ * FR :: removeFilesFromNews() added.
  * FR :: listFilesOfNews() added.
  *
  * **************************************
