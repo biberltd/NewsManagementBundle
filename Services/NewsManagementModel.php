@@ -10,7 +10,7 @@
  *
  * @copyright   Biber Ltd. (www.biberltd.com)
  *
- * @version     1.0.9
+ * @version     1.1.0
  * @date        16.06.2015
  *
  */
@@ -247,7 +247,7 @@ class NewsManagementModel extends CoreModel {
 	 * @name 			getLastAddedFileOfNews()
 	 *
 	 * @since			1.0.9
-	 * @version         1.0.9
+	 * @version         1.1.0
 	 * @author          Can Berkol
 	 *
 	 * @use             $this->createException()
@@ -278,7 +278,7 @@ class NewsManagementModel extends CoreModel {
 
 		$result = $q->getResult();
 
-		if(count($result) < 0){
+		if(count($result) < 1){
 			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, time());
 		}
 		
@@ -2011,6 +2011,12 @@ class NewsManagementModel extends CoreModel {
 }
 /**
  * Change Log
+ * **************************************
+ * v1.1.0                      18.06.2015
+ * Can Berkol
+ * **************************************
+ * BF :: getLastAddedFileOfNews() has an invalid error check. Fixed.
+ *
  * **************************************
  * v1.0.9                      16.06.2015
  * Can Berkol
