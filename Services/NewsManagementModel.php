@@ -10,8 +10,8 @@
  *
  * @copyright   Biber Ltd. (www.biberltd.com)
  *
- * @version     1.1.0
- * @date        16.06.2015
+ * @version     1.1.1
+ * @date        19.06.2015
  *
  */
 namespace BiberLtd\Bundle\NewsManagementBundle\Services;
@@ -429,7 +429,7 @@ class NewsManagementModel extends CoreModel {
 	 * @name            getNewsItemByUrlKey()
 	 *
 	 * @since           1.0.6
-	 * @version         1.0.6
+	 * @version         1.1.1
 	 * @author          Can Berkol
 	 *
 	 * @use             $this->listProducts()
@@ -438,7 +438,7 @@ class NewsManagementModel extends CoreModel {
 	 * @param           mixed 			$urlKey
 	 * @param			mixed			$language
 	 *
-	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function getNewsItemByUrlKey($urlKey, $language = null){
 		$timeStamp = time();
@@ -471,6 +471,7 @@ class NewsManagementModel extends CoreModel {
 		}
 		$response = $this->listNewsItems($filter, null, array('start' => 0, 'count' => 1));
 
+		$response->result->set = $response->result->set[0];
 		$response->stats->execution->start = $timeStamp;
 		$response->stats->execution->end = time();
 
@@ -2011,6 +2012,12 @@ class NewsManagementModel extends CoreModel {
 }
 /**
  * Change Log
+ * **************************************
+ * v1.1.1                      19.06.2015
+ * Can Berkol
+ * **************************************
+ * BF :: getNewsByUrlKey() was returning array.
+ *
  * **************************************
  * v1.1.0                      18.06.2015
  * Can Berkol
