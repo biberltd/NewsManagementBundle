@@ -10,8 +10,8 @@
  *
  * @copyright   Biber Ltd. (www.biberltd.com)
  *
- * @version     1.1.2
- * @date        06.07.2015
+ * @version     1.1.3
+ * @date        18.09.2015
  *
  */
 namespace BiberLtd\Bundle\NewsManagementBundle\Services;
@@ -2007,6 +2007,217 @@ class NewsManagementModel extends CoreModel {
 			return new ModelResponse($updatedItems, $countUpdates, 0, null, false, 'S:D:004', 'Selected entries have been successfully updated within database.', $timeStamp, time());
 		}
 		return new ModelResponse(null, 0, 0, null, true, 'E:D:004', 'One or more entities cannot be updated within database.', $timeStamp, time());
+	}
+	/**
+	 * @name listActiveNewsItemsByDateColumnWhichBeforeGivenDate()
+	 * @author Said Imamoglu
+	 * @since 1.1.3
+	 * @version 1.1.3
+	 * @param $dateColumn
+	 * @param $date
+	 * @param $sortOrder
+	 * @param $limit
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function listActiveNewsItemsByDateColumnWhichBeforeGivenDate($dateColumn,$date,$sortOrder = null,$limit = null){
+		$timeStamp = time();
+		if (! $date instanceof \DateTime) {
+			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'Invalid date object.', $timeStamp, time());
+		}
+		if (!in_array($dateColumn,array('date_added','date_published','date_unpublished'))) {
+			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'Invalid date column.', $timeStamp, time());
+		}
+		// Prepare SQL conditions
+		$filter = array(
+			array(
+				'glue' => 'and',
+				'condition' => array('column' => $this->entity['n']['alias'].'.'.$dateColumn, 'comparison' => '<', 'value' => $date->format('Y-m-d H:i:s')),
+			),
+			array(
+				'glue' => 'and',
+				'condition' => array('column' => $this->entity['n']['alias'].'.status', 'comparison' => '!=', 'value' => 'u'),
+			)
+		);
+		$response = $this->listNewsItems($filter,$sortOrder,$limit);
+		$response->stats->execution->start = $timeStamp;
+		$response->stats->execution->end = time();
+		return $response;
+	}
+	/**
+	 * @name            listNewsOfCategories ()
+	 *
+	 * @since            1.1.3
+	 * @version         1.1.3
+	 *
+	 * @author          Can Berkol
+	 *
+	 * @use             $this->listNewsItems()
+	 *
+	 * @param        array $categories
+	 * @param        array $filter
+	 * @param        array $sortOrder
+	 * @param        array $limit
+	 *
+	 * @return        \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function listNewsOfCategories($categories, $filter = null, $sortOrder = null, $limit = null)
+	{
+		$timeStamp = time();
+		foreach ($categories as $category) {
+			$response = $this->getNewsCategory($category);
+			if ($response->error->exist) {
+				continue;
+			}
+			$categoryIds[] = $response->result->set->getId();
+		}
+
+		$qStr = 'SELECT ' . $this->entity['con']['alias']
+			. ' FROM ' . $this->entity['con']['name'] . ' ' . $this->entity['con']['alias']
+			. ' WHERE ' . $this->entity['con']['alias'] . '.category IN ' . implode(',', $categoryIds);
+
+		$q = $this->em->createQuery($qStr);
+
+		$result = $q->getResult();
+		if (count($result) < 1 || $result == false) {
+			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, time());
+		}
+		$newsIds = array();
+		foreach ($result as $conEntity) {
+			$newsIds[] = $conEntity->getNews()->getId();
+		}
+		$filter[] = array(
+			'glue' => 'and',
+			'condition' => array(
+				array(
+					'glue' => 'and',
+					'condition' => array('column' => $this->entity['n']['alias'] . '.id', 'comparison' => 'in', 'value' => $newsIds),
+				)
+			)
+		);
+		$response = $this->listNewsItems($filter, $sortOrder, $limit);
+
+		$response->stats->execution->start = $timeStamp;
+		$response->stats->execution->end = time();
+
+		return $response;
+	}
+
+	/**
+	 * @name  listNewsOfCategoriesWithStatuses ()
+	 * @version 1.1.3
+	 * @since 1.1.3
+	 * @param $categories
+	 * @param $statuses
+	 * @param $sortOrder
+	 * @param $limit
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function listNewsOfCategoriesWithStatuses($categories, $statuses, $sortOrder, $limit)
+	{
+		$filter = array();
+		$filter[] = array(
+			'glue' => 'and',
+			'condition' => array('column' => $this->entity['n']['alias'] . '.status', 'comparison' => 'in', 'value' => implode(',', $statuses)),
+		);
+		return $this->listNewsCategories($categories, $filter, $sortOrder, $limit);
+	}
+	/**
+	 * @name listNewsItemsByDateColumnWhichBeforeGivenDate()
+	 * @author Said Imamoglu
+	 * @since 1.1.3
+	 * @version 1.1.3
+	 * @param $dateColumn
+	 * @param $date
+	 * @param $sortOrder
+	 * @param $limit
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function listNewsItemsByDateColumnWhichBeforeGivenDate($dateColumn,$date,$sortOrder = null,$limit = null){
+		$timeStamp = time();
+		if (! $date instanceof \DateTime) {
+			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'Invalid date object.', $timeStamp, time());
+		}
+		if (!in_array($dateColumn,array('date_added','date_published','date_unpublished'))) {
+			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'Invalid date column.', $timeStamp, time());
+		}
+		// Prepare SQL conditions
+		$filter = array(
+			array(
+				'glue' => 'and',
+				'condition' => array('column' => $this->entity['n']['alias'].'.'.$dateColumn, 'comparison' => '<', 'value' => $date->format('Y-m-d H:i:s')),
+			)
+		);
+		$response = $this->listNewsItems($filter,$sortOrder,$limit);
+		$response->stats->execution->start = $timeStamp;
+		$response->stats->execution->end = time();
+		return $response;
+	}
+	/**
+	 * @name unPublishNewsOfCategoriesWithStatuses()
+	 * @author  Said Imamoglu
+	 * @since 1.1.3
+	 * @version 1.1.3
+	 * @param $categories
+	 * @param $statuses
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function unPublishNewsOfCategoriesWithStatuses($categories,$statuses){
+		$timeStamp = time();
+		$response = $this->listNewsOfCategoriesWithStatuses($categories,$statuses);
+		if ($response->error->exist) {
+			return $response;
+		}
+		$response =  $this->unpublishNews($response->result->set);
+		$response->stats->execution->start = $timeStamp;
+		$response->stats->execution->end = time();
+		return $response;
+	}
+	/**
+	 * @name unPublishNewsItemsByDateColumnWhichBeforeGivenDate()
+	 * @author Said Imamoglu
+	 * @since 1.1.3
+	 * @version 1.1.3
+	 * @param $dateColumn
+	 * @param $date
+	 * @return ModelResponse
+	 */
+	public function unPublishNewsItemsByDateColumnWhichBeforeGivenDate($dateColumn,$date){
+		$timeStamp = time();
+		$response = $this->listNewsItemsByDateColumnWhichBeforeGivenDate($dateColumn,$date);
+		if ($response->error->exist) {
+			return $response;
+		}
+		$response = $this->unpublishNews($response->result->set);
+		if ($response->error->exist) {
+			return $response;
+		}
+		$response->stats->execution->start = $timeStamp;
+		$response->stats->execution->end = time();
+		return $response;
+	}
+
+	/**
+	 * @name unPublishNewsItemsByDateColumnWhichBeforeGivenDate()
+	 * @author Said Imamoglu
+	 * @since 1.1.3
+	 * @version 1.1.3
+	 * @param $dateColumn
+	 * @param $date
+	 * @return ModelResponse
+	 */
+	public function unPublishActiveNewsItemsByDateColumnWhichBeforeGivenDate($dateColumn,$date){
+		$timeStamp = time();
+		$response = $this->listActiveNewsItemsByDateColumnWhichBeforeGivenDate($dateColumn,$date);
+		if ($response->error->exist) {
+			return $response;
+		}
+		$response = $this->unpublishNews($response->result->set);
+		if ($response->error->exist) {
+			return $response;
+		}
+		$response->stats->execution->start = $timeStamp;
+		$response->stats->execution->end = time();
+		return $response;
 	}
 }
 /**
