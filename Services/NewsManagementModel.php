@@ -2219,6 +2219,42 @@ class NewsManagementModel extends CoreModel {
 		$response->stats->execution->end = time();
 		return $response;
 	}
+
+	/**
+	 * @param null $filter
+	 * @param null $sortOrder
+	 * @param null $limit
+	 * @return BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function listCurrentlyActiveNewsItems($filter = null,$sortOrder = null,$limit = null){
+		$timeStamp = time();
+		$date = new \DateTime('now');
+		// Prepare SQL conditions
+		$filter[] = array(
+
+			'glue' => 'and',
+			'condition' => array('column' => $this->entity['n']['alias'].'.date_published', 'comparison' => '<=', 'value' => $date->format('Y-m-d H:i:s')),
+		);
+		$filter[] =   array(
+			'glue' => 'and',
+			'condition' => array(
+				array(
+					'glue' => 'or',
+					'condition' => array('column' => $this->entity['n']['alias'].'.date_unpublished', 'comparison' => '>', 'value' => $date->format('Y-m-d H:i:s'))),
+				array(
+					'glue' => 'or',
+					'condition' => array('column' => 'n.date_unpublished','comparison' => 'null','value' => '')),
+			)
+		);
+		$filter[] = array(
+			'glue' => 'and',
+			'condition' => array('column' => $this->entity['n']['alias'].'.status', 'comparison' => 'in', 'value' => array('p','a','f')),
+		);
+		$response = $this->listNewsItems($filter,$sortOrder,$limit);
+		$response->stats->execution->start = $timeStamp;
+		$response->stats->execution->end = time();
+		return $response;
+	}
 }
 /**
  * Change Log
@@ -2308,4 +2344,5 @@ class NewsManagementModel extends CoreModel {
  * 26.12.2014
  * **************************************
  * U listNewsItems()
+ * }
  **/
