@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<skipper version="3.2.1.1226" mvc="Symfony2" orm="Doctrine2">
+<skipper version="3.2.4.1256" mvc="Symfony2" orm="Doctrine2">
   <module name="\NewsManagementBundle" local-name="NewsManagementBundle" namespace="\BiberLtd\Bundle\NewsManagementBundle\Entity" local-namespace="BiberLtd\Bundle\NewsManagementBundle\Entity" export-format="Doctrine2Php" export-path="../Entity" uuid="e9ba8e51-c287-4e06-88bf-e1088ae9d7e7">
     <entity name="\BiberLtd\Bundle\NewsManagementBundle\Entity\News" local-name="News" namespace="\BiberLtd\Bundle\NewsManagementBundle\Entity" description="Stores a list of news definitions." uuid="008e5e0d-d97b-4c91-b5b5-38b3f0d509c0">
       <field name="id" description="System given id." type="integer" size="10" required="true" unique="true" primary="true" auto-increment="true" uuid="ee17df6c-5b04-4267-8dc7-8c9161d64a83"/>
@@ -7,7 +7,6 @@
       <field name="date_published" description="Date when the news is published." type="datetime" required="true" uuid="8d7f9983-7905-45bf-9c7a-20f46f9f77a2"/>
       <field name="date_unpublished" description="Date when the news will be unpubblished." type="datetime" uuid="059b96f2-9abf-4378-95a4-a6beaf200449"/>
       <field name="status" description="p: published, u:unpublished, m:moderation" type="string" size="1" default="p" required="true" uuid="9fb817d1-4926-471a-a81e-c794be2099ee"/>
-      <field name="url" description="URL of the news." type="text" uuid="d576e115-620f-4464-94f4-eaa59a3cc0ae"/>
       <field name="sort_order" description="Custom sort order." type="integer" size="10" default="1" required="true" uuid="9e2b05e4-6bd7-4383-9bc6-073cfc72583e"/>
       <field name="site" description="Site that news belongs to." type="integer" size="10" uuid="3bf31bd2-45db-4d5e-a589-c4c6189496dd"/>
       <field name="author" type="integer" size="10" uuid="1c9600b4-8ad2-4e08-a4ad-4c4fc8623bb6"/>
@@ -52,6 +51,7 @@
       <field name="meta_title" description="Localized meta title." type="string" size="155" uuid="14c3b3f0-aa60-41d0-a1bc-99b3be984f55"/>
       <field name="meta_description" description="Localized meta description." type="string" size="255" uuid="ab8798d2-6811-420a-9fa0-84ee72812a25"/>
       <field name="meta_keywords" description="Localized meta keywords." type="string" uuid="3f22b5e4-aeba-45dd-bb85-9a3d355ec3c2"/>
+      <field name="url" description="Localized URL of the news item." type="text" uuid="53f8196a-ce84-4d91-aa60-44877f26ec7b"/>
       <index name="idxUNewsLocalization" unique="true">
         <index-field name="news"/>
         <index-field name="language"/>

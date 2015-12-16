@@ -67,6 +67,11 @@ class NewsLocalization extends CoreEntity
      */
     private $meta_keywords;
 
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $url;
+
     /** 
      * @ORM\Id
      * @ORM\ManyToOne(
@@ -405,7 +410,41 @@ class NewsLocalization extends CoreEntity
 
 		return $this;
 	}
+	/**
+	 * @name            setUrl ()
+	 *
+	 * @author          Can Berkol
+	 *
+	 * @since           1.0.0
+	 * @version         1.0.0
+	 *
+	 * @use             $this->setModified()
+	 *
+	 * @param           mixed $url
+	 *
+	 * @return          object                $this
+	 */
+	public function setUrl($url) {
+		if(!$this->setModified('url', $url)->isModified()) {
+			return $this;
+		}
+		$this->url = $url;
+		return $this;
+	}
 
+	/**
+	 * @name            getUrl ()
+	 *
+	 * @author          Can Berkol
+	 *
+	 * @since           1.0.0
+	 * @version         1.0.0
+	 *
+	 * @return          mixed           $this->url
+	 */
+	public function getUrl() {
+		return $this->url;
+	}
 }
 /**
  * Change Log:

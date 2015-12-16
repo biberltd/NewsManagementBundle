@@ -35,6 +35,11 @@ class FilesOfNews extends CoreEntity
     public $date_added;
 
     /**
+     * @ORM\Column(type="integer", length=10, nullable=false, options={"default":0})
+     */
+    private $count_view;
+
+    /**
      * @ORM\Column(type="integer", length=10, nullable=false, options={"default":1})
      */
     private $sort_order;
