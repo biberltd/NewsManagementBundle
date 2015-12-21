@@ -1206,6 +1206,7 @@ class NewsManagementModel extends CoreModel {
 			if(!isset($unique[$id])){
 				$entities[] = $entry->getNews();
 			}
+			$unique[$id] = $id;
 		}
 		$totalRows = count($entities);
 		if ($totalRows < 1) {
