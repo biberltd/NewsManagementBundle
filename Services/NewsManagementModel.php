@@ -2220,6 +2220,59 @@ class NewsManagementModel extends CoreModel {
 		$response->stats->execution->end = time();
 		return $response;
 	}
+
+	/**
+	 * @param           $site
+	 * @param \DateTime $dateStart
+	 * @param \DateTime $dateEnd
+	 * @param bool      $inclusive
+	 * @param null      $sortOrder
+	 * @param null      $limit
+	 *
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse|\BiberLtd\Bundle\NewsManagementBundle\Services\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function listNewsOfSitePublishedBetween($site, \DateTime $dateStart, \DateTime $dateEnd, $inclusive = true, $sortOrder = null, $limit = null){
+		$timeStamp = time();
+
+		$sModel = new SMMService\SiteManagementModel($this->kernel, $this->dbConnection, $this->orm);
+		$response = $sModel->getSite($site);
+		if($response->error->exist){
+			return $response;
+		}
+		$site = $response->result->set;
+
+		$lt = '<';
+		$gt = '>';
+
+		if($inclusive){
+			$lt = $lt.'=';
+			$gt = $gt.'=';
+		}
+
+		$filter[] = array(
+			'glue' => 'and',
+			'condition' => array(
+				array(
+					'glue' => 'and',
+					'condition' => array('column' => $this->entity['n']['alias'].'.date_published', 'comparison' => $gt, 'value' => $dateStart->format('Y-m-d H:i:s')),
+				),
+				array(
+					'glue' => 'and',
+					'condition' => array('column' => $this->entity['n']['alias'].'.date_published', 'comparison' => $lt, 'value' => $dateEnd->format('Y-m-d H:i:s')),
+				),
+				array(
+					'glue' => 'and',
+					'condition' => array('column' => $this->entity['n']['alias'].'.site', 'comparison' => '=', 'value' => $site->getId()),
+				),
+			)
+		);
+		$response = $this->listNewsItems($filter, $sortOrder, $limit);
+
+		$response->stats->execution->start = $timeStamp;
+		$response->stats->execution->end = time();
+
+		return $response;
+	}
 }
 /**
  * Change Log
