@@ -194,7 +194,7 @@ class NewsManagementModel extends CoreModel {
 			}
 			else{
 				$response = $this->getNewsItem($entry);
-				if(!$response->error->exists){
+				if(!$response->error->exist){
 					$entry = $response->result->set;
 					$this->em->remove($entry);
 					$countDeleted++;
@@ -231,7 +231,7 @@ class NewsManagementModel extends CoreModel {
 
 		$response = $this->getNewsItem($news);
 
-		if ($response->error->exists) {
+		if ($response->error->exist) {
 			if($bypass){
 				return $exist;
 			}
@@ -365,7 +365,7 @@ class NewsManagementModel extends CoreModel {
 		if(!is_null($language)){
 			$mModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
 			$response = $mModel->getLanguage($language);
-			if(!$response->error->exists){
+			if(!$response->error->exist){
 				$filter[] = array(
 					'glue' => 'and',
 					'condition' => array(
@@ -456,7 +456,7 @@ class NewsManagementModel extends CoreModel {
 		if(!is_null($language)){
 			$mModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
 			$response = $mModel->getLanguage($language);
-			if(!$response->error->exists){
+			if(!$response->error->exist){
 				$filter[] = array(
 					'glue' => 'and',
 					'condition' => array(
