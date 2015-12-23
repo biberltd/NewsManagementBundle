@@ -66,6 +66,11 @@ class News extends CoreLocalizableEntity
      */
     private $sort_order;
 
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $url;
+
     /** 
      * @ORM\OneToMany(targetEntity="BiberLtd\Bundle\NewsManagementBundle\Entity\NewsLocalization", mappedBy="news")
      */
@@ -313,6 +318,42 @@ class News extends CoreLocalizableEntity
 		$this->author = $author;
 
 		return $this;
+	}
+
+	/**
+	 * @name            setStatus ()
+	 *
+	 * @author          Can Berkol
+	 *
+	 * @since           1.0.0
+	 * @version         1.0.0
+	 *
+	 * @use             $this->setModified()
+	 *
+	 * @param           mixed $status
+	 *
+	 * @return          object                $this
+	 */
+	public function setUrl($url) {
+		if(!$this->setModified('url', $url)->isModified()) {
+			return $this;
+		}
+		$this->url = $url;
+		return $this;
+	}
+
+	/**
+	 * @name            getStatus ()
+	 *
+	 * @author          Can Berkol
+	 *
+	 * @since           1.0.0
+	 * @version         1.0.0
+	 *
+	 * @return          mixed           $this->status
+	 */
+	public function getUrl() {
+		return $this->url;
 	}
 }
 /**

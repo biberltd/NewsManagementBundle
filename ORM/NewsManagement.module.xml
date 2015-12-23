@@ -9,7 +9,8 @@
       <field name="status" description="p: published, u:unpublished, m:moderation" type="string" size="1" default="p" required="true" uuid="9fb817d1-4926-471a-a81e-c794be2099ee"/>
       <field name="sort_order" description="Custom sort order." type="integer" size="10" default="1" required="true" uuid="9e2b05e4-6bd7-4383-9bc6-073cfc72583e"/>
       <field name="site" description="Site that news belongs to." type="integer" size="10" uuid="3bf31bd2-45db-4d5e-a589-c4c6189496dd"/>
-      <field name="author" type="integer" size="10" uuid="1c9600b4-8ad2-4e08-a4ad-4c4fc8623bb6"/>
+      <field name="author" description="Author of news." type="integer" size="10" uuid="1c9600b4-8ad2-4e08-a4ad-4c4fc8623bb6"/>
+      <field name="url" description="Re-added for backwards compatibility." type="text" uuid="25c9743e-0d0c-45c8-94ba-0fc9f5f534af"/>
       <index name="idxUNewsId" unique="true">
         <index-field name="id"/>
       </index>
