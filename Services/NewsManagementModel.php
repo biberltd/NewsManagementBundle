@@ -2279,7 +2279,7 @@ class NewsManagementModel extends CoreModel {
 	 * @param array|null $sortOrder
 	 * @param array|null $limit
 	 *
-	 * @return \BiberLtd\Bundle\NewsManagementBundle\Services\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function listCurrentlyActiveNewsItems(array $filter = null, array $sortOrder = null, array $limit = null){
 		$timeStamp = time();
@@ -2307,6 +2307,26 @@ class NewsManagementModel extends CoreModel {
 		$response = $this->listNewsItems($filter,$sortOrder,$limit);
 		$response->stats->execution->start = $timeStamp;
 		$response->stats->execution->end = time();
+		return $response;
+	}
+
+	/**
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function listActivePublishYearsOfNewsItems(){
+		$timeStamp = time();
+		$response = $this->listCurrentlyActiveNewsItems();
+		if($response->error->exist){
+			return $response;
+		}
+		$years = array();
+		foreach($response->result->set as $newsItem){
+			$years[$newsItem->getDatePublish()->format('y')] = $newsItem->getDatePublish()->format('y');
+		}
+		$response->result->set = $years;
+		$response->stats->execution->start = $timeStamp;
+		$response->stats->execution->end = time();
+
 		return $response;
 	}
 }
