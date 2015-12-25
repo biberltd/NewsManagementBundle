@@ -2321,12 +2321,70 @@ class NewsManagementModel extends CoreModel {
 		}
 		$years = array();
 		foreach($response->result->set as $newsItem){
-			$years[$newsItem->getDatePublish()->format('y')] = $newsItem->getDatePublish()->format('y');
+			$years[$newsItem->getDatePublished()->format('Y')] = $newsItem->getDatePublished()->format('Y');
 		}
 		$response->result->set = $years;
 		$response->stats->execution->start = $timeStamp;
 		$response->stats->execution->end = time();
 
+		return $response;
+	}
+
+	/**
+	 * @param integer $year
+	 * @param array|null $filter
+	 * @param array|null $sortOrder
+	 * @param array|null $limit
+	 *
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse|\BiberLtd\Bundle\NewsManagementBundle\Services\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function listActiveNewsItemsInYear($year, array $filter = null, array $sortOrder = null, array $limit = null){
+		$timeStamp = time();
+		$response = $this->listCurrentlyActiveNewsItems($filter, $sortOrder, $limit);
+		if($response->error->exist){
+			return $response;
+		}
+
+		$newSet = array();
+		foreach($response->result->set as $newsItem){
+			if($newsItem->getDatePublished()->format('Y') == $year){
+				$newSet[] = $newsItem;
+			}
+		}
+
+		$response->result->set = $newSet;
+		$response->result->count->set = count($newSet);
+		$response->stats->execution->start = $timeStamp;
+		$response->stats->execution->end = time();
+		return $response;
+	}
+	/**
+	 * @param integer $month
+	 * @param integer $year
+	 * @param array|null $filter
+	 * @param array|null $sortOrder
+	 * @param array|null $limit
+	 *
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse|\BiberLtd\Bundle\NewsManagementBundle\Services\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function listActiveNewsItemsInMonthOfYear($month, $year, array $filter = null, array $sortOrder = null, array $limit = null){
+		$timeStamp = time();
+		$response = $this->listCurrentlyActiveNewsItems($filter, $sortOrder, $limit);
+		if($response->error->exist){
+			return $response;
+		}
+
+		$newSet = array();
+		foreach($response->result->set as $newsItem){
+			if($newsItem->getDatePublished()->format('Y') == $year && $newsItem->getDatePublished()->format('n') == $month){
+				$newSet[] = $newsItem;
+			}
+		}
+
+		$response->result->set = $newSet;
+		$response->result->count->set = count($newSet);
+		$response->stats->execution->start = $timeStamp;
+		$response->stats->execution->end = time();
 		return $response;
 	}
 }
