@@ -1,19 +1,12 @@
 <?php
 /**
- * @name        News
- * @package		BiberLtd\Bundle\CoreBundle\NewsManagementBundle
- *
  * @author		Can Berkol
  * @author		Murat Ünal
  *
- * @version     1.0.4
- * @date        15.06.2015
+ * @copyright   Biber Ltd. (http://www.biberltd.com) (C) 2015
+ * @license     GPLv3
  *
- * @copyright   Biber Ltd. (http://www.biberltd.com)
- * @license     GPL v3.0
- *
- * @description Model / Entity class.
- *
+ * @date        25.12.2015
  */
 namespace BiberLtd\Bundle\NewsManagementBundle\Entity;
 use Doctrine\ORM\Mapping AS ORM;
@@ -38,88 +31,79 @@ class News extends CoreLocalizableEntity
      * @ORM\Id
      * @ORM\Column(type="integer", length=10)
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @var int
      */
     private $id;
 
     /** 
      * @ORM\Column(type="datetime", nullable=false)
+     * @var \DateTime
      */
     public $date_added;
 
     /** 
      * @ORM\Column(type="datetime", nullable=false)
+     * @var \DateTime
      */
     private $date_published;
 
     /** 
      * @ORM\Column(type="datetime", nullable=true)
+     * @var \DateTime
      */
     private $date_unpublished;
 
     /** 
      * @ORM\Column(type="string", length=1, nullable=false, options={"default":"p"})
+     * @var string
      */
     private $status;
 
     /** 
      * @ORM\Column(type="integer", length=10, nullable=false, options={"default":1})
+     * @var int
      */
     private $sort_order;
 
     /**
      * @ORM\Column(type="text", nullable=true)
+     * @var string
      */
     private $url;
 
     /** 
      * @ORM\OneToMany(targetEntity="BiberLtd\Bundle\NewsManagementBundle\Entity\NewsLocalization", mappedBy="news")
+     * @var array
      */
     protected $localizations;
 
     /** 
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\SiteManagementBundle\Entity\Site")
      * @ORM\JoinColumn(name="site", referencedColumnName="id", onDelete="CASCADE")
+     * @var \BiberLtd\Bundle\SiteManagementBundle\Entity\Site
      */
     private $site;
 
     /**
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\MemberManagementBundle\Entity\Member")
      * @ORM\JoinColumn(name="author", referencedColumnName="id")
+     * @var \BiberLtd\Bundle\MemberManagementBundle\Entity\Member
      */
     private $author;
-    /******************************************************************
-     * PUBLIC SET AND GET FUNCTIONS                                   *
-     ******************************************************************/
 
-    /**
-     * @name            getId()
-     *                  Gets $id property.
-     * .
-     * @author          Murat Ünal
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          integer          $this->id
-     */
+	/**
+	 * @return mixed
+	 */
     public function getId(){
         return $this->id;
     }
 
-    /**
-     * @name            setDatePublished ()
+	/**
+	 * @param \DateTime $date_published
 	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $date_published
-     *
-     * @return          object                $this
-     */
-    public function setDatePublished($date_published) {
+	 * @return $this
+	 */
+    public function setDatePublished(\DateTime $date_published) {
         if(!$this->setModified('date_published', $date_published)->isModified()) {
             return $this;
         }
@@ -127,35 +111,19 @@ class News extends CoreLocalizableEntity
 		return $this;
     }
 
-    /**
-     * @name            getDatePublished ()
-	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->date_published
-     */
+	/**
+	 * @return \DateTime
+	 */
     public function getDatePublished() {
         return $this->date_published;
     }
 
-    /**
-     * @name            setDateUnpublished ()
+	/**
+	 * @param \DateTime $date_unpublished
 	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $date_unpublished
-     *
-     * @return          object                $this
-     */
-    public function setDateUnpublished($date_unpublished) {
+	 * @return $this
+	 */
+    public function setDateUnpublished(\DateTime $date_unpublished) {
         if(!$this->setModified('date_unpublished', $date_unpublished)->isModified()) {
             return $this;
         }
@@ -163,35 +131,19 @@ class News extends CoreLocalizableEntity
 		return $this;
     }
 
-    /**
-     * @name            getDateUnpublished ()
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->date_unpublished
-     */
+	/**
+	 * @return \DateTime
+	 */
     public function getDateUnpublished() {
         return $this->date_unpublished;
     }
 
-    /**
-     * @name            setSite ()
+	/**
+	 * @param \BiberLtd\Bundle\SiteManagementBundle\Entity\Site $site
 	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $site
-     *
-     * @return          object                $this
-     */
-    public function setSite($site) {
+	 * @return $this
+	 */
+    public function setSite(\BiberLtd\Bundle\SiteManagementBundle\Entity\Site $site) {
         if(!$this->setModified('site', $site)->isModified()) {
             return $this;
         }
@@ -199,35 +151,19 @@ class News extends CoreLocalizableEntity
 		return $this;
     }
 
-    /**
-     * @name            getSite ()
-	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->site
-     */
+	/**
+	 * @return \BiberLtd\Bundle\SiteManagementBundle\Entity\Site
+	 */
     public function getSite() {
         return $this->site;
     }
 
-    /**
-     * @name            setSortOrder ()
+	/**
+	 * @param int $sort_order
 	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $sort_order
-     *
-     * @return          object                $this
-     */
-    public function setSortOrder($sort_order) {
+	 * @return $this
+	 */
+    public function setSortOrder(\integer $sort_order) {
         if(!$this->setModified('sort_order', $sort_order)->isModified()) {
             return $this;
         }
@@ -235,35 +171,19 @@ class News extends CoreLocalizableEntity
 		return $this;
     }
 
-    /**
-     * @name            getSortOrder ()
-	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->sort_order
-     */
+	/**
+	 * @return int
+	 */
     public function getSortOrder() {
         return $this->sort_order;
     }
 
-    /**
-     * @name            setStatus ()
+	/**
+	 * @param string $status
 	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $status
-     *
-     * @return          object                $this
-     */
-    public function setStatus($status) {
+	 * @return $this
+	 */
+    public function setStatus(\string $status) {
         if(!$this->setModified('status', $status)->isModified()) {
             return $this;
         }
@@ -271,47 +191,26 @@ class News extends CoreLocalizableEntity
 		return $this;
     }
 
-    /**
-     * @name            getStatus ()
-	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->status
-     */
+	/**
+	 * @return string
+	 */
     public function getStatus() {
         return $this->status;
     }
 
 	/**
-	 * @name        getAuthor ()
-	 *
-	 * @author      Can Berkol
-	 *
-	 * @since       1.0.4
-	 * @version     1.0.4
-	 *
-	 * @return      mixed
+	 * @return \BiberLtd\Bundle\MemberManagementBundle\Entity\Member
 	 */
 	public function getAuthor() {
 		return $this->author;
 	}
 
 	/**
-	 * @name        setAuthor ()
+	 * @param \BiberLtd\Bundle\MemberManagementBundle\Entity\Member $author
 	 *
-	 * @author      Can Berkol
-	 *
-	 * @since       1.0.4
-	 * @version     1.0.4
-	 *
-	 * @param       mixed $author
-	 *
-	 * @return      $this
+	 * @return $this
 	 */
-	public function setAuthor($author) {
+	public function setAuthor(\BiberLtd\Bundle\MemberManagementBundle\Entity\Member $author) {
 		if (!$this->setModified('author', $author)->isModified()) {
 			return $this;
 		}
@@ -321,20 +220,11 @@ class News extends CoreLocalizableEntity
 	}
 
 	/**
-	 * @name            setStatus ()
+	 * @param string $url
 	 *
-	 * @author          Can Berkol
-	 *
-	 * @since           1.0.0
-	 * @version         1.0.0
-	 *
-	 * @use             $this->setModified()
-	 *
-	 * @param           mixed $status
-	 *
-	 * @return          object                $this
+	 * @return $this
 	 */
-	public function setUrl($url) {
+	public function setUrl(\string $url) {
 		if(!$this->setModified('url', $url)->isModified()) {
 			return $this;
 		}
@@ -343,71 +233,9 @@ class News extends CoreLocalizableEntity
 	}
 
 	/**
-	 * @name            getStatus ()
-	 *
-	 * @author          Can Berkol
-	 *
-	 * @since           1.0.0
-	 * @version         1.0.0
-	 *
-	 * @return          mixed           $this->status
+	 * @return string
 	 */
 	public function getUrl() {
 		return $this->url;
 	}
 }
-/**
- * Change Log:
- * **************************************
- * v1.0.4                      15.06.2015
- * Can Berkol
- * **************************************
- * CR :: author property and related get/set methods added.
- *
- * **************************************
- * v1.0.3                      13.06.2015
- * Can Berkol
- * **************************************
- * CR :: , cascade={"persist"} added to localizations property.
- *
- * **************************************
- * v1.0.2                      03.05.2015
- * Can Berkol
- * **************************************
- * CR :: ORM updates.
- *
- * * ************************************
- * v1.0.1                      Murat Ünal
- * 11.10.2013
- * **************************************
- * D get_files_of_news()
- * D set_files_of_news()
- *
- * **************************************
- * v1.0.0                      Murat Ünal
- * 12.09.2013
- * **************************************
- * A get_categories_of_news()
- * A getDateAdded()
- * A getDatePublished()
- * A getDateUnpublished()
- * A get_files_of_news()
- * A getId()
- * A getLocalizations()
- * A getSite()
- * A getSortOrder()
- * A getStatus()
- * A getUrl()
- *
- * A set_categories_of_news()
- * A setDateAdded()
- * A setDatePublished()
- * A setDateUnpublished()
- * A set_files_of_news()
- * A setLocalizations()
- * A setSite()
- * A setSortOrder()
- * A setStatus()
- * A setUrl()
- *
- */

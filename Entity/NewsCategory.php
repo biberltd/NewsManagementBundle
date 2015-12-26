@@ -1,19 +1,12 @@
 <?php
 /**
- * @name        NewsCategory
- * @package		BiberLtd\Bundle\CoreBundle\NewsManagementBundle
- *
  * @author		Can Berkol
  * @author		Murat Ünal
  *
- * @version     1.0.2
- * @date        01.05.2015
+ * @copyright   Biber Ltd. (http://www.biberltd.com) (C) 2015
+ * @license     GPLv3
  *
- * @copyright   Biber Ltd. (http://www.biberltd.com)
- * @license     GPL v3.0
- *
- * @description Model / Entity class.
- *
+ * @date        25.12.2015
  */
 namespace BiberLtd\Bundle\NewsManagementBundle\Entity;
 use Doctrine\ORM\Mapping AS ORM;
@@ -33,31 +26,37 @@ class NewsCategory extends CoreLocalizableEntity
      * @ORM\Id
      * @ORM\Column(type="integer", length=10, options={"default":" "})
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @var int
      */
     private $id;
 
     /**
      * @ORM\Column(type="integer", length=10, nullable=false, options={"default":0})
+     * @var int
      */
     private $count_view;
 
     /**
      * @ORM\Column(type="integer", length=10, nullable=false, options={"default":0})
+     * @var int
      */
     private $count_news;
 
 	/**
 	 * @ORM\Column(type="datetime", nullable=false)
+	 * @var \DateTime
 	 */
 	public $date_added;
 
 	/**
 	 * @ORM\Column(type="datetime", nullable=false)
+	 * @var \DateTime
 	 */
 	public $date_updated;
 
 	/**
 	 * @ORM\Column(type="datetime", nullable=true)
+	 * @var \DateTime
 	 */
 	public $date_removed;
 
@@ -66,52 +65,37 @@ class NewsCategory extends CoreLocalizableEntity
      *     targetEntity="BiberLtd\Bundle\NewsManagementBundle\Entity\NewsCategoryLocalization",
      *     mappedBy="category"
      * )
+     * @var array
      */
     protected $localizations;
 
     /** 
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\SiteManagementBundle\Entity\Site")
      * @ORM\JoinColumn(name="site", referencedColumnName="id", onDelete="CASCADE")
+     * @var \BiberLtd\Bundle\SiteManagementBundle\Entity\Site
      */
     private $site;
 
     /**
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\NewsManagementBundle\Entity\NewsCategory")
      * @ORM\JoinColumn(name="parent", referencedColumnName="id", onDelete="CASCADE")
+     * @var \BiberLtd\Bundle\NewsManagementBundle\Entity\NewsCategory
      */
     private $parent;
-    /******************************************************************
-     * PUBLIC SET AND GET FUNCTIONS                                   *
-     ******************************************************************/
 
-    /**
-     * @name            getId()
-     *                  Gets $id property.
-     * @author          Murat Ünal
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          integer          $this->id
-     */
+	/**
+	 * @return mixed
+	 */
     public function getId(){
         return $this->id;
     }
 
-    /**
-     * @name            setSite ()
+	/**
+	 * @param \BiberLtd\Bundle\SiteManagementBundle\Entity\Site $site
 	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $site
-     *
-     * @return          object                $this
-     */
-    public function setSite($site) {
+	 * @return $this
+	 */
+    public function setSite(\BiberLtd\Bundle\SiteManagementBundle\Entity\Site $site) {
         if(!$this->setModified('site', $site)->isModified()) {
             return $this;
         }
@@ -119,47 +103,26 @@ class NewsCategory extends CoreLocalizableEntity
 		return $this;
     }
 
-    /**
-     * @name            getSite ()
-	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->site
-     */
+	/**
+	 * @return \BiberLtd\Bundle\SiteManagementBundle\Entity\Site
+	 */
     public function getSite() {
         return $this->site;
     }
 
 	/**
-	 * @name        getCountView ()
-	 *
-	 * @author      Can Berkol
-	 *
-	 * @since       1.0.0
-	 * @version     1.0.0
-	 *
-	 * @return      mixed
+	 * @return int
 	 */
 	public function getCountView() {
 		return $this->count_view;
 	}
 
 	/**
-	 * @name        setCountView ()
+	 * @param int $count_view
 	 *
-	 * @author      Can Berkol
-	 *
-	 * @since       1.0.0
-	 * @version     1.0.0
-	 *
-	 * @param       mixed $count_view
-	 *
-	 * @return      $this
+	 * @return $this
 	 */
-	public function setCountView($count_view) {
+	public function setCountView(\integer $count_view) {
 		if (!$this->setModified('count_view', $count_view)->isModified()) {
 			return $this;
 		}
@@ -169,32 +132,18 @@ class NewsCategory extends CoreLocalizableEntity
 	}
 
 	/**
-	 * @name        getCountNews ()
-	 *
-	 * @author      Can Berkol
-	 *
-	 * @since       1.0.0
-	 * @version     1.0.0
-	 *
-	 * @return      mixed
+	 * @return int
 	 */
 	public function getCountNews() {
 		return $this->count_news;
 	}
 
 	/**
-	 * @name        setCountNews ()
+	 * @param int $count_news
 	 *
-	 * @author      Can Berkol
-	 *
-	 * @since       1.0.0
-	 * @version     1.0.0
-	 *
-	 * @param       mixed $count_news
-	 *
-	 * @return      $this
+	 * @return $this
 	 */
-	public function setCountNews($count_news) {
+	public function setCountNews(\integer $count_news) {
 		if (!$this->setModified('count_news', $count_news)->isModified()) {
 			return $this;
 		}
@@ -204,32 +153,18 @@ class NewsCategory extends CoreLocalizableEntity
 	}
 
 	/**
-	 * @name        getParent ()
-	 *
-	 * @author      Can Berkol
-	 *
-	 * @since       1.0.0
-	 * @version     1.0.0
-	 *
-	 * @return      mixed
+	 * @return \BiberLtd\Bundle\NewsManagementBundle\Entity\NewsCategory
 	 */
 	public function getParent() {
 		return $this->parent;
 	}
 
 	/**
-	 * @name        setParent ()
+	 * @param \BiberLtd\Bundle\NewsManagementBundle\Entity\NewsCategory $parent
 	 *
-	 * @author      Can Berkol
-	 *
-	 * @since       1.0.0
-	 * @version     1.0.0
-	 *
-	 * @param       mixed $parent
-	 *
-	 * @return      $this
+	 * @return $this
 	 */
-	public function setParent($parent) {
+	public function setParent(\BiberLtd\Bundle\NewsManagementBundle\Entity\NewsCategory $parent) {
 		if (!$this->setModified('parent', $parent)->isModified()) {
 			return $this;
 		}
@@ -239,33 +174,3 @@ class NewsCategory extends CoreLocalizableEntity
 	}
 
 }
-/**
- * Change Log:
- * **************************************
- * v1.0.2                      03.05.2015
- * Can Berkol
- * **************************************
- * CR :: ORM updates.
- *
- * **************************************
- * v1.0.1                      Murat Ünal
- * 11.10.2013
- * **************************************
- * D get_categories_of_news()
- * D set_categories_of_news()
- * **************************************
- * v1.0.0                      Murat Ünal
- * 12.09.2013
- * **************************************
- * A getCountNews()
- * A getCountView()
- * A getId()
- * A getLocalizations()
- * A getSite()
- *
- * A setCountNews()
- * A setCountView()
- * A setLocalizations()
- * A setSite()
- *
- */

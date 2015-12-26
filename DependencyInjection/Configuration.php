@@ -1,5 +1,13 @@
 <?php
-
+/**
+ * @author		Can Berkol
+ * @author		Murat Ünal
+ *
+ * @copyright   Biber Ltd. (http://www.biberltd.com) (C) 2015
+ * @license     GPLv3
+ *
+ * @date        25.12.2015
+ */
 namespace BiberLtd\Bundle\NewsManagementBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;

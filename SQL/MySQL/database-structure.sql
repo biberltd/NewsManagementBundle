@@ -1,18 +1,11 @@
-/*
-Navicat MariaDB Data Transfer
-
-Source Server         : localmariadb
-Source Server Version : 100108
-Source Host           : localhost:3306
-Source Database       : bod_core
-
-Target Server Type    : MariaDB
-Target Server Version : 100108
-File Encoding         : 65001
-
-Date: 2015-12-21 13:57:45
-*/
-
+/**
+ * @author		Can Berkol
+ *
+ * @copyright   Biber Ltd. (http://www.biberltd.com) (C) 2015
+ * @license     GPLv3
+ *
+ * @date        26.12.2015
+ */
 SET FOREIGN_KEY_CHECKS=0;
 
 -- ----------------------------
@@ -30,6 +23,25 @@ CREATE TABLE `categories_of_news` (
   KEY `idxNCategoriesoFNewsDateAdded` (`date_added`) USING BTREE,
   CONSTRAINT `idxFCategoryOfNews` FOREIGN KEY (`category`) REFERENCES `news_category` (`id`),
   CONSTRAINT `idxFNewsOfCategory` FOREIGN KEY (`news`) REFERENCES `news` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_turkish_ci ROW_FORMAT=COMPACT;
+
+-- ----------------------------
+-- Table structure for files_of_news
+-- ----------------------------
+DROP TABLE IF EXISTS `files_of_news`;
+CREATE TABLE `files_of_news` (
+  `news` int(10) unsigned NOT NULL COMMENT 'News of file.',
+  `file` int(10) unsigned NOT NULL COMMENT 'File of news.',
+  `language` int(5) unsigned NOT NULL COMMENT 'Language of File.',
+  `date_added` datetime NOT NULL COMMENT 'Date when file is added to the news.',
+  `sort_order` int(10) NOT NULL DEFAULT '1' COMMENT 'Custom sort order.',
+  UNIQUE KEY `idxUFilesOfNews` (`news`,`file`) USING BTREE,
+  KEY `idxFFilesOfNews` (`news`) USING BTREE,
+  KEY `idxFNewsOfFile` (`file`) USING BTREE,
+  KEY `idxFLanguageOfFileOfNews` (`language`) USING BTREE,
+  CONSTRAINT `idxFFilesOfNews` FOREIGN KEY (`news`) REFERENCES `news` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `idxFLanguageOfFileOfNews` FOREIGN KEY (`language`) REFERENCES `language` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `idxFNewsOfFile` FOREIGN KEY (`file`) REFERENCES `file` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_turkish_ci ROW_FORMAT=COMPACT;
 
 -- ----------------------------

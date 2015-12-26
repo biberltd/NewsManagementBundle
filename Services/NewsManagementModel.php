@@ -1,30 +1,20 @@
 <?php
 /**
- * @vendor      BiberLtd
- * @package		Core\Bundles\NewsManagementBundle
- * @subpackage	Services
- * @name	    NewsManagementModel
- *
  * @author		Can Berkol
- * @author      Said Imamoglu
+ * @author		Said İmamoğlu
  *
- * @copyright   Biber Ltd. (www.biberltd.com)
+ * @copyright   Biber Ltd. (http://www.biberltd.com) (C) 2015
+ * @license     GPLv3
  *
- * @version     1.1.3
- * @date        18.09.2015
- *
+ * @date        26.12.2015
  */
 namespace BiberLtd\Bundle\NewsManagementBundle\Services;
 
-/** Extends CoreModel */
 use BiberLtd\Bundle\CoreBundle\CoreModel;
-/** Entities to be used */
 use BiberLtd\Bundle\CoreBundle\Responses\ModelResponse;
 use BiberLtd\Bundle\NewsManagementBundle\Entity as BundleEntity;
-/** Helper Models */
 use BiberLtd\Bundle\SiteManagementBundle\Services as SMMService;
 use BiberLtd\Bundle\MultiLanguageSupportBundle\Services as MLSService;
-/** Core Service */
 use BiberLtd\Bundle\CoreBundle\Services as CoreServices;
 
 class NewsManagementModel extends CoreModel {
@@ -36,23 +26,15 @@ class NewsManagementModel extends CoreModel {
 		'con' => array('name' => 'NewsManagementBundle:CategoriesOfNews', 'alias' => 'con'),
 		'fon' => array('name' => 'NewsManagementBundle:FilesOfNews', 'alias' => 'fon'),
 	);
+
 	/**
-	 * @name 			addFilesToNewsItems()
+	 * @param mixed $item
+	 * @param array $files
+	 * @param mixed $language
 	 *
-	 * @since			1.0.2
-	 * @version         1.0.2
-	 * @author          Can Berkol
-	 *
-	 * @use             $this->getNewsItem()
-	 * @use             $this->isFileOfNews()
-	 * @use             $this->createException()
-	 *
-	 * @param           mixed           $item
-	 * @param           array           $files
-	 *
-	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function addFilesToNewsItems($item, $files, $language) {
+	public function addFilesToNewsItems($item, array $files, $language) {
 		$timeStamp = time();
 		$lModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
 		$response = $lModel->getLanguage($language);
@@ -69,7 +51,7 @@ class NewsManagementModel extends CoreModel {
 		if (!is_array($files)) {
 			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. $groups parameter must be an array collection', 'E:S:001');
 		}
-		$toAdd = array();
+		$toAdd = [];
 		$fModel = $this->kernel->getContainer()->get('filemanagement.model');
 		foreach ($files as $file) {
 			$response = $fModel->getFile($file);
@@ -97,28 +79,17 @@ class NewsManagementModel extends CoreModel {
 		}
 		return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
 	}
+
 	/**
-	 * @name 			addNewsToCategories()
+	 * @param mixed $item
+	 * @param array $categories
 	 *
-	 * @since			1.0.2
-	 * @version         1.0.2
-	 * @author          Can Berkol
-	 *
-	 * @use             $this->getNewsItem()
-	 * @use             $this->getNewsCategory()
-	 * @use             $this->isNewsOfCategory()
-	 * @use             $this->createException()
-	 *
-	 * @param           mixed           $item
-	 * @param           array           $categories
-	 *
-	 * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function addNewsToCategories($item, $categories) {
+	public function addNewsToCategories($item, array $categories) {
 		$timeStamp = time();
 		$response = $this->getNewsItem($item);
 		if($response->error->exist){
-			var_dump(get_class($item));die;
 			return $response;
 		}
 		$item = $response->result->set;
@@ -151,37 +122,22 @@ class NewsManagementModel extends CoreModel {
 		}
 		return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
 	}
+
 	/**
-	 * @name 			deleteNewsItem()
+	 * @param mixed $news
 	 *
-	 * @since			1.0.0
-	 * @version         1.0.2
-	 * @author          Can Berkol
-	 *
-	 * @use             $this->deleteFiles()
-	 *
-	 * @param           mixed           $news
-	 *
-	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function deleteNewsItem($news){
 		return $this->deleteNewsItems(array($news));
 	}
+
 	/**
-	 * @name 			deleteNewsItems()
+	 * @param array $collection
 	 *
-	 * @since			1.0.0
-	 * @version         1.0.2
-	 *
-	 * @author          Can Berkol
-	 *
-	 * @use             $this->createException()
-	 *
-	 * @param           array           $collection
-	 *
-	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function deleteNewsItems($collection) {
+	public function deleteNewsItems(array $collection) {
 		$timeStamp = time();
 		if (!is_array($collection)) {
 			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
@@ -208,24 +164,14 @@ class NewsManagementModel extends CoreModel {
 
 		return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully removed from database.', $timeStamp, time());
 	}
+
 	/**
-	 * @name 			doesNewsItemExist()
+	 * @param array $news
+	 * @param bool  $bypass
 	 *
-	 * @since			1.0.0
-	 * @version         1.0.0
-	 *
-	 * @author          Can Berkol
-	 * @author          Said İmamoğlu
-	 *
-	 * @use             $this->getNewsItem()
-	 *
-	 * @param           mixed           $news
-	 *
-	 * @param           bool            $bypass         If set to true does not return response but only the result.
-	 *
-	 * @return          mixed           $response
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse|bool
 	 */
-	public function doesNewsItemExist($news, $bypass = false) {
+	public function doesNewsItemExist(array $news, \bool $bypass = false) {
 		$timeStamp = time();
 		$exist = false;
 
@@ -244,18 +190,11 @@ class NewsManagementModel extends CoreModel {
 		}
 		return new ModelResponse($exist, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
 	}
+
 	/**
-	 * @name 			getLastAddedFileOfNews()
+	 * @param mixed $item
 	 *
-	 * @since			1.0.9
-	 * @version         1.1.0
-	 * @author          Can Berkol
-	 *
-	 * @use             $this->createException()
-	 *
-	 * @param           mixed           $item
-	 *
-	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse|\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function getLastAddedFileOfNews($item) {
 		$timeStamp = time();
@@ -292,21 +231,11 @@ class NewsManagementModel extends CoreModel {
 
 		return $response;
 	}
+
 	/**
-	 * @name 			getNewsCategory()
+	 * @param $category
 	 *
-	 * @since			1.0.2
-	 * @version         1.0.6
-	 *
-	 * @author          Can Berkol
-	 * @author          Said İmamoğlu
-	 *
-	 * @use             $this->createException()
-	 * @use             $this->listNewsItems()
-	 *
-	 * @param           mixed           $category
-	 *
-	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function getNewsCategory($category) {
 		$timeStamp = time();
@@ -333,22 +262,14 @@ class NewsManagementModel extends CoreModel {
 
 		return new ModelResponse($result, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
 	}
+
 	/**
-	 * @name            getNewsCategoryByUrlKey()
+	 * @param string $urlKey
+	 * @param mixed|null   $language
 	 *
-	 * @since           1.0.6
-	 * @version         1.0.6
-	 * @author          Can Berkol
-	 *
-	 * @use             $this->listProducts()
-	 * @use             $this->createException()
-	 *
-	 * @param           mixed 			$urlKey
-	 * @param			mixed			$language
-	 *
-	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function getNewsCategoryByUrlKey($urlKey, $language = null){
+	public function getNewsCategoryByUrlKey(\string $urlKey, $language = null){
 		$timeStamp = time();
 		if(!is_string($urlKey)){
 			return $this->createException('InvalidParameterValueException', '$urlKey must be a string.', 'E:S:007');
@@ -383,21 +304,11 @@ class NewsManagementModel extends CoreModel {
 		}
 		return new ModelResponse($response->result->set[0], 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
 	}
+
 	/**
-	 * @name 			getNewsItem()
+	 * @param mixed $news
 	 *
-	 * @since			1.0.0
-	 * @version         1.0.2
-	 *
-	 * @author          Can Berkol
-	 * @author          Said İmamoğlu
-	 *
-	 * @use             $this->createException()
-	 * @use             $this->listNewsItems()
-	 *
-	 * @param           mixed           $news
-	 *
-	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function getNewsItem($news) {
 		$timeStamp = time();
@@ -424,22 +335,14 @@ class NewsManagementModel extends CoreModel {
 
 		return new ModelResponse($result, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
 	}
+
 	/**
-	 * @name            getNewsItemByUrlKey()
+	 * @param string $urlKey
+	 * @param null   $language
 	 *
-	 * @since           1.0.6
-	 * @version         1.1.1
-	 * @author          Can Berkol
-	 *
-	 * @use             $this->listProducts()
-	 * @use             $this->createException()
-	 *
-	 * @param           mixed 			$urlKey
-	 * @param			mixed			$language
-	 *
-	 * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function getNewsItemByUrlKey($urlKey, $language = null){
+	public function getNewsItemByUrlKey(\string $urlKey, $language = null){
 		$timeStamp = time();
 		if(!is_string($urlKey)){
 			return $this->createException('InvalidParameterValueException', '$urlKey must be a string.', 'E:S:007');
@@ -476,36 +379,22 @@ class NewsManagementModel extends CoreModel {
 
 		return $response;
 	}
+
 	/**
-	 * @name 			insertNewsCategory()
+	 * @param mixed $category
 	 *
-	 * @since			1.0.2
-	 * @version         1.0.2
-	 * @author          Can Berkol
-	 *
-	 * @use             $this->insertNewsCategories()
-	 *
-	 * @param           mixed           $category
-	 *
-	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function insertNewsCategory($category) {
 		return $this->insertNewsCategories(array($category));
 	}
+
 	/**
-	 * @name 			insertNewsCategories()
+	 * @param array $collection
 	 *
-	 * @since			1.0.2
-	 * @version         1.0.2
-	 * @author          Can Berkol
-	 *
-	 * @use             $this->createException()
-	 *
-	 * @param           array           $collection
-	 *
-	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function insertNewsCategories($collection)	{
+	public function insertNewsCategories(array $collection)	{
 		$timeStamp = time();
 		/** Parameter must be an array */
 		if (!is_array($collection)) {
@@ -572,54 +461,44 @@ class NewsManagementModel extends CoreModel {
 		if ($countInserts > 0 && $countLocalizations > 0) {
 			$response = $this->insertNewsItemCategoryLocalizations($localizations);
 		}
+		unset($response);
 		if($countInserts > 0){
 			$this->em->flush();
 			return new ModelResponse($insertedItems, $countInserts, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, time());
 		}
 		return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
 	}
+
 	/**
-	/**
-	 * @name 			insertNewsItem()
+	 * @param mixed $item
 	 *
-	 * @since			1.0.0
-	 * @version         1.0.2
-	 * @author          Can Berkol
-	 *
-	 * @use             $this->insertNewsItems()
-	 *
-	 * @param           mixed           $item
-	 *
-	 * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function insertNewsItem($item) {
 		return $this->insertNewsItems(array($item));
 	}
+
 	/**
-	 * @name 			insertNewsItems()
+	 * @param array $collection
 	 *
-	 * @since			1.0.0
-	 * @version         1.1.2
-	 * @author          Can Berkol
-	 *
-	 * @use             $this->createException()
-	 *
-	 * @param           array           $collection
-	 *
-	 * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function insertNewsItems($collection){
+	public function insertNewsItems(array $collection){
 		$timeStamp = time();
 		/** Parameter must be an array */
 		if (!is_array($collection)) {
 			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
 		}
+		/**
+		 * @var \BiberLtd\Bundle\FileManagementBundle\Services\FileManagementModel $fModel
+		 */
+		$fModel = $this->kernel->getContainer()->get('filemanagement.model');
 		$countInserts = 0;
 		$countLocalizations = 0;
 		$countCats = 0;
 		$countFiles = 0;
-		$insertedItems = array();
-		$localizations = array();
+		$insertedItems = [];
+		$localizations = [];
 		foreach ($collection as $data) {
 			if ($data instanceof BundleEntity\News) {
 				$entity = $data;
@@ -655,6 +534,9 @@ class NewsManagementModel extends CoreModel {
 							$countLocalizations++;
 							break;
 						case 'author':
+							/**
+							 * @var \BiberLtd\Bundle\MemberManagementBundle\Services\MemberManagementModel $mModel
+							 */
 							$mModel = $this->kernel->getContainer()->get('membermanagement.model');
 							$response = $mModel->getMember($value);
 							if(!$response->error->exist){
@@ -663,6 +545,9 @@ class NewsManagementModel extends CoreModel {
 							unset($response, $sModel);
 							break;
 						case 'site':
+							/**
+							 * @var \BiberLtd\Bundle\SiteManagementBundle\Services\SiteManagementModel $sModel
+							 */
 							$sModel = $this->kernel->getContainer()->get('sitemanagement.model');
 							$response = $sModel->getSite($value);
 							if(!$response->error->exist){
@@ -676,7 +561,6 @@ class NewsManagementModel extends CoreModel {
 							$countCats++;
 							break;
 						case 'files':
-							$fModel = $this->kernel->getContainer()->get('filemanagement.model');
 							foreach($value as $file){
 								$response = $fModel->getFile($file);
 								if(!$response->error->exist){
@@ -714,40 +598,209 @@ class NewsManagementModel extends CoreModel {
 		}
 		if($countInserts > 0 && $countCats > 0){
 			foreach($cats as $cat){
-				$response =$this->addNewsItemToCategories($cat['entity'], $cat['categories']);
+				$response = $this->addNewsItemToCategories($cat['entity'], $cat['categories']);
 			}
 		}
 		if($countInserts > 0 && $countFiles > 0){
-			foreach($cats as $cat){
-				$response =$this->addFilesToNewsItem($files['entity'], $files['files']);
+			foreach($files as $file){
+				$response = $this->addFilesToNewsItem($file['entity'], $file['files']);
 			}
 		}
+		unset($response);
 		if($countInserts > 0){
 			$this->em->flush();
 			return new ModelResponse($insertedItems, $countInserts, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, time());
 		}
 		return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
 	}
+
 	/**
-	 * @name 			insertNewsCategoryLocalizations()
+	 * @param array $collection
+	 * @param mixed $category
 	 *
-	 * @since			1.0.2
-	 * @version         1.0.4
-	 * @author          Can Berkol
-	 *
-	 * @use             $this->createException()
-	 *
-	 * @param           array           $collection
-	 *
-	 * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function insertNewsCategoryLocalizations($collection) {
+	public function addNewsItemsToCategory(array $collection, $category)
+	{
+		$timeStamp = time();
+		$response = $this->getNewsCategory($category);
+		if ($response->error->exist) {
+			return $response;
+		}
+		$category = $response->result->set;
+		$conCollection = [];
+		$count = 0;
+		$now = new \DateTime('now', new \DateTimezone($this->kernel->getContainer()->getParameter('app_timezone')));
+		foreach ($collection as $item) {
+			$response = $this->getNewsItem($item);
+			if ($response->error->exist) {
+				return $response;
+			}
+			$newsEntity = $response->result->set;
+			if ($this->isNewsItemAssociatedWithCategory($newsEntity, $category, true)) {
+				break;
+			}
+			$con = new BundleEntity\CategoriesOfNews();
+			$con->setNews($newsEntity)->setCategory($category)->setDateAdded($now);
+
+			/** persist entry */
+			$this->em->persist($con);
+			$conCollection[] = $con;
+			$count++;
+		}
+		if ($count > 0) {
+			$this->em->flush();
+			return new ModelResponse($conCollection, $count, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, time());
+		}
+		return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
+	}
+
+	/**
+	 * @param array $collection
+	 * @param mixed $newsItem
+	 *
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function addFilesToNewsItem(array $collection, $newsItem)
+	{
+		$timeStamp = time();
+		$response = $this->getNewsItem($newsItem);
+		if ($response->error->exist) {
+			return $response;
+		}
+		$newsItem = $response->result->set;
+		/**
+		 * @var \BiberLtd\Bundle\FileManagementModel\Services\FileManagementModel $fileModel
+		 */
+		$fileModel = $this->kernel->getContainer()->get('filemanagement.model');
+
+		$fonCollection = [];
+		$count = 0;
+		$now = new \DateTime('now', new \DateTimezone($this->kernel->getContainer()->getParameter('app_timezone')));
+		foreach ($collection as $file) {
+			$response = $fileModel->getFile($file['file']);
+			if ($response->error->exist) {
+				return $response;
+			}
+			$file['file'] = $response->result->set;
+			if (!$this->isFileAssociatedWithNewsItem($file['file'], $newsItem, true)) {
+				$fon = new BundleEntity\FilesOfNews();
+				$fon->setFile($file['file'])->setNews($newsItem)->setDateAdded($now);
+				if (!is_null($file['sort_order'])) {
+					$fon->setSortOrder($file['sort_order']);
+				} else {
+					$fon->setSortOrder($this->getMaxSortOrderOfProductFile($product, true) + 1);
+				}
+				/** persist entry */
+				$this->em->persist($fon);
+				$fonCollection[] = $fon;
+				$count++;
+			}
+		}
+
+		if ($count > 0) {
+			$this->em->flush();
+			return new ModelResponse($fonCollection, $count, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, time());
+		}
+		return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
+	}
+
+	/**
+	 * @param mixed $newsItem
+	 * @param mixed $category
+	 * @param bool $bypass
+	 *
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse|bool
+	 */
+	public function isNewsItemAssociatedWithCategory($newsItem, $category, \bool $bypass = false){
+		$timeStamp = time();
+		$response = $this->getNewsItem($newsItem);
+		if ($response->error->exist) {
+			return $response;
+		}
+		$product = $response->result->set;
+
+		$response = $this->getNewsCategory($category);
+		if ($response->error->exist) {
+			return $response;
+		}
+		$category = $response->result->set;
+		$found = false;
+
+		$qStr = 'SELECT COUNT(' . $this->entity['con']['alias'] . '.category)'
+			. ' FROM ' . $this->entity['con']['name'] . ' ' . $this->entity['con']['alias']
+			. ' WHERE ' . $this->entity['con']['alias'] . '.news = ' . $newsItem->getId()
+			. ' AND ' . $this->entity['con']['alias'] . '.category = ' . $category->getId();
+		$query = $this->em->createQuery($qStr);
+
+		$result = $query->getSingleScalarResult();
+
+		if ($result > 0) {
+			$found = true;
+		}
+		if ($bypass) {
+			return $found;
+		}
+		return new ModelResponse($found, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+	}
+
+	/**
+	 * @param mixed $file
+	 * @param mixed $newsItem
+	 * @param bool $bypass
+	 *
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse|bool
+	 */
+	public function isFileAssociatedWithNewsItem($file, $newsItem, \bool $bypass = false){
+		$timeStamp = time();
+
+		/**
+		 * @var \BiberLtd\Bundle\FileManagementModel\Services\FileManagementModel $fModel
+		 */
+		$fModel = $this->kernel->getContainer()->get('filemanagement.model');
+
+		$response = $fModel->getFile($file);
+		if ($response->error->exist) {
+			return $response;
+		}
+
+		$response = $this->getNewsItem($newsItem);
+
+		if ($response->error->exist) {
+			return $response;
+		}
+		$newsItem = $response->result->set;
+
+		$found = false;
+
+		$qStr = 'SELECT COUNT(' . $this->entity['fon']['alias'] . '.file' . ')'
+			. ' FROM ' . $this->entity['fon']['name'] . ' ' . $this->entity['fon']['alias']
+			. ' WHERE ' . $this->entity['fon']['alias'] . '.file = ' . $file->getId()
+			. ' AND ' . $this->entity['fon']['alias'] . '.news = ' . $newsItem->getId();
+		$query = $this->em->createQuery($qStr);
+
+		$result = $query->getSingleScalarResult();
+
+		if ($result > 0) {
+			$found = true;
+		}
+		if ($bypass) {
+			return $found;
+		}
+		return new ModelResponse($found, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+	}
+	/**
+	 * @param array $collection
+	 *
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function insertNewsCategoryLocalizations(array $collection) {
 		$timeStamp = time();
 		if (!is_array($collection)) {
 			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
 		}
 		$countInserts = 0;
-		$insertedItems = array();
+		$insertedItems = [];
 		foreach($collection as $data){
 			if($data instanceof BundleEntity\NewsCategoryLocalization){
 				$entity = $data;
@@ -790,26 +843,19 @@ class NewsManagementModel extends CoreModel {
 		}
 		return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
 	}
+	
 	/**
-	 * @name 			insertNewsItemLocalizations()
+	 * @param array $collection
 	 *
-	 * @since			1.0.2
-	 * @version         1.0.2
-	 * @author          Can Berkol
-	 *
-	 * @use             $this->createException()
-	 *
-	 * @param           array           $collection
-	 *
-	 * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function insertNewsItemLocalizations($collection) {
+	public function insertNewsItemLocalizations(array $collection) {
 		$timeStamp = time();
 		if (!is_array($collection)) {
 			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
 		}
 		$countInserts = 0;
-		$insertedItems = array();
+		$insertedItems = [];
 		foreach($collection as $data){
 			if($data instanceof BundleEntity\NewsLocalization){
 				$entity = $data;
@@ -852,22 +898,15 @@ class NewsManagementModel extends CoreModel {
 		}
 		return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
 	}
+	
 	/**
-	 * @name 			isFileOfNews()
+	 * @param mixed $item
+	 * @param mixed $file
+	 * @param bool $bypass
 	 *
-	 * @since			1.0.2
-	 * @version         1.0.2
-	 * @author          Can Berkol
-	 *
-	 * @use             $this->createException()
-	 *
-	 * @param           mixed           $item
-	 * @param           mixed           $file
-	 * @param           bool            $bypass                 if set to true returns the result directly.
-	 *
-	 * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse|bool
 	 */
-	public function isFileOfNews($item, $file, $bypass = false) {
+	public function isFileOfNews($item, $file, \bool $bypass = false) {
 		$timeStamp = time();
 		$fModel = $this->kernel->getContainer()->get('filemanagement.model');
 		$response = $fModel->getFile($file);
@@ -898,22 +937,15 @@ class NewsManagementModel extends CoreModel {
 		}
 		return new ModelResponse($exist, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
 	}
+	
 	/**
-	 * @name 			isNewsOfCategory()
+	 * @param mixed $item
+	 * @param mixed $category
+	 * @param bool $bypass
 	 *
-	 * @since			1.0.2
-	 * @version         1.0.2
-	 * @author          Can Berkol
-	 *
-	 * @use             $this->createException()
-	 *
-	 * @param           mixed           $item
-	 * @param           mixed           $category
-	 * @param           bool            $bypass                 if set to true returns the result directly.
-	 *
-	 * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse|bool
 	 */
-	public function isNewsOfCategory($item, $category, $bypass = false) {
+	public function isNewsOfCategory($item, $category, \bool $bypass = false) {
 		$timeStamp = time();
 		$response = $this->getNewsCategory($category);
 		if($response->error->exist){
@@ -943,23 +975,16 @@ class NewsManagementModel extends CoreModel {
 		}
 		return new ModelResponse($exist, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
 	}
+	
 	/**
-	 * @name 			listCategoriesOfNews()
+	 * @param mixed $item
+	 * @param array|null $filter
+	 * @param array|null $sortOrder
+	 * @param array|null $limit
 	 *
-	 * @since			1.0.9
-	 * @version         1.0.9
-	 * @author          Can Berkol
-	 *
-	 * @use             $this->createException()
-	 *
-	 * @param           mixed           $item
-	 * @param           array           $filter
-	 * @param           array           $sortOrder
-	 * @param           array           $limit
-	 *
-	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function listCategoriesOfNews($item, $filter = null, $sortOrder = null, $limit = null) {
+	public function listCategoriesOfNews($item, array $filter = null, array $sortOrder = null, array $limit = null) {
 		$timeStamp = time();
 		$response = $this->getNewsItem($item);
 		if($response->error->exist){
@@ -1005,23 +1030,16 @@ class NewsManagementModel extends CoreModel {
 
 		return $response;
 	}
+	
 	/**
-	 * @name 			listFilesOfNews()
+	 * @param mixed $item
+	 * @param array $filter
+	 * @param array $sortOrder
+	 * @param array $limit
 	 *
-	 * @since			1.0.9
-	 * @version         1.0.9
-	 * @author          Can Berkol
-	 *
-	 * @use             $this->createException()
-	 *
-	 * @param           mixed           $item
-	 * @param           array           $filter
-	 * @param           array           $sortOrder
-	 * @param           array           $limit
-	 *
-	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function listFilesOfNews($item, $filter = array(), $sortOrder = array(), $limit = array()) {
+	public function listFilesOfNews($item, array $filter = array(), array $sortOrder = array(), array $limit = array()) {
 		$timeStamp = time();
 		$response = $this->getNewsItem($item);
 		if($response->error->exist){
@@ -1069,23 +1087,15 @@ class NewsManagementModel extends CoreModel {
 
 		return $response;
 	}
+	
 	/**
-	 * @name 			listNewsCategories()
+	 * @param array|null $filter
+	 * @param array|null $sortOrder
+	 * @param array|null $limit
 	 *
-	 * @since			1.0.0
-	 * @version         1.0.2
-	 * @author          Can Berkol
-	 * @author          Said İmamoğlu
-	 *
-	 * @use             $this->createException()
-	 *
-	 * @param   		array   $filter
-	 * @param   		array   $sortOrder
-	 * @param   		array   $limit
-	 *
-	 * @return   		BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function listNewsCategories($filter = null, $sortOrder = null, $limit = null){
+	public function listNewsCategories(array $filter = null, array $sortOrder = null, array $limit = null){
 		$timeStamp = time();
 		if(!is_array($sortOrder) && !is_null($sortOrder)){
 			return $this->createException('InvalidSortOrderException', '$sortOrder must be an array with key => value pairs where value can only be "asc" or "desc".', 'E:S:002');
@@ -1140,23 +1150,15 @@ class NewsManagementModel extends CoreModel {
 		}
 		return new ModelResponse($entities, $totalRows, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
 	}
+	
 	/**
-	 * @name 			listNewsItems()
+	 * @param array|null $filter
+	 * @param array|null $sortOrder
+	 * @param array|null $limit
 	 *
-	 * @since			1.0.0
-	 * @version         1.0.2
-	 * @author          Can Berkol
-	 * @author          Said İmamoğlu
-	 *
-	 * @use             $this->createException()
-	 *
-	 * @param   		array   $filter
-	 * @param   		array   $sortOrder
-	 * @param   		array   $limit
-	 *
-	 * @return   		BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function listNewsItems($filter = null, $sortOrder = null, $limit = null){
+	public function listNewsItems(array $filter = null, array $sortOrder = null, array $limit = null){
 		$timeStamp = time();
 		if(!is_array($sortOrder) && !is_null($sortOrder)){
 			return $this->createException('InvalidSortOrderException', '$sortOrder must be an array with key => value pairs where value can only be "asc" or "desc".', 'E:S:002');
@@ -1214,24 +1216,16 @@ class NewsManagementModel extends CoreModel {
 		}
 		return new ModelResponse($entities, $totalRows, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
 	}
+	
 	/**
-	 * @name 			listRecentNewsOfCategory()
+	 * @param mixed $category
+	 * @param int        $count
+	 * @param array|null $filter
+	 * @param array|null $sortOrder
 	 *
-	 * @since			1.0.3
-	 * @version         1.0.3
-	 *
-	 * @author          Can Berkol
-	 *
-	 * @use             $this->listNews()
-	 *
-	 * @param   		mixed   $category
-	 * @param   		integer $count
-	 * @param   		array	$filter
-	 * @param   		array   $sortOrder
-	 *
-	 * @return   		BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function listRecentNewsOfCategory($category, $count = 10, $filter = null, $sortOrder = null){
+	public function listRecentNewsOfCategory($category, \integer $count = 10, array $filter = null, array $sortOrder = null){
 		$timeStamp = time();
 		$response = $this->getNewsCategory($category);
 		if($response->error->exist){
@@ -1271,24 +1265,16 @@ class NewsManagementModel extends CoreModel {
 
 		return $response;
 	}
+	
 	/**
-	 * @name 			listRecentNewsOfCategoryAndSite()
+	 * @param mixed $category
+	 * @param mixed $site
+	 * @param int        $count
+	 * @param array|null $filter
 	 *
-	 * @since			1.0.3
-	 * @version         1.0.3
-	 *
-	 * @author          Can Berkol
-	 *
-	 * @use             $this->listNews()
-	 *
-	 * @param   		mixed   $category
-	 * @param   		mixed   $site
-	 * @param   		integer $count
-	 * @param   		array   $filter
-	 *
-	 * @return   		BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function listRecentNewsOfCategoryAndSite($category, $site, $count = 10, $filter = null){
+	public function listRecentNewsOfCategoryAndSite($category, $site, \integer $count = 10, array $filter = null){
 		$timeStamp = time();
 		$response = $this->getNewsCategory($category);
 		if($response->error->exist){
@@ -1337,25 +1323,17 @@ class NewsManagementModel extends CoreModel {
 
 		return $response;
 	}
+	
 	/**
-	 * @name 			listRecentNewsOfCategoryAndSiteWithStatuses()
+	 * @param mixed $category
+	 * @param mixed $site
+	 * @param array      $statuses
+	 * @param int        $count
+	 * @param array|null $filter
 	 *
-	 * @since			1.0.6
-	 * @version         1.0.6
-	 *
-	 * @author          Can Berkol
-	 *
-	 * @use             $this->listNews()
-	 *
-	 * @param   		mixed   $category
-	 * @param   		mixed   $site
-	 * @param   		mixed   $statuses
-	 * @param   		integer $count
-	 * @param   		array   $filter
-	 *
-	 * @return   		BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function listRecentNewsOfCategoryAndSiteWithStatuses($category, $site, $statuses, $count = 10, $filter = null){
+	public function listRecentNewsOfCategoryAndSiteWithStatuses($category, $site, array $statuses, \integer $count = 10, array $filter = null){
 		$filter[] = array(
 			'glue' => 'and',
 			'condition' => array(
@@ -1367,24 +1345,16 @@ class NewsManagementModel extends CoreModel {
 		);
 		return $this->listRecentNewsOfCategoryAndSite($category, $site, $count, $filter);
 	}
+	
 	/**
-	 * @name 			listNewsOfCategory()
+	 * @param mixed $category
+	 * @param array|null $filter
+	 * @param array|null $sortOrder
+	 * @param array|null $limit
 	 *
-	 * @since			1.0.3
-	 * @version         1.0.3
-	 *
-	 * @author          Can Berkol
-	 *
-	 * @use             $this->listNews()
-	 *
-	 * @param   		mixed   $category
-	 * @param   		array	$filter
-	 * @param   		array   $sortOrder
-	 * @param   		array   $limit
-	 *
-	 * @return   		BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function listNewsOfCategory($category, $filter = null, $sortOrder = null, $limit = null){
+	public function listNewsOfCategory($category, array $filter = null, array $sortOrder = null, array $limit = null){
 		$timeStamp = time();
 		$response = $this->getNewsCategory($category);
 		if($response->error->exist){
@@ -1423,25 +1393,17 @@ class NewsManagementModel extends CoreModel {
 
 		return $response;
 	}
+	
 	/**
-	 * @name 			listNewsOfCategoryAndSite()
+	 * @param mixed $category
+	 * @param mixed $site
+	 * @param array|null $filter
+	 * @param array|null $sortOrder
+	 * @param array|null $limit
 	 *
-	 * @since			1.0.3
-	 * @version         1.0.3
-	 *
-	 * @author          Can Berkol
-	 *
-	 * @use             $this->listNews()
-	 *
-	 * @param   		mixed   $category
-	 * @param   		mixed   $site
-	 * @param   		array   $filter
-	 * @param   		array   $sortOrder
-	 * @param   		array   $limit
-	 *
-	 * @return   		BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function listNewsOfCategoryAndSite($category, $site, $filter = null, $sortOrder = null, $limit = null){
+	public function listNewsOfCategoryAndSite($category, $site, array $filter = null, array $sortOrder = null, array $limit = null){
 		$timeStamp = time();
 		$response = $this->getNewsCategory($category);
 		if($response->error->exist){
@@ -1488,26 +1450,18 @@ class NewsManagementModel extends CoreModel {
 
 		return $response;
 	}
+	
 	/**
-	 * @name 			listNewsOfCategoryAndSiteWithStatuses()
+	 * @param mixed      $category
+	 * @param mixed      $site
+	 * @param array      $statuses
+	 * @param array|null $filter
+	 * @param array|null $sortOrder
+	 * @param array|null $limit
 	 *
-	 * @since			1.0.6
-	 * @version         1.0.6
-	 *
-	 * @author          Can Berkol
-	 *
-	 * @use             $this->listNews()
-	 *
-	 * @param   		mixed   $category
-	 * @param   		mixed   $site
-	 * @param   		mixed   $statuses
-	 * @param   		array   $filter
-	 * @param   		array   $sortOrder
-	 * @param   		array   $limit
-	 *
-	 * @return   		BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function listNewsOfCategoryAndSiteWithStatuses($category, $site, $statuses, $filter = null, $sortOrder = null, $limit = null){
+	public function listNewsOfCategoryAndSiteWithStatuses($category, $site, array $statuses, array $filter = null, array $sortOrder = null, array $limit = null){
 		$filter[] = array(
 			'glue' => 'and',
 			'condition' => array(
@@ -1519,21 +1473,13 @@ class NewsManagementModel extends CoreModel {
 		);
 		return $this->listNewsOfCategoryAndSite($category, $site, $filter, $sortOrder, $limit);
 	}
+	
 	/**
-	 * @name            markNewsAsDeleted()
+	 * @param array $collection
 	 *
-	 * @since           1.0.5
-	 * @version         1.0.5
-	 *
-	 * @author          Can Berkol
-	 *
-	 * @use             $this->createException()
-	 *
-	 * @param           array 			$collection
-	 *
-	 * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function markNewsAsDeleted($collection){
+	public function markNewsAsDeleted(array $collection){
 		$timeStamp = time();
 		if (!is_array($collection)) {
 			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
@@ -1559,21 +1505,13 @@ class NewsManagementModel extends CoreModel {
 
 		return $response;
 	}
+	
 	/**
-	 * @name            publishNews()
+	 * @param array $collection
 	 *
-	 * @since           1.0.7
-	 * @version         1.0.7
-	 *
-	 * @author          Can Berkol
-	 *
-	 * @use             $this->createException()
-	 *
-	 * @param           array 			$collection
-	 *
-	 * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function publishNews($collection){
+	public function publishNews(array $collection){
 		$timeStamp = time();
 		if (!is_array($collection)) {
 			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
@@ -1600,21 +1538,14 @@ class NewsManagementModel extends CoreModel {
 
 		return $response;
 	}
+	
 	/**
-	 * @name 			removeCategoriesFromNewsItem()
+	 * @param array $categories
+	 * @param mixd  $item
 	 *
-	 * @since			1.0.2
-	 * @version         1.0.2
-	 * @author          Can Berkol
-	 *
-	 * @use             $this->createException()
-	 *
-	 * @param           array           $categories
-	 * @param           mixed           $item
-	 *
-	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function removeCategoriesFromNewsItem($categories, $item) {
+	public function removeCategoriesFromNewsItem(array $categories, $item) {
 		$timeStamp = time();
 		$response = $this->getNewsItem($item);
 		if($response->error->exist){
@@ -1646,21 +1577,14 @@ class NewsManagementModel extends CoreModel {
 		}
 		return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Unable to delete all or some of the selected entries.', $timeStamp, time());
 	}
+	
 	/**
-	 * @name 			removeFilesFromNewsItem()
+	 * @param array $files
+	 * @param mixed $item
 	 *
-	 * @since			1.0.2
-	 * @version         1.0.2
-	 * @author          Can Berkol
-	 *
-	 * @use             $this->createException()
-	 *
-	 * @param           array           $files
-	 * @param           mixed           $item
-	 *
-	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function removeFilesFromNewsItem($files, $item) {
+	public function removeFilesFromNewsItem(array $files, $item) {
 		$timeStamp = time();
 		$response = $this->getNewsItem($item);
 		if($response->error->exist){
@@ -1693,22 +1617,14 @@ class NewsManagementModel extends CoreModel {
 		}
 		return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Unable to delete all or some of the selected entries.', $timeStamp, time());
 	}
-
+	
 	/**
-	 * @name 			removeItemsFromNewsCategory()
+	 * @param array $items
+	 * @param mixed $category
 	 *
-	 * @since			1.0.2
-	 * @version         1.0.2
-	 * @author          Can Berkol
-	 *
-	 * @use             $this->createException()
-	 *
-	 * @param           array           $items
-	 * @param           mixed           $category
-	 *
-	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function removeItemsFromNewsCategory($items, $category) {
+	public function removeItemsFromNewsCategory(array $items, $category) {
 		$timeStamp = time();
 		$response = $this->getNewsCategory($category);
 		if($response->error->exist){
@@ -1740,21 +1656,13 @@ class NewsManagementModel extends CoreModel {
 		}
 		return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Unable to delete all or some of the selected entries.', $timeStamp, time());
 	}
+	
 	/**
-	 * @name            unpublishNews()
+	 * @param array $collection
 	 *
-	 * @since           1.0.7
-	 * @version         1.0.7
-	 *
-	 * @author          Can Berkol
-	 *
-	 * @use             $this->createException()
-	 *
-	 * @param           array 			$collection
-	 *
-	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function unpublishNews($collection){
+	public function unpublishNews(array $collection){
 		$timeStamp = time();
 		if (!is_array($collection)) {
 			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
@@ -1780,36 +1688,22 @@ class NewsManagementModel extends CoreModel {
 
 		return $response;
 	}
+	
 	/**
-	 * @name 			updateNewsCategory()
+	 * @param mixed $category
 	 *
-	 * @since			1.0.2
-	 * @version         1.0.2
-	 * @author          Can Berkol
-	 *
-	 * @use             $this->updateNewsCategories()
-	 *
-	 * @param           array           $category
-	 *
-	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function updateNewsCategory($category) {
 		return $this->updateNewsCategories(array($category));
 	}
+	
 	/**
-	 * @name 			updateNewsCategories()
+	 * @param array $collection
 	 *
-	 * @since			1.0.2
-	 * @version         1.0.2
-	 * @author          Can Berkol
-	 *
-	 * @use             $this->createException()
-	 *
-	 * @param           array           $collection
-	 *
-	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function updateNewsCategories($collection){
+	public function updateNewsCategories(array $collection){
 		$timeStamp = time();
 		/** Parameter must be an array */
 		if (!is_array($collection)) {
@@ -1893,44 +1787,30 @@ class NewsManagementModel extends CoreModel {
 		}
 		return new ModelResponse(null, 0, 0, null, true, 'E:D:004', 'One or more entities cannot be updated within database.', $timeStamp, time());
 	}
+	
 	/**
-	 * @name 			updateNewsItem()
+	 * @param mixed $item
 	 *
-	 * @since			1.0.2
-	 * @version         1.0.2
-	 * @author          Can Berkol
-	 *
-	 * @use             $this->updateNewsItems()
-	 *
-	 * @param           array           $item
-	 *
-	 * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function updateNewsItem($item) {
 		return $this->updateNewsItems(array($item));
 	}
+	
 	/**
-	 * @name 			updateNewsItems()
+	 * @param array $collection
 	 *
-	 * @since			1.0.2
-	 * @version         1.0.2
-	 * @author          Can Berkol
-	 *
-	 * @use             $this->createException()
-	 *
-	 * @param           array           $collection
-	 *
-	 * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function updateNewsItems($collection){
+	public function updateNewsItems(array $collection){
 		$timeStamp = time();
 		/** Parameter must be an array */
 		if (!is_array($collection)) {
 			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
 		}
 		$countUpdates = 0;
-		$updatedItems = array();
-		$localizations = array();
+		$updatedItems = [];
+		$localizations = [];
 		foreach ($collection as $data) {
 			if ($data instanceof BundleEntity\News) {
 				$entity = $data;
@@ -2009,18 +1889,16 @@ class NewsManagementModel extends CoreModel {
 		}
 		return new ModelResponse(null, 0, 0, null, true, 'E:D:004', 'One or more entities cannot be updated within database.', $timeStamp, time());
 	}
+	
 	/**
-	 * @name listActiveNewsItemsByDateColumnWhichBeforeGivenDate()
-	 * @author Said Imamoglu
-	 * @since 1.1.3
-	 * @version 1.1.3
-	 * @param $dateColumn
-	 * @param $date
-	 * @param $sortOrder
-	 * @param $limit
+	 * @param string $dateColumn
+	 * @param \DateTime  $date
+	 * @param array|null $sortOrder
+	 * @param array|null $limit
+	 *
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function listActiveNewsItemsByDateColumnWhichBeforeGivenDate($dateColumn,$date,$sortOrder = null,$limit = null){
+	public function listActiveNewsItemsByDateColumnBeforeGivenDate(\string $dateColumn, \DateTime $date, array $sortOrder = null, array $limit = null){
 		$timeStamp = time();
 		if (! $date instanceof \DateTime) {
 			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'Invalid date object.', $timeStamp, time());
@@ -2044,24 +1922,16 @@ class NewsManagementModel extends CoreModel {
 		$response->stats->execution->end = time();
 		return $response;
 	}
+	
 	/**
-	 * @name            listNewsOfCategories ()
+	 * @param array      $categories
+	 * @param array|null $filter
+	 * @param array|null $sortOrder
+	 * @param array|null $limit
 	 *
-	 * @since            1.1.3
-	 * @version         1.1.3
-	 *
-	 * @author          Can Berkol
-	 *
-	 * @use             $this->listNewsItems()
-	 *
-	 * @param        array $categories
-	 * @param        array $filter
-	 * @param        array $sortOrder
-	 * @param        array $limit
-	 *
-	 * @return        \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function listNewsOfCategories($categories, $filter = null, $sortOrder = null, $limit = null)
+	public function listNewsOfCategories(array $categories, array $filter = null, array $sortOrder = null, array $limit = null)
 	{
 		$timeStamp = time();
 		foreach ($categories as $category) {
@@ -2102,18 +1972,16 @@ class NewsManagementModel extends CoreModel {
 
 		return $response;
 	}
-
+	
 	/**
-	 * @name  listNewsOfCategoriesWithStatuses ()
-	 * @version 1.1.3
-	 * @since 1.1.3
-	 * @param $categories
-	 * @param $statuses
-	 * @param $sortOrder
-	 * @param $limit
+	 * @param array      $categories
+	 * @param array      $statuses
+	 * @param array|null $sortOrder
+	 * @param array|null $limit
+	 *
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function listNewsOfCategoriesWithStatuses($categories, $statuses, $sortOrder, $limit)
+	public function listNewsOfCategoriesWithStatuses(array $categories, array $statuses, array $sortOrder = null, array $limit = null)
 	{
 		$filter = array();
 		$filter[] = array(
@@ -2122,18 +1990,16 @@ class NewsManagementModel extends CoreModel {
 		);
 		return $this->listNewsCategories($categories, $filter, $sortOrder, $limit);
 	}
+	
 	/**
-	 * @name listNewsItemsByDateColumnWhichBeforeGivenDate()
-	 * @author Said Imamoglu
-	 * @since 1.1.3
-	 * @version 1.1.3
-	 * @param $dateColumn
-	 * @param $date
-	 * @param $sortOrder
-	 * @param $limit
+	 * @param string     $dateColumn
+	 * @param \DateTime  $date
+	 * @param array|null $sortOrder
+	 * @param array|null $limit
+	 *
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function listNewsItemsByDateColumnWhichBeforeGivenDate($dateColumn,$date,$sortOrder = null,$limit = null){
+	public function listNewsItemsByDateColumnBeforeGivenDate(\string $dateColumn, \DateTime $date, array $sortOrder = null, array $limit = null){
 		$timeStamp = time();
 		if (! $date instanceof \DateTime) {
 			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'Invalid date object.', $timeStamp, time());
@@ -2153,16 +2019,14 @@ class NewsManagementModel extends CoreModel {
 		$response->stats->execution->end = time();
 		return $response;
 	}
+	
 	/**
-	 * @name unPublishNewsOfCategoriesWithStatuses()
-	 * @author  Said Imamoglu
-	 * @since 1.1.3
-	 * @version 1.1.3
-	 * @param $categories
-	 * @param $statuses
+	 * @param array $categories
+	 * @param array $statuses
+	 *
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function unPublishNewsOfCategoriesWithStatuses($categories,$statuses){
+	public function unPublishNewsOfCategoriesWithStatuses(array $categories, array $statuses){
 		$timeStamp = time();
 		$response = $this->listNewsOfCategoriesWithStatuses($categories,$statuses);
 		if ($response->error->exist) {
@@ -2173,18 +2037,37 @@ class NewsManagementModel extends CoreModel {
 		$response->stats->execution->end = time();
 		return $response;
 	}
+	
 	/**
-	 * @name unPublishNewsItemsByDateColumnWhichBeforeGivenDate()
-	 * @author Said Imamoglu
-	 * @since 1.1.3
-	 * @version 1.1.3
-	 * @param $dateColumn
-	 * @param $date
-	 * @return ModelResponse
+	 * @param string    $dateColumn
+	 * @param \DateTime $date
+	 *
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function unPublishNewsItemsByDateColumnWhichBeforeGivenDate($dateColumn,$date){
+	public function unPublishNewsItemsByDateColumnBeforeGivenDate(\string $dateColumn, \DateTime $date){
 		$timeStamp = time();
-		$response = $this->listNewsItemsByDateColumnWhichBeforeGivenDate($dateColumn,$date);
+		$response = $this->listNewsItemsByDateColumnBeforeGivenDate($dateColumn,$date);
+		if ($response->error->exist) {
+			return $response;
+		}
+		$response = $this->unpublishNews($response->result->set);
+		if ($response->error->exist) {
+			return $response;
+		}
+		$response->stats->execution->start = $timeStamp;
+		$response->stats->execution->end = time();
+		return $response;
+	}
+	
+	/**
+	 * @param \sring    $dateColumn
+	 * @param \DateTime $date
+	 *
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function unPublishActiveNewsItemsByDateColumnBeforeGivenDate(\sring $dateColumn, \DateTime $date){
+		$timeStamp = time();
+		$response = $this->listActiveNewsItemsByDateColumnBeforeGivenDate($dateColumn,$date);
 		if ($response->error->exist) {
 			return $response;
 		}
@@ -2198,38 +2081,14 @@ class NewsManagementModel extends CoreModel {
 	}
 
 	/**
-	 * @name unPublishNewsItemsByDateColumnWhichBeforeGivenDate()
-	 * @author Said Imamoglu
-	 * @since 1.1.3
-	 * @version 1.1.3
-	 * @param $dateColumn
-	 * @param $date
-	 * @return ModelResponse
-	 */
-	public function unPublishActiveNewsItemsByDateColumnWhichBeforeGivenDate($dateColumn,$date){
-		$timeStamp = time();
-		$response = $this->listActiveNewsItemsByDateColumnWhichBeforeGivenDate($dateColumn,$date);
-		if ($response->error->exist) {
-			return $response;
-		}
-		$response = $this->unpublishNews($response->result->set);
-		if ($response->error->exist) {
-			return $response;
-		}
-		$response->stats->execution->start = $timeStamp;
-		$response->stats->execution->end = time();
-		return $response;
-	}
-
-	/**
-	 * @param           $site
+	 * @param mixed $site
 	 * @param \DateTime $dateStart
 	 * @param \DateTime $dateEnd
 	 * @param bool      $inclusive
 	 * @param null      $sortOrder
 	 * @param null      $limit
 	 *
-	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse|\BiberLtd\Bundle\NewsManagementBundle\Services\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function listNewsOfSitePublishedBetween($site, \DateTime $dateStart, \DateTime $dateEnd, $inclusive = true, $sortOrder = null, $limit = null){
 		$timeStamp = time();
@@ -2331,14 +2190,14 @@ class NewsManagementModel extends CoreModel {
 	}
 
 	/**
-	 * @param integer $year
+	 * @param int        $year
 	 * @param array|null $filter
 	 * @param array|null $sortOrder
 	 * @param array|null $limit
 	 *
-	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse|\BiberLtd\Bundle\NewsManagementBundle\Services\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function listActiveNewsItemsInYear($year, array $filter = null, array $sortOrder = null, array $limit = null){
+	public function listActiveNewsItemsInYear(\integer $year, array $filter = null, array $sortOrder = null, array $limit = null){
 		$timeStamp = time();
 		$response = $this->listCurrentlyActiveNewsItems($filter, $sortOrder, $limit);
 		if($response->error->exist){
@@ -2358,16 +2217,17 @@ class NewsManagementModel extends CoreModel {
 		$response->stats->execution->end = time();
 		return $response;
 	}
+
 	/**
-	 * @param integer $month
-	 * @param integer $year
+	 * @param int        $month
+	 * @param int        $year
 	 * @param array|null $filter
 	 * @param array|null $sortOrder
 	 * @param array|null $limit
 	 *
-	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse|\BiberLtd\Bundle\NewsManagementBundle\Services\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function listActiveNewsItemsInMonthOfYear($month, $year, array $filter = null, array $sortOrder = null, array $limit = null){
+	public function listActiveNewsItemsInMonthOfYear(\integer $month, \integer $year, array $filter = null, array $sortOrder = null, array $limit = null){
 		$timeStamp = time();
 		$response = $this->listCurrentlyActiveNewsItems($filter, $sortOrder, $limit);
 		if($response->error->exist){
@@ -2388,92 +2248,3 @@ class NewsManagementModel extends CoreModel {
 		return $response;
 	}
 }
-/**
- * Change Log
- * **************************************
- * v1.1.2                      06.07.2015
- * Can Berkol
- * **************************************
- * BF :: 3783696 :: insertNewsItems() "persist" issues fixed.
- *
- * **************************************
- * v1.1.1                      19.06.2015
- * Can Berkol
- * **************************************
- * BF :: getNewsByUrlKey() was returning array.
- *
- * **************************************
- * v1.1.0                      18.06.2015
- * Can Berkol
- * **************************************
- * BF :: getLastAddedFileOfNews() has an invalid error check. Fixed.
- *
- * **************************************
- * v1.0.9                      16.06.2015
- * Can Berkol
- * **************************************
- * FR :: addFilesToNews() added.
- * FR :: getLastAddedFileOfNews() added.
- * FR :: removeFilesFromNews() added.
- * FR :: listFilesOfNews() added.
- *
- * **************************************
- * v1.0.8                      15.06.2015
- * Can Berkol
- * **************************************
- * CR :: insertNewsItems() now supports author field.
- *
- * **************************************
- * v1.0.7                      13.06.2015
- * Can Berkol
- * **************************************
- * FR :: publishNews) added.
- * FR :: unpublishNews() added.
- *
- * **************************************
- * v1.0.6                      13.06.2015
- * Can Berkol
- * **************************************
- * CR :: getNewsCategory() now can get category by url key..
- * CR :: getNewsItem() now can get news item by url key..
- * FR :: getNewsCategoryByUrlKey() added.
- * FR :: getNewsItemByUrlKey() added.
- * FR :: listNewsOfCategoryAndSiteWithStatuses() added.
- * FR :: listRecentNewsOfCategoryAndSiteWithStatuses() added.
- *
- * **************************************
- * v1.0.5                      11.06.2015
- * Can Berkol
- * **************************************
- * BF :: insertNewsLocalizations() rewritten.
- * BF :: insertNewsCategoryLocalizations() rewritten.
- * FR :: markNewsAsDeleted() added.
- *
- * **************************************
- * v1.0.4                      10.06.2015
- * Can Berkol
- * **************************************
- * BF :: getNewsCategory() has copy/paste errors.
- *
- * **************************************
- * v1.0.3                      09.06.2015
- * Can Berkol
- * **************************************
- * BF :: ModelResponse added in use statement.
- * FR :: listRecentNewsOfCategory()
- * FR :: listRecentNewsOfCategoryAndSite()
- * FR :: listNewsOfCategory()
- * FR :: listNewsOfCategoryAndSite()
- *
- * **************************************
- * v1.0.2                      03.05.2015
- * Can Berkol
- * **************************************
- * CR :: Made compatible with CoreBundle v3.3.
- *
- * **************************************
- * v1.0.1                      Said İmamoğlu
- * 26.12.2014
- * **************************************
- * U listNewsItems()
- **/

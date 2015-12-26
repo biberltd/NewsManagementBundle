@@ -1,3 +1,0 @@
-biber_ltd_news_management_homepage:
-    path:     /hello/{name}
-    defaults: { _controller: BiberLtdNewsManagementBundle:Default:index }

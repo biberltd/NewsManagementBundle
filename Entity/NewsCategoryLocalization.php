@@ -1,18 +1,12 @@
 <?php
 /**
- * @name        NewsCategoryLocalization
- * @package		BiberLtd\Bundle\CoreBundle\NewsManagementBundle
- *
+ * @author		Can Berkol
  * @author		Murat Ünal
  *
- * @version     1.0.1
- * @date        03.05.2015
+ * @copyright   Biber Ltd. (http://www.biberltd.com) (C) 2015
+ * @license     GPLv3
  *
- * @copyright   Biber Ltd. (http://www.biberltd.com)
- * @license     GPL v3.0
- *
- * @description Model / Entity class.
- *
+ * @date        25.12.2015
  */
 namespace BiberLtd\Bundle\NewsManagementBundle\Entity;
 use Doctrine\ORM\Mapping AS ORM;
@@ -33,14 +27,15 @@ class NewsCategoryLocalization extends CoreEntity
 {
     /** 
      * @ORM\Column(type="string", length=45, nullable=false)
+     * @var string
      */
     private $name;
 
     /** 
      * @ORM\Column(type="string", length=155, nullable=false)
+     * @var string
      */
     private $url_key;
-
 
 	/**
 	 * @ORM\Id
@@ -49,6 +44,7 @@ class NewsCategoryLocalization extends CoreEntity
 	 *     inversedBy="localizations"
 	 * )
 	 * @ORM\JoinColumn(name="category", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+	 * @var \BiberLtd\Bundle\NewsManagementBundle\Entity\NewsCategory
 	 */
 	private $category;
 
@@ -56,24 +52,16 @@ class NewsCategoryLocalization extends CoreEntity
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language")
      * @ORM\JoinColumn(name="language", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @var \BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language
      */
     private $language;
 
-    /**
-     * @name            setLanguage ()
+	/**
+	 * @param \BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language $language
 	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $language
-     *
-     * @return          object                $this
-     */
-    public function setLanguage($language) {
+	 * @return $this
+	 */
+    public function setLanguage(\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language $language) {
         if(!$this->setModified('language', $language)->isModified()) {
             return $this;
         }
@@ -81,35 +69,19 @@ class NewsCategoryLocalization extends CoreEntity
 		return $this;
     }
 
-    /**
-     * @name            getLanguage ()
-	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->language
-     */
+	/**
+	 * @return \BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language
+	 */
     public function getLanguage() {
         return $this->language;
     }
 
-    /**
-     * @name            setName ()
+	/**
+	 * @param string $name
 	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $name
-     *
-     * @return          object                $this
-     */
-    public function setName($name) {
+	 * @return $this
+	 */
+    public function setName(\string $name) {
         if(!$this->setModified('name', $name)->isModified()) {
             return $this;
         }
@@ -117,35 +89,19 @@ class NewsCategoryLocalization extends CoreEntity
 		return $this;
     }
 
-    /**
-     * @name            getName ()
-	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->name
-     */
+	/**
+	 * @return string
+	 */
     public function getName() {
         return $this->name;
     }
 
-    /**
-     * @name            setCategory ()
+	/**
+	 * @param \BiberLtd\Bundle\NewsManagementBundle\Entity\NewsCategory $category
 	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $category
-     *
-     * @return          object                $this
-     */
-    public function setCategory($category) {
+	 * @return $this
+	 */
+    public function setCategory(\BiberLtd\Bundle\NewsManagementBundle\Entity\NewsCategory $category) {
         if(!$this->setModified('category', $category)->isModified()) {
             return $this;
         }
@@ -153,35 +109,19 @@ class NewsCategoryLocalization extends CoreEntity
 		return $this;
     }
 
-    /**
-     * @name            getCategory ()
-	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->category
-     */
+	/**
+	 * @return \BiberLtd\Bundle\NewsManagementBundle\Entity\NewsCategory
+	 */
     public function getCategory() {
         return $this->category;
     }
 
-    /**
-     * @name            setUrlKey ()
+	/**
+	 * @param string $url_key
 	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $url_key
-     *
-     * @return          object                $this
-     */
-    public function setUrlKey($url_key) {
+	 * @return $this
+	 */
+    public function setUrlKey(\string $url_key) {
         if(!$this->setModified('url_key', $url_key)->isModified()) {
             return $this;
         }
@@ -189,40 +129,10 @@ class NewsCategoryLocalization extends CoreEntity
 		return $this;
     }
 
-    /**
-     * @name            getUrlKey ()
-	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->url_key
-     */
+	/**
+	 * @return string
+	 */
     public function getUrlKey() {
         return $this->url_key;
     }
 }
-/**
- * Change Log:
- * **************************************
- * v1.0.1                      03.05.2015
- * Can Berkol
- * **************************************
- * CR :: ORM updates.
- *
- * **************************************
- * v1.0.0                      Murat Ünal
- * 12.09.2013
- * **************************************
- * A getLanguage()
- * A getName()
- * A getNewsCategory()
- * A getUrlKey()
- *
- * A setLanguage()
- * A setName()
- * A setNewsCategory()
- * A setUrlKey()
- *
- */
