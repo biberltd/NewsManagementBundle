@@ -71,9 +71,9 @@ class News extends CoreLocalizableEntity
      */
     private $url;
 
-    /** 
-     * @ORM\OneToMany(targetEntity="BiberLtd\Bundle\NewsManagementBundle\Entity\NewsLocalization", mappedBy="news")
-     */
+	/**
+	 * @ORM\OneToMany(targetEntity="BiberLtd\Bundle\NewsManagementBundle\Entity\NewsLocalization", mappedBy="news", cascade={"persist"})
+	 */
     protected $localizations;
 
     /** 
