@@ -2387,6 +2387,56 @@ class NewsManagementModel extends CoreModel {
 		$response->stats->execution->end = time();
 		return $response;
 	}
+
+	/**
+	 * @param string|null $status
+	 *
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function setAllPopupsTo($status = 'n'){
+		$timeStamp = time();
+		$qStr = 'UPDATE '.$this->entity['name']['n'].' SET '.$this->entity['alias']['n'].'.popup = "'.$status.'"';
+
+		$q = $this->em->createQuery($qStr);
+		$result = $q->getResult();
+
+		$updated = true;
+		if (!$result) {
+			$updated = false;
+		}
+		if ($updated) {
+			return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully updated.', $timeStamp, time());
+		}
+		return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Selected entries cannot be updated at the moment.', $timeStamp, time());
+	}
+
+	/**
+	 * @param string|null $status
+	 *
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function setAllPopupsExceptTo($excludedItem, $status = 'n'){
+		$timeStamp = time();
+		$response = $this->getNewsItem($excludedItem);
+		if($response->error->exist){
+			return $response;
+		}
+		$newsItem = $response->result->set;
+		$qStr = 'UPDATE '.$this->entity['name']['n'].' SET '.$this->entity['alias']['n'].'.popup = "'.$status.'" WHERE '.$this->entity['alias']['n'].'.id <> '.$newsItem->getId();
+
+		$q = $this->em->createQuery($qStr);
+
+		$result = $q->getResult();
+
+		$updated = true;
+		if (!$result) {
+			$updated = false;
+		}
+		if ($updated) {
+			return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully updated.', $timeStamp, time());
+		}
+		return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Selected entries cannot be updated at the moment.', $timeStamp, time());
+	}
 }
 /**
  * Change Log
