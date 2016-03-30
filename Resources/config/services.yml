@@ -1,4 +1,4 @@
 services:
     newsmanagement.model:
         class: BiberLtd\Bundle\NewsManagementBundle\Services\NewsManagementModel
-        arguments:    [@kernel, "default", "doctrine"]
+        arguments:    ["@kernel", "default", "doctrine"]

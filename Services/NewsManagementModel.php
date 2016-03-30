@@ -35,7 +35,7 @@ class NewsManagementModel extends CoreModel {
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function addFilesToNewsItems($item, array $files, $language) {
-		$timeStamp = time();
+		$timeStamp = microtime(true);
 		$lModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
 		$response = $lModel->getLanguage($language);
 		if($response->error->exist){
@@ -64,7 +64,7 @@ class NewsManagementModel extends CoreModel {
 			}
 		}
 		$now = new \DateTime('now', new \DateTimezone($this->kernel->getContainer()->getParameter('app_timezone')));
-		$insertedItems = array();
+		$insertedItems = [];
 		$i = 1;
 		foreach ($toAdd as $file) {
 			$entity = new BundleEntity\FilesOfNews();
@@ -75,9 +75,9 @@ class NewsManagementModel extends CoreModel {
 		$countInserts = count($toAdd);
 		if($countInserts > 0){
 			$this->em->flush();
-			return new ModelResponse($insertedItems, $countInserts, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, time());
+			return new ModelResponse($insertedItems, $countInserts, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, microtime(true));
 		}
-		return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
+		return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, microtime(true));
 	}
 
 	/**
@@ -87,7 +87,7 @@ class NewsManagementModel extends CoreModel {
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function addNewsToCategories($item, array $categories) {
-		$timeStamp = time();
+		$timeStamp = microtime(true);
 		$response = $this->getNewsItem($item);
 		if($response->error->exist){
 			return $response;
@@ -96,7 +96,7 @@ class NewsManagementModel extends CoreModel {
 		if (!is_array($categories)) {
 			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. $groups parameter must be an array collection', 'E:S:001');
 		}
-		$toAdd = array();
+		$toAdd = [];
 		foreach ($categories as $category) {
 			$response = $this->getNewsCategory($category);
 			if($response->error->exist){
@@ -108,7 +108,7 @@ class NewsManagementModel extends CoreModel {
 			}
 		}
 		$now = new \DateTime('now', new \DateTimezone($this->kernel->getContainer()->getParameter('app_timezone')));
-		$insertedItems = array();
+		$insertedItems = [];
 		foreach ($toAdd as $cat) {
 			$entity = new BundleEntity\CategoriesOfNews();
 			$entity->setCategory($cat)->setNews($item)->setDateAdded($now)->setSortOrder(1);
@@ -118,9 +118,9 @@ class NewsManagementModel extends CoreModel {
 		$countInserts = count($toAdd);
 		if($countInserts > 0){
 			$this->em->flush();
-			return new ModelResponse($insertedItems, $countInserts, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, time());
+			return new ModelResponse($insertedItems, $countInserts, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, microtime(true));
 		}
-		return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
+		return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, microtime(true));
 	}
 
 	/**
@@ -138,7 +138,7 @@ class NewsManagementModel extends CoreModel {
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function deleteNewsItems(array $collection) {
-		$timeStamp = time();
+		$timeStamp = microtime(true);
 		if (!is_array($collection)) {
 			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
 		}
@@ -158,11 +158,11 @@ class NewsManagementModel extends CoreModel {
 			}
 		}
 		if($countDeleted < 0){
-			return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Unable to delete all or some of the selected entries.', $timeStamp, time());
+			return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Unable to delete all or some of the selected entries.', $timeStamp, microtime(true));
 		}
 		$this->em->flush();
 
-		return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully removed from database.', $timeStamp, time());
+		return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully removed from database.', $timeStamp, microtime(true));
 	}
 
 	/**
@@ -171,8 +171,8 @@ class NewsManagementModel extends CoreModel {
 	 *
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse|bool
 	 */
-	public function doesNewsItemExist(array $news, \bool $bypass = false) {
-		$timeStamp = time();
+	public function doesNewsItemExist(array $news, bool $bypass = false) {
+		$timeStamp = microtime(true);
 		$exist = false;
 
 		$response = $this->getNewsItem($news);
@@ -188,7 +188,7 @@ class NewsManagementModel extends CoreModel {
 		if ($bypass) {
 			return $exist;
 		}
-		return new ModelResponse($exist, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+		return new ModelResponse($exist, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, microtime(true));
 	}
 
 	/**
@@ -197,7 +197,7 @@ class NewsManagementModel extends CoreModel {
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse|\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function getLastAddedFileOfNews($item) {
-		$timeStamp = time();
+		$timeStamp = microtime(true);
 		$response = $this->getNewsItem($item);
 		if($response->error->exist){
 			return $response;
@@ -219,7 +219,7 @@ class NewsManagementModel extends CoreModel {
 		$result = $q->getResult();
 
 		if(count($result) < 1){
-			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, time());
+			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, microtime(true));
 		}
 
 		$fModel = $this->kernel->getContainer()->get('filemanagement.model');
@@ -227,7 +227,7 @@ class NewsManagementModel extends CoreModel {
 		$response = $fModel->getFile($result[0]->getFile());
 
 		$response->stats->execution->start = $timeStamp;
-		$response->stats->execution->end = time();
+		$response->stats->execution->end = microtime(true);
 
 		return $response;
 	}
@@ -238,9 +238,9 @@ class NewsManagementModel extends CoreModel {
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function getNewsCategory($category) {
-		$timeStamp = time();
+		$timeStamp = microtime(true);
 		if($category instanceof BundleEntity\NewsCategory){
-			return new ModelResponse($category, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+			return new ModelResponse($category, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, microtime(true));
 		}
 		$result = null;
 		switch($category){
@@ -257,10 +257,10 @@ class NewsManagementModel extends CoreModel {
 				break;
 		}
 		if(is_null($result)){
-			return new ModelResponse($result, 0, 0, null, true, 'E:D:002', 'Unable to find request entry in database.', $timeStamp, time());
+			return new ModelResponse($result, 0, 0, null, true, 'E:D:002', 'Unable to find request entry in database.', $timeStamp, microtime(true));
 		}
 
-		return new ModelResponse($result, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+		return new ModelResponse($result, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, microtime(true));
 	}
 
 	/**
@@ -269,8 +269,8 @@ class NewsManagementModel extends CoreModel {
 	 *
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function getNewsCategoryByUrlKey(\string $urlKey, $language = null){
-		$timeStamp = time();
+	public function getNewsCategoryByUrlKey(string $urlKey, $language = null){
+		$timeStamp = microtime(true);
 		if(!is_string($urlKey)){
 			return $this->createException('InvalidParameterValueException', '$urlKey must be a string.', 'E:S:007');
 		}
@@ -302,7 +302,7 @@ class NewsManagementModel extends CoreModel {
 		if($response->error->exist){
 			return $response;
 		}
-		return new ModelResponse($response->result->set[0], 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+		return new ModelResponse($response->result->set[0], 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, microtime(true));
 	}
 
 	/**
@@ -311,9 +311,9 @@ class NewsManagementModel extends CoreModel {
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function getNewsItem($news) {
-		$timeStamp = time();
+		$timeStamp = microtime(true);
 		if($news instanceof BundleEntity\News){
-			return new ModelResponse($news, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+			return new ModelResponse($news, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, microtime(true));
 		}
 		$result = null;
 		switch($news){
@@ -330,10 +330,10 @@ class NewsManagementModel extends CoreModel {
 				break;
 		}
 		if(is_null($result)){
-			return new ModelResponse($result, 0, 0, null, true, 'E:D:002', 'Unable to find request entry in database.', $timeStamp, time());
+			return new ModelResponse($result, 0, 0, null, true, 'E:D:002', 'Unable to find request entry in database.', $timeStamp, microtime(true));
 		}
 
-		return new ModelResponse($result, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+		return new ModelResponse($result, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, microtime(true));
 	}
 
 	/**
@@ -342,8 +342,8 @@ class NewsManagementModel extends CoreModel {
 	 *
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function getNewsItemByUrlKey(\string $urlKey, $language = null){
-		$timeStamp = time();
+	public function getNewsItemByUrlKey(string $urlKey, $language = null){
+		$timeStamp = microtime(true);
 		if(!is_string($urlKey)){
 			return $this->createException('InvalidParameterValueException', '$urlKey must be a string.', 'E:S:007');
 		}
@@ -375,7 +375,7 @@ class NewsManagementModel extends CoreModel {
 
 		$response->result->set = $response->result->set[0];
 		$response->stats->execution->start = $timeStamp;
-		$response->stats->execution->end = time();
+		$response->stats->execution->end = microtime(true);
 
 		return $response;
 	}
@@ -395,15 +395,15 @@ class NewsManagementModel extends CoreModel {
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function insertNewsCategories(array $collection)	{
-		$timeStamp = time();
+		$timeStamp = microtime(true);
 		/** Parameter must be an array */
 		if (!is_array($collection)) {
 			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
 		}
 		$countInserts = 0;
 		$countLocalizations = 0;
-		$insertedItems = array();
-		$localizations = array();
+		$insertedItems = [];
+		$localizations = [];
 		foreach ($collection as $data) {
 			if ($data instanceof BundleEntity\NewsCategory) {
 				$entity = $data;
@@ -464,9 +464,9 @@ class NewsManagementModel extends CoreModel {
 		unset($response);
 		if($countInserts > 0){
 			$this->em->flush();
-			return new ModelResponse($insertedItems, $countInserts, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, time());
+			return new ModelResponse($insertedItems, $countInserts, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, microtime(true));
 		}
-		return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
+		return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, microtime(true));
 	}
 
 	/**
@@ -484,7 +484,7 @@ class NewsManagementModel extends CoreModel {
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function insertNewsItems(array $collection){
-		$timeStamp = time();
+		$timeStamp = microtime(true);
 		/** Parameter must be an array */
 		if (!is_array($collection)) {
 			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
@@ -521,7 +521,7 @@ class NewsManagementModel extends CoreModel {
 				if(!property_exists($data, 'site')){
 					$data->site = 1;
 				}
-				$cats = array();
+				$cats = [];
 				foreach ($data as $column => $value) {
 					$localeSet = false;
 					$catSet = false;
@@ -609,9 +609,9 @@ class NewsManagementModel extends CoreModel {
 		unset($response);
 		if($countInserts > 0){
 			$this->em->flush();
-			return new ModelResponse($insertedItems, $countInserts, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, time());
+			return new ModelResponse($insertedItems, $countInserts, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, microtime(true));
 		}
-		return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
+		return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, microtime(true));
 	}
 
 	/**
@@ -622,7 +622,7 @@ class NewsManagementModel extends CoreModel {
 	 */
 	public function addNewsItemsToCategory(array $collection, $category)
 	{
-		$timeStamp = time();
+		$timeStamp = microtime(true);
 		$response = $this->getNewsCategory($category);
 		if ($response->error->exist) {
 			return $response;
@@ -650,9 +650,9 @@ class NewsManagementModel extends CoreModel {
 		}
 		if ($count > 0) {
 			$this->em->flush();
-			return new ModelResponse($conCollection, $count, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, time());
+			return new ModelResponse($conCollection, $count, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, microtime(true));
 		}
-		return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
+		return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, microtime(true));
 	}
 
 	/**
@@ -663,7 +663,7 @@ class NewsManagementModel extends CoreModel {
 	 */
 	public function addFilesToNewsItem(array $collection, $newsItem)
 	{
-		$timeStamp = time();
+		$timeStamp = microtime(true);
 		$response = $this->getNewsItem($newsItem);
 		if ($response->error->exist) {
 			return $response;
@@ -700,9 +700,9 @@ class NewsManagementModel extends CoreModel {
 
 		if ($count > 0) {
 			$this->em->flush();
-			return new ModelResponse($fonCollection, $count, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, time());
+			return new ModelResponse($fonCollection, $count, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, microtime(true));
 		}
-		return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
+		return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, microtime(true));
 	}
 
 	/**
@@ -712,8 +712,8 @@ class NewsManagementModel extends CoreModel {
 	 *
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse|bool
 	 */
-	public function isNewsItemAssociatedWithCategory($newsItem, $category, \bool $bypass = false){
-		$timeStamp = time();
+	public function isNewsItemAssociatedWithCategory($newsItem, $category, bool $bypass = false){
+		$timeStamp = microtime(true);
 		$response = $this->getNewsItem($newsItem);
 		if ($response->error->exist) {
 			return $response;
@@ -741,7 +741,7 @@ class NewsManagementModel extends CoreModel {
 		if ($bypass) {
 			return $found;
 		}
-		return new ModelResponse($found, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+		return new ModelResponse($found, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, microtime(true));
 	}
 
 	/**
@@ -751,8 +751,8 @@ class NewsManagementModel extends CoreModel {
 	 *
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse|bool
 	 */
-	public function isFileAssociatedWithNewsItem($file, $newsItem, \bool $bypass = false){
-		$timeStamp = time();
+	public function isFileAssociatedWithNewsItem($file, $newsItem, bool $bypass = false){
+		$timeStamp = microtime(true);
 
 		/**
 		 * @var \BiberLtd\Bundle\FileManagementModel\Services\FileManagementModel $fModel
@@ -787,7 +787,7 @@ class NewsManagementModel extends CoreModel {
 		if ($bypass) {
 			return $found;
 		}
-		return new ModelResponse($found, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+		return new ModelResponse($found, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, microtime(true));
 	}
 	/**
 	 * @param array $collection
@@ -795,7 +795,7 @@ class NewsManagementModel extends CoreModel {
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function insertNewsCategoryLocalizations(array $collection) {
-		$timeStamp = time();
+		$timeStamp = microtime(true);
 		if (!is_array($collection)) {
 			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
 		}
@@ -839,9 +839,9 @@ class NewsManagementModel extends CoreModel {
 		}
 		if($countInserts > 0){
 			$this->em->flush();
-			return new ModelResponse($insertedItems, $countInserts, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, time());
+			return new ModelResponse($insertedItems, $countInserts, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, microtime(true));
 		}
-		return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
+		return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, microtime(true));
 	}
 	
 	/**
@@ -850,7 +850,7 @@ class NewsManagementModel extends CoreModel {
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function insertNewsItemLocalizations(array $collection) {
-		$timeStamp = time();
+		$timeStamp = microtime(true);
 		if (!is_array($collection)) {
 			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
 		}
@@ -894,9 +894,9 @@ class NewsManagementModel extends CoreModel {
 		}
 		if($countInserts > 0){
 			$this->em->flush();
-			return new ModelResponse($insertedItems, $countInserts, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, time());
+			return new ModelResponse($insertedItems, $countInserts, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, microtime(true));
 		}
-		return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
+		return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, microtime(true));
 	}
 	
 	/**
@@ -906,8 +906,8 @@ class NewsManagementModel extends CoreModel {
 	 *
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse|bool
 	 */
-	public function isFileOfNews($item, $file, \bool $bypass = false) {
-		$timeStamp = time();
+	public function isFileOfNews($item, $file, bool $bypass = false) {
+		$timeStamp = microtime(true);
 		$fModel = $this->kernel->getContainer()->get('filemanagement.model');
 		$response = $fModel->getFile($file);
 		if($response->error->exist){
@@ -935,7 +935,7 @@ class NewsManagementModel extends CoreModel {
 		if ($bypass) {
 			return $exist;
 		}
-		return new ModelResponse($exist, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+		return new ModelResponse($exist, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, microtime(true));
 	}
 	
 	/**
@@ -945,8 +945,8 @@ class NewsManagementModel extends CoreModel {
 	 *
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse|bool
 	 */
-	public function isNewsOfCategory($item, $category, \bool $bypass = false) {
-		$timeStamp = time();
+	public function isNewsOfCategory($item, $category, bool $bypass = false) {
+		$timeStamp = microtime(true);
 		$response = $this->getNewsCategory($category);
 		if($response->error->exist){
 			return $response;
@@ -973,7 +973,7 @@ class NewsManagementModel extends CoreModel {
 		if ($bypass) {
 			return $exist;
 		}
-		return new ModelResponse($exist, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+		return new ModelResponse($exist, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, microtime(true));
 	}
 	
 	/**
@@ -985,7 +985,7 @@ class NewsManagementModel extends CoreModel {
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function listCategoriesOfNews($item, array $filter = null, array $sortOrder = null, array $limit = null) {
-		$timeStamp = time();
+		$timeStamp = microtime(true);
 		$response = $this->getNewsItem($item);
 		if($response->error->exist){
 			return $response;
@@ -1005,14 +1005,14 @@ class NewsManagementModel extends CoreModel {
 		$result = $q->getResult();
 		$totalRows = count($result);
 
-		$catIds = array();
+		$catIds = [];
 		if($totalRows > 0){
 			foreach($result as $gm){
 				$catIds[] = $gm->getCategory()->getId();
 			}
 		}
 		else{
-			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, time());
+			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, microtime(true));
 		}
 		$filter[] = array('glue' => 'and',
 						  'condition' => array(
@@ -1026,7 +1026,7 @@ class NewsManagementModel extends CoreModel {
 		$response = $this->listNewsCategories($filter, $sortOrder, $limit);
 
 		$response->stats->execution->start = $timeStamp;
-		$response->stats->execution->end = time();
+		$response->stats->execution->end = microtime(true);
 
 		return $response;
 	}
@@ -1039,8 +1039,8 @@ class NewsManagementModel extends CoreModel {
 	 *
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function listFilesOfNews($item, array $filter = array(), array $sortOrder = array(), array $limit = array()) {
-		$timeStamp = time();
+	public function listFilesOfNews($item, array $filter = [], array $sortOrder = [], array $limit = []) {
+		$timeStamp = microtime(true);
 		$response = $this->getNewsItem($item);
 		if($response->error->exist){
 			return $response;
@@ -1060,14 +1060,14 @@ class NewsManagementModel extends CoreModel {
 		$result = $q->getResult();
 		$totalRows = count($result);
 
-		$fileIds = array();
+		$fileIds = [];
 		if($totalRows > 0){
 			foreach($result as $gm){
 				$fileIds[] = $gm->getFile()->getId();
 			}
 		}
 		else{
-			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, time());
+			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, microtime(true));
 		}
 
 		$filter[] = array('glue' => 'and',
@@ -1083,7 +1083,7 @@ class NewsManagementModel extends CoreModel {
 		$response = $fModel->listFiles($filter, $sortOrder, $limit);
 
 		$response->stats->execution->start = $timeStamp;
-		$response->stats->execution->end = time();
+		$response->stats->execution->end = microtime(true);
 
 		return $response;
 	}
@@ -1096,7 +1096,7 @@ class NewsManagementModel extends CoreModel {
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function listNewsCategories(array $filter = null, array $sortOrder = null, array $limit = null){
-		$timeStamp = time();
+		$timeStamp = microtime(true);
 		if(!is_array($sortOrder) && !is_null($sortOrder)){
 			return $this->createException('InvalidSortOrderException', '$sortOrder must be an array with key => value pairs where value can only be "asc" or "desc".', 'E:S:002');
 		}
@@ -1137,7 +1137,7 @@ class NewsManagementModel extends CoreModel {
 
 		$result = $q->getResult();
 
-		$entities = array();
+		$entities = [];
 		foreach($result as $entry){
 			$id = $entry->getCategory()->getId();
 			if(!isset($unique[$id])){
@@ -1146,9 +1146,9 @@ class NewsManagementModel extends CoreModel {
 		}
 		$totalRows = count($entities);
 		if ($totalRows < 1) {
-			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, time());
+			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, microtime(true));
 		}
-		return new ModelResponse($entities, $totalRows, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+		return new ModelResponse($entities, $totalRows, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, microtime(true));
 	}
 	
 	/**
@@ -1159,7 +1159,7 @@ class NewsManagementModel extends CoreModel {
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function listNewsItems(array $filter = null, array $sortOrder = null, array $limit = null){
-		$timeStamp = time();
+		$timeStamp = microtime(true);
 		if(!is_array($sortOrder) && !is_null($sortOrder)){
 			return $this->createException('InvalidSortOrderException', '$sortOrder must be an array with key => value pairs where value can only be "asc" or "desc".', 'E:S:002');
 		}
@@ -1202,7 +1202,7 @@ class NewsManagementModel extends CoreModel {
 		$q = $this->addLimit($q, $limit);
 		$result = $q->getResult();
 
-		$entities = array();
+		$entities = [];
 		foreach($result as $entry){
 			$id = $entry->getNews()->getId();
 			if(!isset($unique[$id])){
@@ -1212,9 +1212,9 @@ class NewsManagementModel extends CoreModel {
 		}
 		$totalRows = count($entities);
 		if ($totalRows < 1) {
-			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, time());
+			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, microtime(true));
 		}
-		return new ModelResponse($entities, $totalRows, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+		return new ModelResponse($entities, $totalRows, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, microtime(true));
 	}
 	
 	/**
@@ -1225,8 +1225,8 @@ class NewsManagementModel extends CoreModel {
 	 *
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function listRecentNewsOfCategory($category, \integer $count = 10, array $filter = null, array $sortOrder = null){
-		$timeStamp = time();
+	public function listRecentNewsOfCategory($category, int $count = 10, array $filter = null, array $sortOrder = null){
+		$timeStamp = microtime(true);
 		$response = $this->getNewsCategory($category);
 		if($response->error->exist){
 			return $response;
@@ -1242,9 +1242,9 @@ class NewsManagementModel extends CoreModel {
 
 		$result = $q->getResult();
 		if(count($result) < 1 || $result == false){
-			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, time());
+			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, microtime(true));
 		}
-		$newsIds = array();
+		$newsIds = [];
 		foreach($result as $conEntity){
 			$newsIds[] = $conEntity->getNews()->getId();
 		}
@@ -1261,7 +1261,7 @@ class NewsManagementModel extends CoreModel {
 		$response = $this->listNewsItems($filter, $sortOrder, array('start' => 0, 'count' => $count));
 
 		$response->stats->execution->start = $timeStamp;
-		$response->stats->execution->end = time();
+		$response->stats->execution->end = microtime(true);
 
 		return $response;
 	}
@@ -1274,8 +1274,8 @@ class NewsManagementModel extends CoreModel {
 	 *
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function listRecentNewsOfCategoryAndSite($category, $site, \integer $count = 10, array $filter = null){
-		$timeStamp = time();
+	public function listRecentNewsOfCategoryAndSite($category, $site, int $count = 10, array $filter = null){
+		$timeStamp = microtime(true);
 		$response = $this->getNewsCategory($category);
 		if($response->error->exist){
 			return $response;
@@ -1296,9 +1296,9 @@ class NewsManagementModel extends CoreModel {
 
 		$result = $q->getResult();
 		if(count($result) < 1 || $result == false){
-			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, time());
+			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, microtime(true));
 		}
-		$newsIds = array();
+		$newsIds = [];
 		foreach($result as $conEntity){
 			$newsIds[] = $conEntity->getNews()->getId();
 		}
@@ -1319,7 +1319,7 @@ class NewsManagementModel extends CoreModel {
 		$response = $this->listNewsItems($filter, array('date_published' => 'desc'), array('start' => 0, 'count' => $count));
 
 		$response->stats->execution->start = $timeStamp;
-		$response->stats->execution->end = time();
+		$response->stats->execution->end = microtime(true);
 
 		return $response;
 	}
@@ -1333,7 +1333,7 @@ class NewsManagementModel extends CoreModel {
 	 *
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function listRecentNewsOfCategoryAndSiteWithStatuses($category, $site, array $statuses, \integer $count = 10, array $filter = null){
+	public function listRecentNewsOfCategoryAndSiteWithStatuses($category, $site, array $statuses, int $count = 10, array $filter = null){
 		$filter[] = array(
 			'glue' => 'and',
 			'condition' => array(
@@ -1355,7 +1355,7 @@ class NewsManagementModel extends CoreModel {
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function listNewsOfCategory($category, array $filter = null, array $sortOrder = null, array $limit = null){
-		$timeStamp = time();
+		$timeStamp = microtime(true);
 		$response = $this->getNewsCategory($category);
 		if($response->error->exist){
 			return $response;
@@ -1371,9 +1371,9 @@ class NewsManagementModel extends CoreModel {
 
 		$result = $q->getResult();
 		if(count($result) < 1 || $result == false){
-			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, time());
+			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, microtime(true));
 		}
-		$newsIds = array();
+		$newsIds = [];
 		foreach($result as $conEntity){
 			$newsIds[] = $conEntity->getNews()->getId();
 		}
@@ -1389,7 +1389,7 @@ class NewsManagementModel extends CoreModel {
 		$response = $this->listNewsItems($filter, $sortOrder, $limit);
 
 		$response->stats->execution->start = $timeStamp;
-		$response->stats->execution->end = time();
+		$response->stats->execution->end = microtime(true);
 
 		return $response;
 	}
@@ -1404,7 +1404,7 @@ class NewsManagementModel extends CoreModel {
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function listNewsOfCategoryAndSite($category, $site, array $filter = null, array $sortOrder = null, array $limit = null){
-		$timeStamp = time();
+		$timeStamp = microtime(true);
 		$response = $this->getNewsCategory($category);
 		if($response->error->exist){
 			return $response;
@@ -1424,9 +1424,9 @@ class NewsManagementModel extends CoreModel {
 
 		$result = $q->getResult();
 		if(count($result) < 1 || $result == false){
-			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, time());
+			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, microtime(true));
 		}
-		$newsIds = array();
+		$newsIds = [];
 		foreach($result as $conEntity){
 			$newsIds[] = $conEntity->getNews()->getId();
 		}
@@ -1446,7 +1446,7 @@ class NewsManagementModel extends CoreModel {
 		$response = $this->listNewsItems($filter, $sortOrder, $limit);
 
 		$response->stats->execution->start = $timeStamp;
-		$response->stats->execution->end = time();
+		$response->stats->execution->end = microtime(true);
 
 		return $response;
 	}
@@ -1480,12 +1480,12 @@ class NewsManagementModel extends CoreModel {
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function markNewsAsDeleted(array $collection){
-		$timeStamp = time();
+		$timeStamp = microtime(true);
 		if (!is_array($collection)) {
 			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
 		}
 		$now = new \DateTime('now', new \DateTimeZone($this->kernel->getContainer()->getParameter('app_timezone')));
-		$toUpdate = array();
+		$toUpdate = [];
 		foreach ($collection as $news) {
 			if(!$news instanceof BundleEntity\News){
 				$response = $this->getNewsItem($news);
@@ -1501,7 +1501,7 @@ class NewsManagementModel extends CoreModel {
 		}
 		$response = $this->updateNewsItems($toUpdate);
 		$response->stats->execution->start = $timeStamp;
-		$response->stats->execution->end = time();
+		$response->stats->execution->end = microtime(true);
 
 		return $response;
 	}
@@ -1512,12 +1512,12 @@ class NewsManagementModel extends CoreModel {
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function publishNews(array $collection){
-		$timeStamp = time();
+		$timeStamp = microtime(true);
 		if (!is_array($collection)) {
 			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
 		}
 		$now = new \DateTime('now', new \DateTimeZone($this->kernel->getContainer()->getParameter('app_timezone')));
-		$toUpdate = array();
+		$toUpdate = [];
 		foreach ($collection as $news) {
 			if(!$news instanceof BundleEntity\News){
 				$response = $this->getNewsItem($news);
@@ -1534,7 +1534,7 @@ class NewsManagementModel extends CoreModel {
 		}
 		$response = $this->updateNewsItems($toUpdate);
 		$response->stats->execution->start = $timeStamp;
-		$response->stats->execution->end = time();
+		$response->stats->execution->end = microtime(true);
 
 		return $response;
 	}
@@ -1546,13 +1546,13 @@ class NewsManagementModel extends CoreModel {
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function removeCategoriesFromNewsItem(array $categories, $item) {
-		$timeStamp = time();
+		$timeStamp = microtime(true);
 		$response = $this->getNewsItem($item);
 		if($response->error->exist){
 			return $response;
 		}
 		$item = $response->result->set;
-		$idsToRemove = array();
+		$idsToRemove = [];
 		foreach ($categories as $category) {
 			$response = $this->getNewsCategory($category);
 			if($response->error->exist){
@@ -1573,9 +1573,9 @@ class NewsManagementModel extends CoreModel {
 			$deleted = false;
 		}
 		if ($deleted) {
-			return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully removed from database.', $timeStamp, time());
+			return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully removed from database.', $timeStamp, microtime(true));
 		}
-		return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Unable to delete all or some of the selected entries.', $timeStamp, time());
+		return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Unable to delete all or some of the selected entries.', $timeStamp, microtime(true));
 	}
 	
 	/**
@@ -1585,13 +1585,13 @@ class NewsManagementModel extends CoreModel {
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function removeFilesFromNewsItem(array $files, $item) {
-		$timeStamp = time();
+		$timeStamp = microtime(true);
 		$response = $this->getNewsItem($item);
 		if($response->error->exist){
 			return $response;
 		}
 		$item = $response->result->set;
-		$idsToRemove = array();
+		$idsToRemove = [];
 		$fModel = $this->kernel->getContainer()->get('filemanagement.model');
 		foreach ($files as $file) {
 			$response = $fModel->getFile($file);
@@ -1613,9 +1613,9 @@ class NewsManagementModel extends CoreModel {
 			$deleted = false;
 		}
 		if ($deleted) {
-			return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully removed from database.', $timeStamp, time());
+			return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully removed from database.', $timeStamp, microtime(true));
 		}
-		return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Unable to delete all or some of the selected entries.', $timeStamp, time());
+		return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Unable to delete all or some of the selected entries.', $timeStamp, microtime(true));
 	}
 	
 	/**
@@ -1625,13 +1625,13 @@ class NewsManagementModel extends CoreModel {
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function removeItemsFromNewsCategory(array $items, $category) {
-		$timeStamp = time();
+		$timeStamp = microtime(true);
 		$response = $this->getNewsCategory($category);
 		if($response->error->exist){
 			return $response;
 		}
 		$category = $response->result->set;
-		$idsToRemove = array();
+		$idsToRemove = [];
 		foreach ($items as $category) {
 			$response = $this->getNewsCategory($category);
 			if($response->error->exist){
@@ -1652,9 +1652,9 @@ class NewsManagementModel extends CoreModel {
 			$deleted = false;
 		}
 		if ($deleted) {
-			return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully removed from database.', $timeStamp, time());
+			return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully removed from database.', $timeStamp, microtime(true));
 		}
-		return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Unable to delete all or some of the selected entries.', $timeStamp, time());
+		return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Unable to delete all or some of the selected entries.', $timeStamp, microtime(true));
 	}
 	
 	/**
@@ -1663,12 +1663,12 @@ class NewsManagementModel extends CoreModel {
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function unpublishNews(array $collection){
-		$timeStamp = time();
+		$timeStamp = microtime(true);
 		if (!is_array($collection)) {
 			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
 		}
 		$now = new \DateTime('now', new \DateTimeZone($this->kernel->getContainer()->getParameter('app_timezone')));
-		$toUpdate = array();
+		$toUpdate = [];
 		foreach ($collection as $news) {
 			if(!$news instanceof BundleEntity\News){
 				$response = $this->getNewsItem($news);
@@ -1684,7 +1684,7 @@ class NewsManagementModel extends CoreModel {
 		}
 		$response = $this->updateNewsItems($toUpdate);
 		$response->stats->execution->start = $timeStamp;
-		$response->stats->execution->end = time();
+		$response->stats->execution->end = microtime(true);
 
 		return $response;
 	}
@@ -1704,14 +1704,14 @@ class NewsManagementModel extends CoreModel {
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function updateNewsCategories(array $collection){
-		$timeStamp = time();
+		$timeStamp = microtime(true);
 		/** Parameter must be an array */
 		if (!is_array($collection)) {
 			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
 		}
 		$countUpdates = 0;
-		$updatedItems = array();
-		$localizations = array();
+		$updatedItems = [];
+		$localizations = [];
 		foreach ($collection as $data) {
 			if ($data instanceof BundleEntity\NewsCategory) {
 				$entity = $data;
@@ -1783,9 +1783,9 @@ class NewsManagementModel extends CoreModel {
 		}
 		if($countUpdates > 0){
 			$this->em->flush();
-			return new ModelResponse($updatedItems, $countUpdates, 0, null, false, 'S:D:004', 'Selected entries have been successfully updated within database.', $timeStamp, time());
+			return new ModelResponse($updatedItems, $countUpdates, 0, null, false, 'S:D:004', 'Selected entries have been successfully updated within database.', $timeStamp, microtime(true));
 		}
-		return new ModelResponse(null, 0, 0, null, true, 'E:D:004', 'One or more entities cannot be updated within database.', $timeStamp, time());
+		return new ModelResponse(null, 0, 0, null, true, 'E:D:004', 'One or more entities cannot be updated within database.', $timeStamp, microtime(true));
 	}
 	
 	/**
@@ -1803,7 +1803,7 @@ class NewsManagementModel extends CoreModel {
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function updateNewsItems(array $collection){
-		$timeStamp = time();
+		$timeStamp = microtime(true);
 		/** Parameter must be an array */
 		if (!is_array($collection)) {
 			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
@@ -1885,9 +1885,9 @@ class NewsManagementModel extends CoreModel {
 		}
 		if($countUpdates > 0){
 			$this->em->flush();
-			return new ModelResponse($updatedItems, $countUpdates, 0, null, false, 'S:D:004', 'Selected entries have been successfully updated within database.', $timeStamp, time());
+			return new ModelResponse($updatedItems, $countUpdates, 0, null, false, 'S:D:004', 'Selected entries have been successfully updated within database.', $timeStamp, microtime(true));
 		}
-		return new ModelResponse(null, 0, 0, null, true, 'E:D:004', 'One or more entities cannot be updated within database.', $timeStamp, time());
+		return new ModelResponse(null, 0, 0, null, true, 'E:D:004', 'One or more entities cannot be updated within database.', $timeStamp, microtime(true));
 	}
 	
 	/**
@@ -1898,13 +1898,13 @@ class NewsManagementModel extends CoreModel {
 	 *
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function listActiveNewsItemsByDateColumnBeforeGivenDate(\string $dateColumn, \DateTime $date, array $sortOrder = null, array $limit = null){
-		$timeStamp = time();
+	public function listActiveNewsItemsByDateColumnBeforeGivenDate(string $dateColumn, \DateTime $date, array $sortOrder = null, array $limit = null){
+		$timeStamp = microtime(true);
 		if (! $date instanceof \DateTime) {
-			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'Invalid date object.', $timeStamp, time());
+			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'Invalid date object.', $timeStamp, microtime(true));
 		}
 		if (!in_array($dateColumn,array('date_added','date_published','date_unpublished'))) {
-			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'Invalid date column.', $timeStamp, time());
+			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'Invalid date column.', $timeStamp, microtime(true));
 		}
 		// Prepare SQL conditions
 		$filter = array(
@@ -1919,7 +1919,7 @@ class NewsManagementModel extends CoreModel {
 		);
 		$response = $this->listNewsItems($filter,$sortOrder,$limit);
 		$response->stats->execution->start = $timeStamp;
-		$response->stats->execution->end = time();
+		$response->stats->execution->end = microtime(true);
 		return $response;
 	}
 	
@@ -1933,7 +1933,7 @@ class NewsManagementModel extends CoreModel {
 	 */
 	public function listNewsOfCategories(array $categories, array $filter = null, array $sortOrder = null, array $limit = null)
 	{
-		$timeStamp = time();
+		$timeStamp = microtime(true);
 		foreach ($categories as $category) {
 			$response = $this->getNewsCategory($category);
 			if ($response->error->exist) {
@@ -1950,9 +1950,9 @@ class NewsManagementModel extends CoreModel {
 
 		$result = $q->getResult();
 		if (count($result) < 1 || $result == false) {
-			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, time());
+			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, microtime(true));
 		}
-		$newsIds = array();
+		$newsIds = [];
 		foreach ($result as $conEntity) {
 			$newsIds[] = $conEntity->getNews()->getId();
 		}
@@ -1968,7 +1968,7 @@ class NewsManagementModel extends CoreModel {
 		$response = $this->listNewsItems($filter, $sortOrder, $limit);
 
 		$response->stats->execution->start = $timeStamp;
-		$response->stats->execution->end = time();
+		$response->stats->execution->end = microtime(true);
 
 		return $response;
 	}
@@ -1983,7 +1983,7 @@ class NewsManagementModel extends CoreModel {
 	 */
 	public function listNewsOfCategoriesWithStatuses(array $categories, array $statuses, array $sortOrder = null, array $limit = null)
 	{
-		$filter = array();
+		$filter = [];
 		$filter[] = array(
 			'glue' => 'and',
 			'condition' => array('column' => $this->entity['n']['alias'] . '.status', 'comparison' => 'in', 'value' => implode(',', $statuses)),
@@ -1999,13 +1999,13 @@ class NewsManagementModel extends CoreModel {
 	 *
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function listNewsItemsByDateColumnBeforeGivenDate(\string $dateColumn, \DateTime $date, array $sortOrder = null, array $limit = null){
-		$timeStamp = time();
+	public function listNewsItemsByDateColumnBeforeGivenDate(string $dateColumn, \DateTime $date, array $sortOrder = null, array $limit = null){
+		$timeStamp = microtime(true);
 		if (! $date instanceof \DateTime) {
-			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'Invalid date object.', $timeStamp, time());
+			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'Invalid date object.', $timeStamp, microtime(true));
 		}
 		if (!in_array($dateColumn,array('date_added','date_published','date_unpublished'))) {
-			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'Invalid date column.', $timeStamp, time());
+			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'Invalid date column.', $timeStamp, microtime(true));
 		}
 		// Prepare SQL conditions
 		$filter = array(
@@ -2016,7 +2016,7 @@ class NewsManagementModel extends CoreModel {
 		);
 		$response = $this->listNewsItems($filter,$sortOrder,$limit);
 		$response->stats->execution->start = $timeStamp;
-		$response->stats->execution->end = time();
+		$response->stats->execution->end = microtime(true);
 		return $response;
 	}
 	
@@ -2027,14 +2027,14 @@ class NewsManagementModel extends CoreModel {
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function unPublishNewsOfCategoriesWithStatuses(array $categories, array $statuses){
-		$timeStamp = time();
+		$timeStamp = microtime(true);
 		$response = $this->listNewsOfCategoriesWithStatuses($categories,$statuses);
 		if ($response->error->exist) {
 			return $response;
 		}
 		$response =  $this->unpublishNews($response->result->set);
 		$response->stats->execution->start = $timeStamp;
-		$response->stats->execution->end = time();
+		$response->stats->execution->end = microtime(true);
 		return $response;
 	}
 	
@@ -2044,8 +2044,8 @@ class NewsManagementModel extends CoreModel {
 	 *
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function unPublishNewsItemsByDateColumnBeforeGivenDate(\string $dateColumn, \DateTime $date){
-		$timeStamp = time();
+	public function unPublishNewsItemsByDateColumnBeforeGivenDate(string $dateColumn, \DateTime $date){
+		$timeStamp = microtime(true);
 		$response = $this->listNewsItemsByDateColumnBeforeGivenDate($dateColumn,$date);
 		if ($response->error->exist) {
 			return $response;
@@ -2055,7 +2055,7 @@ class NewsManagementModel extends CoreModel {
 			return $response;
 		}
 		$response->stats->execution->start = $timeStamp;
-		$response->stats->execution->end = time();
+		$response->stats->execution->end = microtime(true);
 		return $response;
 	}
 	
@@ -2066,7 +2066,7 @@ class NewsManagementModel extends CoreModel {
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function unPublishActiveNewsItemsByDateColumnBeforeGivenDate(\sring $dateColumn, \DateTime $date){
-		$timeStamp = time();
+		$timeStamp = microtime(true);
 		$response = $this->listActiveNewsItemsByDateColumnBeforeGivenDate($dateColumn,$date);
 		if ($response->error->exist) {
 			return $response;
@@ -2076,7 +2076,7 @@ class NewsManagementModel extends CoreModel {
 			return $response;
 		}
 		$response->stats->execution->start = $timeStamp;
-		$response->stats->execution->end = time();
+		$response->stats->execution->end = microtime(true);
 		return $response;
 	}
 
@@ -2091,7 +2091,7 @@ class NewsManagementModel extends CoreModel {
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function listNewsOfSitePublishedBetween($site, \DateTime $dateStart, \DateTime $dateEnd, $inclusive = true, $sortOrder = null, $limit = null){
-		$timeStamp = time();
+		$timeStamp = microtime(true);
 
 		$sModel = new SMMService\SiteManagementModel($this->kernel, $this->dbConnection, $this->orm);
 		$response = $sModel->getSite($site);
@@ -2128,7 +2128,7 @@ class NewsManagementModel extends CoreModel {
 		$response = $this->listNewsItems($filter, $sortOrder, $limit);
 
 		$response->stats->execution->start = $timeStamp;
-		$response->stats->execution->end = time();
+		$response->stats->execution->end = microtime(true);
 
 		return $response;
 	}
@@ -2141,7 +2141,7 @@ class NewsManagementModel extends CoreModel {
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function listCurrentlyActiveNewsItems(array $filter = null, array $sortOrder = null, array $limit = null){
-		$timeStamp = time();
+		$timeStamp = microtime(true);
 		$date = new \DateTime('now');
 		// Prepare SQL conditions
 		$filter[] = array(
@@ -2165,7 +2165,7 @@ class NewsManagementModel extends CoreModel {
 		);
 		$response = $this->listNewsItems($filter,$sortOrder,$limit);
 		$response->stats->execution->start = $timeStamp;
-		$response->stats->execution->end = time();
+		$response->stats->execution->end = microtime(true);
 		return $response;
 	}
 
@@ -2173,18 +2173,18 @@ class NewsManagementModel extends CoreModel {
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function listActivePublishYearsOfNewsItems(){
-		$timeStamp = time();
+		$timeStamp = microtime(true);
 		$response = $this->listCurrentlyActiveNewsItems();
 		if($response->error->exist){
 			return $response;
 		}
-		$years = array();
+		$years = [];
 		foreach($response->result->set as $newsItem){
 			$years[$newsItem->getDatePublished()->format('Y')] = $newsItem->getDatePublished()->format('Y');
 		}
 		$response->result->set = $years;
 		$response->stats->execution->start = $timeStamp;
-		$response->stats->execution->end = time();
+		$response->stats->execution->end = microtime(true);
 
 		return $response;
 	}
@@ -2197,14 +2197,14 @@ class NewsManagementModel extends CoreModel {
 	 *
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function listActiveNewsItemsInYear(\integer $year, array $filter = null, array $sortOrder = null, array $limit = null){
-		$timeStamp = time();
+	public function listActiveNewsItemsInYear(int $year, array $filter = null, array $sortOrder = null, array $limit = null){
+		$timeStamp = microtime(true);
 		$response = $this->listCurrentlyActiveNewsItems($filter, $sortOrder, $limit);
 		if($response->error->exist){
 			return $response;
 		}
 
-		$newSet = array();
+		$newSet = [];
 		foreach($response->result->set as $newsItem){
 			if($newsItem->getDatePublished()->format('Y') == $year){
 				$newSet[] = $newsItem;
@@ -2214,7 +2214,7 @@ class NewsManagementModel extends CoreModel {
 		$response->result->set = $newSet;
 		$response->result->count->set = count($newSet);
 		$response->stats->execution->start = $timeStamp;
-		$response->stats->execution->end = time();
+		$response->stats->execution->end = microtime(true);
 		return $response;
 	}
 
@@ -2227,14 +2227,14 @@ class NewsManagementModel extends CoreModel {
 	 *
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function listActiveNewsItemsInMonthOfYear(\integer $month, \integer $year, array $filter = null, array $sortOrder = null, array $limit = null){
-		$timeStamp = time();
+	public function listActiveNewsItemsInMonthOfYear(int $month, int $year, array $filter = null, array $sortOrder = null, array $limit = null){
+		$timeStamp = microtime(true);
 		$response = $this->listCurrentlyActiveNewsItems($filter, $sortOrder, $limit);
 		if($response->error->exist){
 			return $response;
 		}
 
-		$newSet = array();
+		$newSet = [];
 		foreach($response->result->set as $newsItem){
 			if($newsItem->getDatePublished()->format('Y') == $year && $newsItem->getDatePublished()->format('n') == $month){
 				$newSet[] = $newsItem;
@@ -2244,7 +2244,59 @@ class NewsManagementModel extends CoreModel {
 		$response->result->set = $newSet;
 		$response->result->count->set = count($newSet);
 		$response->stats->execution->start = $timeStamp;
-		$response->stats->execution->end = time();
+		$response->stats->execution->end = microtime(true);
 		return $response;
+	}
+
+	/**
+	 * @param string|null $status
+	 *
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function setAllPopupsTo(string $status = null){
+		$timeStamp = microtime(true);
+		$qStr = 'UPDATE '.$this->entity['name']['n'].' SET '.$this->entity['alias']['n'].'.popup = "'.$status.'"';
+		$status = $status ?? 'n';
+
+		$q = $this->em->createQuery($qStr);
+		$result = $q->getResult();
+
+		$updated = true;
+		if (!$result) {
+			$updated = false;
+		}
+		if ($updated) {
+			return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully updated.', $timeStamp, microtime(true));
+		}
+		return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Selected entries cannot be updated at the moment.', $timeStamp, microtime(true));
+	}
+
+	/**
+	 * @param string|null $status
+	 *
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function setAllPopupsExceptTo($excludedItem, string $status = null){
+		$timeStamp = microtime(true);
+		$response = $this->getNewsItem($excludedItem);
+		if($response->error->exist){
+			return $response;
+		}
+		$status = $status ?? 'n';
+		$newsItem = $response->result->set;
+		$qStr = 'UPDATE '.$this->entity['name']['n'].' SET '.$this->entity['alias']['n'].'.popup = "'.$status.'" WHERE '.$this->entity['alias']['n'].'.id <> '.$newsItem->getId();
+
+		$q = $this->em->createQuery($qStr);
+
+		$result = $q->getResult();
+
+		$updated = true;
+		if (!$result) {
+			$updated = false;
+		}
+		if ($updated) {
+			return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully updated.', $timeStamp, microtime(true));
+		}
+		return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Selected entries cannot be updated at the moment.', $timeStamp, microtime(true));
 	}
 }

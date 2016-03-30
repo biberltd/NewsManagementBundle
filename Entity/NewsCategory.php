@@ -122,7 +122,7 @@ class NewsCategory extends CoreLocalizableEntity
 	 *
 	 * @return $this
 	 */
-	public function setCountView(\integer $count_view) {
+	public function setCountView(int $count_view) {
 		if (!$this->setModified('count_view', $count_view)->isModified()) {
 			return $this;
 		}
@@ -143,7 +143,7 @@ class NewsCategory extends CoreLocalizableEntity
 	 *
 	 * @return $this
 	 */
-	public function setCountNews(\integer $count_news) {
+	public function setCountNews(int $count_news) {
 		if (!$this->setModified('count_news', $count_news)->isModified()) {
 			return $this;
 		}

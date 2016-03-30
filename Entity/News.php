@@ -71,6 +71,12 @@ class News extends CoreLocalizableEntity
      */
     private $url;
 
+    /**
+     * @ORM\Column(type="string", length=1, nullable=false, options={"default":"n"})
+     * @var string
+     */
+    private $popup;
+
     /** 
      * @ORM\OneToMany(targetEntity="BiberLtd\Bundle\NewsManagementBundle\Entity\NewsLocalization", mappedBy="news")
      * @var array
@@ -163,7 +169,7 @@ class News extends CoreLocalizableEntity
 	 *
 	 * @return $this
 	 */
-    public function setSortOrder(\integer $sort_order) {
+    public function setSortOrder(int $sort_order) {
         if(!$this->setModified('sort_order', $sort_order)->isModified()) {
             return $this;
         }
@@ -183,7 +189,7 @@ class News extends CoreLocalizableEntity
 	 *
 	 * @return $this
 	 */
-    public function setStatus(\string $status) {
+    public function setStatus(string $status) {
         if(!$this->setModified('status', $status)->isModified()) {
             return $this;
         }
@@ -224,7 +230,7 @@ class News extends CoreLocalizableEntity
 	 *
 	 * @return $this
 	 */
-	public function setUrl(\string $url) {
+	public function setUrl(string $url) {
 		if(!$this->setModified('url', $url)->isModified()) {
 			return $this;
 		}
@@ -237,5 +243,24 @@ class News extends CoreLocalizableEntity
 	 */
 	public function getUrl() {
 		return $this->url;
+	}
+	/**
+	 * @param string $status
+	 *
+	 * @return $this
+	 */
+	public function setPopup(string $status) {
+		if(!$this->setModified('popup', $status)->isModified()) {
+			return $this;
+		}
+		$this->popup = $status;
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getPopup() {
+		return $this->popup;
 	}
 }
