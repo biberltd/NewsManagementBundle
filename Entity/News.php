@@ -355,6 +355,25 @@ class News extends CoreLocalizableEntity
 	public function getUrl() {
 		return $this->url;
 	}
+	/**
+	 * @param string $status
+	 *
+	 * @return $this
+	 */
+	public function setPopup($status) {
+		if(!$this->setModified('popup', $status)->isModified()) {
+			return $this;
+		}
+		$this->popup = $status;
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getPopup() {
+		return $this->popup;
+	}
 }
 /**
  * Change Log:
