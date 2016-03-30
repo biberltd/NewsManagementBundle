@@ -46,6 +46,7 @@ CREATE TABLE `news` (
   `sort_order` int(10) unsigned NOT NULL DEFAULT '1' COMMENT 'Custom sort order.',
   `site` int(10) unsigned DEFAULT NULL COMMENT 'Site that news belong to.',
   `author` int(10) unsigned NOT NULL,
+  `popup` char(1) COLLATE utf8_turkish_ci NOT NULL DEFAULT 'n' COMMENT 'n: no, y:yes',
   PRIMARY KEY (`id`),
   UNIQUE KEY `idxUNewsId` (`id`) USING BTREE,
   KEY `idxNNewsDateAdded` (`date_added`) USING BTREE,
