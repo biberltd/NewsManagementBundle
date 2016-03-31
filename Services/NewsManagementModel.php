@@ -2255,7 +2255,7 @@ class NewsManagementModel extends CoreModel {
 	 */
 	public function setAllPopupsTo(string $status = null){
 		$timeStamp = microtime(true);
-		$qStr = 'UPDATE '.$this->entity['name']['n'].' SET '.$this->entity['alias']['n'].'.popup = "'.$status.'"';
+		$qStr = 'UPDATE '.$this->entity['n']['name'].' '.$this->entity['n']['alias'].' SET '.$this->entity['n']['alias'].'.popup = "'.$status.'"';
 		$status = $status ?? 'n';
 
 		$q = $this->em->createQuery($qStr);
@@ -2284,7 +2284,7 @@ class NewsManagementModel extends CoreModel {
 		}
 		$status = $status ?? 'n';
 		$newsItem = $response->result->set;
-		$qStr = 'UPDATE '.$this->entity['name']['n'].' SET '.$this->entity['alias']['n'].'.popup = "'.$status.'" WHERE '.$this->entity['alias']['n'].'.id <> '.$newsItem->getId();
+		$qStr = 'UPDATE '.$this->entity['n']['name'].' '.$this->entity['n']['alias'].' SET '.$this->entity['n']['alias'].'.popup = "'.$status.'" WHERE '.$this->entity['n']['alias'].'.id <> '.$newsItem->getId();
 
 		$q = $this->em->createQuery($qStr);
 
@@ -2298,5 +2298,20 @@ class NewsManagementModel extends CoreModel {
 			return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully updated.', $timeStamp, microtime(true));
 		}
 		return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Selected entries cannot be updated at the moment.', $timeStamp, microtime(true));
+	}
+
+	/**
+	 * @param string     $status
+	 * @param array|null $sortOrder
+	 * @param array|null $limit
+	 *
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function listActiveNewsWithPopupStatus(string $status, array $sortOrder = null, array $limit = null){
+		$filter[] = array(
+			'glue' => 'and',
+			'condition' => array('column' => $this->entity['n']['alias'].'.popup', 'comparison' => '=', 'value' => $status),
+		);
+		return $this->listNewsItems($filter, $sortOrder, $limit);
 	}
 }
