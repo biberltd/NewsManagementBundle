@@ -2461,7 +2461,7 @@ class NewsManagementModel extends CoreModel {
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse|\BiberLtd\Bundle\NewsManagementBundle\Services\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
     public function setAllPopupsOfSiteExceptTo($excludedItem, $site, $status = 'n'){
-        $timeStamp = time();
+        $timeStamp = time(); 
         $response = $this->getNewsItem($excludedItem);
         if($response->error->exist){
             return $response;
