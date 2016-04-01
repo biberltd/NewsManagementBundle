@@ -2422,7 +2422,9 @@ class NewsManagementModel extends CoreModel {
 			return $response;
 		}
 		$newsItem = $response->result->set;
-		$qStr = 'UPDATE '.$this->entity['n']['name'].' '.$this->entity['n']['alias'].' SET '.$this->entity['n']['alias'].'.popup = "'.$status.'" WHERE '.$this->entity['n']['alias'].'.id <> '.$newsItem->getId();
+		//popup = \''.$status.'\'
+		$qStr = 'UPDATE '.$this->entity['n']['name'].' '.$this->entity['n']['alias'].
+		' SET '.$this->entity['n']['alias'].'.popup = "\''.$status.'\'" WHERE '.$this->entity['n']['alias'].'.id <> '.$newsItem->getId();
 
 		$q = $this->em->createQuery($qStr);
 
