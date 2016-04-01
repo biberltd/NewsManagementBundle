@@ -2460,33 +2460,33 @@ class NewsManagementModel extends CoreModel {
 	 *
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse|\BiberLtd\Bundle\NewsManagementBundle\Services\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function setAllPopupsOfSiteExceptTo($excludedItem, $site, $status = 'n'){
-		$timeStamp = time();
-		$response = $this->getNewsItem($excludedItem);
-		if($response->error->exist){
-			return $response;
-		}
-		$newsItem = $response->result->set;
-		$sModel = $this->kernel->getContainer()->get('sitemanagement.model');
-		$response = $sModel->getSite($site);
-		if($response->error->exist){
-			return $response;
-		}
-		$site = $response->result->set;
-		$qStr = 'UPDATE '.$this->entity['n']['name'].' '.$this->entity['n']['alias'].' SET '.$this->entity['n']['alias'].'.popup = \''.$status.'\' WHERE '.$this->entity['n']['alias'].'.id <> '.$newsItem->getId().' AND site = '.$site->getSiteId();
-		$q = $this->em->createQuery($qStr);
+    public function setAllPopupsOfSiteExceptTo($excludedItem, $site, $status = 'n'){
+        $timeStamp = time();
+        $response = $this->getNewsItem($excludedItem);
+        if($response->error->exist){
+            return $response;
+        }
+        $newsItem = $response->result->set;
+        $sModel = $this->kernel->getContainer()->get('sitemanagement.model');
+        $response = $sModel->getSite($site);
+        if($response->error->exist){
+            return $response;
+        }
+        $site = $response->result->set;
+        $qStr = 'UPDATE '.$this->entity['n']['name'].' '.$this->entity['n']['alias'].' SET '.$this->entity['n']['alias'].'.popup = \''.$status.'\' WHERE '.$this->entity['n']['alias'].'.id <> '.$newsItem->getId().' AND '.$this->entity['n']['alias'].'.site = '.$site->getId();
+        $q = $this->em->createQuery($qStr);
 
-		$result = $q->getResult();
+        $result = $q->getResult();
 
-		$updated = true;
-		if (!$result) {
-			$updated = false;
-		}
-		if ($updated) {
-			return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully updated.', $timeStamp, time());
-		}
-		return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Selected entries cannot be updated at the moment.', $timeStamp, time());
-	}
+        $updated = true;
+        if (!$result) {
+            $updated = false;
+        }
+        if ($updated) {
+            return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully updated.', $timeStamp, time());
+        }
+        return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Selected entries cannot be updated at the moment.', $timeStamp, time());
+    }
 
 	/**
 	 * @param            $status
