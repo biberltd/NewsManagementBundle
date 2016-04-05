@@ -2489,16 +2489,15 @@ class NewsManagementModel extends CoreModel {
     }
 
 	/**
-	 * @param            $status
+	 * @param            $popupStatus
 	 * @param            $site
 	 * @param array|null $filter
 	 * @param array|null $sortOrder
 	 * @param array|null $limit
 	 *
-	 * @return \BiberLtd\Bundle\NewsManagementBundle\Services\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function listActiveNewsOfSiteWithPopupStatus($status, $site, array $filter = null, array $sortOrder = null, array $limit = null){
-		$timeStamp = time();
+	public function listActiveNewsOfSiteWithPopupStatus($popupStatus, $site,$filter = array(), array $sortOrder = null, array $limit = null){
 		$sModel = $this->kernel->getContainer()->get('sitemanagement.model');
 		$response = $sModel->getSite($site);
 		if($response->error->exist){
@@ -2507,13 +2506,13 @@ class NewsManagementModel extends CoreModel {
 		$site = $response->result->set;
 		$filter[] = array(
 			'glue' => 'and',
-			'condition' => array('column' => $this->entity['n']['alias'].'.popup', 'comparison' => '=', 'value' => $status),
+			'condition' => array('column' => $this->entity['n']['alias'].'.popup', 'comparison' => '=', 'value' => $popupStatus),
 		);
 		$filter[] = array(
 			'glue' => 'and',
 			'condition' => array('column' => $this->entity['n']['alias'].'.site', 'comparison' => '=', 'value' => $site->getId()),
 		);
-		return $this->listNewsItems($filter, $sortOrder, $limit);
+		return $this->listCurrentlyActiveNewsItems($filter, $sortOrder, $limit);
 	}
 }
 /**
