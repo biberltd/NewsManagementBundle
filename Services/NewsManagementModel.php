@@ -2377,4 +2377,40 @@ class NewsManagementModel extends CoreModel {
 		);
 		return $this->listNewsItems($filter, $sortOrder, $limit);
 	}
+
+	/**
+	 * @param array $statutes
+	 * @param array|null $filter
+	 * @param array|null $sortOrder
+	 * @param array|null $limit
+	 * @return ModelResponse
+	 */
+	public function listActiveNewsItemsWithStatuses(array $statutes, array $filter = null, array $sortOrder = null, array $limit = null){
+		$timeStamp = microtime(true);
+		$date = new \DateTime('now');
+		// Prepare SQL conditions
+		$filter[] = array(
+			'glue' => 'and',
+			'condition' => array('column' => $this->entity['n']['alias'].'.date_published', 'comparison' => '<=', 'value' => $date->format('Y-m-d H:i:s')),
+		);
+		$filter[] =   array(
+			'glue' => 'and',
+			'condition' => array(
+				array(
+					'glue' => 'or',
+					'condition' => array('column' => $this->entity['n']['alias'].'.date_unpublished', 'comparison' => '>', 'value' => $date->format('Y-m-d H:i:s'))),
+				array(
+					'glue' => 'or',
+					'condition' => array('column' => 'n.date_unpublished','comparison' => 'null','value' => '')),
+			)
+		);
+		$filter[] = array(
+			'glue' => 'and',
+			'condition' => array('column' => $this->entity['n']['alias'].'.status', 'comparison' => 'in', 'value' => $statutes),
+		);
+		$response = $this->listNewsItems($filter,$sortOrder,$limit);
+		$response->stats->execution->start = $timeStamp;
+		$response->stats->execution->end = microtime(true);
+		return $response;
+	}
 }
