@@ -2497,7 +2497,7 @@ class NewsManagementModel extends CoreModel {
 	 *
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function listActiveNewsOfSiteWithPopupStatus($popupStatus, $site,$filter = array(), array $sortOrder = null, array $limit = null){
+	public function listActiveNewsOfSiteWithPopupStatus($popupStatus, $site, $filter = array(), array $sortOrder = null, $limit = null){
 		$sModel = $this->kernel->getContainer()->get('sitemanagement.model');
 		$response = $sModel->getSite($site);
 		if($response->error->exist){
@@ -2513,6 +2513,42 @@ class NewsManagementModel extends CoreModel {
 			'condition' => array('column' => $this->entity['n']['alias'].'.site', 'comparison' => '=', 'value' => $site->getId()),
 		);
 		return $this->listCurrentlyActiveNewsItems($filter, $sortOrder, $limit);
+	}
+
+	/**
+	 * @param array $statutes
+	 * @param array|null $filter
+	 * @param array|null $sortOrder
+	 * @param array|null $limit
+	 * @return ModelResponse
+	 */
+	public function listActiveNewsItemsWithStatuses($statutes, $filter = null, $sortOrder = null, $limit = null){
+		$timeStamp = microtime(true);
+		$date = new \DateTime('now');
+		// Prepare SQL conditions
+		$filter[] = array(
+			'glue' => 'and',
+			'condition' => array('column' => $this->entity['n']['alias'].'.date_published', 'comparison' => '<=', 'value' => $date->format('Y-m-d H:i:s')),
+		);
+		$filter[] =   array(
+			'glue' => 'and',
+			'condition' => array(
+				array(
+					'glue' => 'or',
+					'condition' => array('column' => $this->entity['n']['alias'].'.date_unpublished', 'comparison' => '>', 'value' => $date->format('Y-m-d H:i:s'))),
+				array(
+					'glue' => 'or',
+					'condition' => array('column' => 'n.date_unpublished','comparison' => 'null','value' => '')),
+			)
+		);
+		$filter[] = array(
+			'glue' => 'and',
+			'condition' => array('column' => $this->entity['n']['alias'].'.status', 'comparison' => 'in', 'value' => $statutes),
+		);
+		$response = $this->listNewsItems($filter,$sortOrder,$limit);
+		$response->stats->execution->start = $timeStamp;
+		$response->stats->execution->end = microtime(true);
+		return $response;
 	}
 }
 /**
