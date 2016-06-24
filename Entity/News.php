@@ -78,7 +78,7 @@ class News extends CoreLocalizableEntity
     private $popup;
 
     /** 
-     * @ORM\OneToMany(targetEntity="BiberLtd\Bundle\NewsManagementBundle\Entity\NewsLocalization", mappedBy="news", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="BiberLtd\Bundle\NewsManagementBundle\Entity\NewsLocalization", mappedBy="news")
      * @var array
      */
     protected $localizations;
@@ -92,7 +92,13 @@ class News extends CoreLocalizableEntity
 
     /**
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\MemberManagementBundle\Entity\Member")
-     * @ORM\JoinColumn(name="author", referencedColumnName="id")
+     * @ORM\JoinColumn(name="author", referencedColumnName="id", onDelete="CASCADE")
+     */
+    private $member;
+
+    /**
+     * 
+     * 
      * @var \BiberLtd\Bundle\MemberManagementBundle\Entity\Member
      */
     private $author;
