@@ -658,7 +658,7 @@
         <attribute name="side-inverse"/>
       </orm-attributes>
     </association>
-    <association from="\BiberLtd\Bundle\NewsManagementBundle\Entity\NewsCategoryLocalization" to="\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language" caption="idx_f_news_category_localizaton_language" owner-alias="" inverse-alias="language" many-owner="true" many-inverse="false" parent-required="true" uuid="e342889c-d745-4c7f-a230-018ad095f446">
+    <association from="\BiberLtd\Bundle\NewsManagementBundle\Entity\NewsCategoryLocalization" to="\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language" caption="idxFNewsCategoryLocalizatonLanguage" owner-alias="" inverse-alias="language" many-owner="true" many-inverse="false" parent-required="true" uuid="e342889c-d745-4c7f-a230-018ad095f446">
       <association-field from="language" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
