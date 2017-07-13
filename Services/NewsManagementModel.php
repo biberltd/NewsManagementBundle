@@ -28,6 +28,11 @@ use BiberLtd\Bundle\MultiLanguageSupportBundle\Services as MLSService;
 use BiberLtd\Bundle\CoreBundle\Services as CoreServices;
 
 class NewsManagementModel extends CoreModel {
+
+    const NEWS_STATUS_PUBLISHED = 'p';
+    const NEWS_CATEGORY_LOCALIZATION_URL_KEY_NEWS = 'news';
+    const NEWS_CATEGORY_LOCALIZATION_URL_KEY_CAMPAIGNS = 'campaigns';
+    
 	public $entity = array(
 		'n' => array('name' => 'NewsManagementBundle:News', 'alias' => 'n'),
 		'nl' => array('name' => 'NewsManagementBundle:NewsLocalization', 'alias' => 'nl'),
@@ -1069,77 +1074,84 @@ class NewsManagementModel extends CoreModel {
 
 		return $response;
 	}
-	/**
-	 * @name 			listNewsCategories()
-	 *
-	 * @since			1.0.0
-	 * @version         1.0.2
-	 * @author          Can Berkol
-	 * @author          Said İmamoğlu
-	 *
-	 * @use             $this->createException()
-	 *
-	 * @param   		array   $filter
-	 * @param   		array   $sortOrder
-	 * @param   		array   $limit
-	 *
-	 * @return   		BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
-	 */
-	public function listNewsCategories($filter = null, $sortOrder = null, $limit = null){
-		$timeStamp = time();
-		if(!is_array($sortOrder) && !is_null($sortOrder)){
-			return $this->createException('InvalidSortOrderException', '$sortOrder must be an array with key => value pairs where value can only be "asc" or "desc".', 'E:S:002');
-		}
-		$oStr = $wStr = $gStr = $fStr = '';
 
-		$qStr = 'SELECT '.$this->entity['nc']['alias'].', '.$this->entity['ncl']['alias']
-			.' FROM '.$this->entity['ncl']['name'].' '.$this->entity['ncl']['alias']
-			.' JOIN '.$this->entity['ncl']['alias'].'.category '.$this->entity['nc']['alias'];
+    /**
+     * @name 			listNewsCategories()
+     *
+     * @since			1.0.0
+     * @version         1.0.2
+     * @author          Can Berkol
+     * @author          Said İmamoğlu
+     *
+     * @use             $this->createException()
+     *
+     * @param   		array   $filter
+     * @param   		array   $sortOrder
+     * @param   		array   $limit
+     *
+     * @return   		BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     */
+    public function listNewsCategories($filter = null, $sortOrder = null, $limit = null){
+        $timeStamp = time();
+        if(!is_array($sortOrder) && !is_null($sortOrder)){
+            return $this->createException('InvalidSortOrderException', '$sortOrder must be an array with key => value pairs where value can only be "asc" or "desc".', 'E:S:002');
+        }
+        $oStr = $wStr = $gStr = $fStr = '';
 
-		if(!is_null($sortOrder)){
-			foreach($sortOrder as $column => $direction){
-				switch($column){
-					case 'id':
-					case 'date_added':
-					case 'date_updated':
-					case 'date_removed':
-						$column = $this->entity['n']['alias'].'.'.$column;
-						break;
-					case 'name':
-					case 'url_key':
-						$column = $this->entity['nl']['alias'].'.'.$column;
-						break;
-				}
-				$oStr .= ' '.$column.' '.strtoupper($direction).', ';
-			}
-			$oStr = rtrim($oStr, ', ');
-			$oStr = ' ORDER BY '.$oStr.' ';
-		}
+        $qStr = 'SELECT '.$this->entity['con']['alias']
+            .' FROM '.$this->entity['con']['name'].' '.$this->entity['con']['alias']
+            .' JOIN '.$this->entity['con']['alias'].'.category '.$this->entity['nc']['alias']
+            .' JOIN '.$this->entity['con']['alias'].'.news '.$this->entity['n']['alias']
+            .' JOIN '.$this->entity['ncl']['name'].' '.$this->entity['ncl']['alias']
+            .' WITH '.$this->entity['nc']['alias'].'.id='.$this->entity['ncl']['alias'].'.category';
 
-		if(!is_null($filter)){
-			$fStr = $this->prepareWhere($filter);
-			$wStr .= ' WHERE '.$fStr;
-		}
+        if(!is_null($sortOrder)){
+            foreach($sortOrder as $column => $direction){
+                switch($column){
+                    case 'id':
+                    case 'date_added':
+                    case 'date_updated':
+                    case 'date_removed':
+                        $column = $this->entity['nc']['alias'].'.'.$column;
+                        break;
+                    case 'name':
+                    case 'url_key':
+                        $column = $this->entity['ncl']['alias'].'.'.$column;
+                        break;
+                }
+                $oStr .= ' '.$column.' '.strtoupper($direction).', ';
+            }
+            $oStr = rtrim($oStr, ', ');
+            $oStr = ' ORDER BY '.$oStr.' ';
+        }
 
-		$qStr .= $wStr.$gStr.$oStr;
-		$q = $this->em->createQuery($qStr);
-		$q = $this->addLimit($q, $limit);
+        if(!is_null($filter)){
+            $fStr = $this->prepareWhere($filter);
+            $wStr .= ' WHERE '.$fStr;
+        }
 
-		$result = $q->getResult();
+        $qStr .= $wStr.$gStr.$oStr;
+        $q = $this->em->createQuery($qStr);
+        $q = $this->addLimit($q, $limit);
 
-		$entities = array();
-		foreach($result as $entry){
-			$id = $entry->getCategory()->getId();
-			if(!isset($unique[$id])){
-				$entities[] = $entry->getCategory();
-			}
-		}
-		$totalRows = count($entities);
-		if ($totalRows < 1) {
-			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, time());
-		}
-		return new ModelResponse($entities, $totalRows, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
-	}
+        $result = $q->getResult();
+
+        $entities = array();
+        foreach($result as $entry){
+            /**
+             * @var BundleEntity\CategoriesOfNews $entry
+             */
+            $entities[] = $entry->getNews();
+        }
+
+        $totalRows = count($entities);
+
+        if ($totalRows < 1) {
+            return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, time());
+        }
+        return new ModelResponse($entities, $totalRows, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+    }
+
 	/**
 	 * @name 			listNewsItems()
 	 *
@@ -2103,25 +2115,42 @@ class NewsManagementModel extends CoreModel {
 		return $response;
 	}
 
-	/**
-	 * @name  listNewsOfCategoriesWithStatuses ()
-	 * @version 1.1.3
-	 * @since 1.1.3
-	 * @param $categories
-	 * @param $statuses
-	 * @param $sortOrder
-	 * @param $limit
-	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
-	 */
-	public function listNewsOfCategoriesWithStatuses($categories, $statuses, $sortOrder, $limit)
-	{
-		$filter = array();
-		$filter[] = array(
-			'glue' => 'and',
-			'condition' => array('column' => $this->entity['n']['alias'] . '.status', 'comparison' => 'in', 'value' => implode(',', $statuses)),
-		);
-		return $this->listNewsCategories($categories, $filter, $sortOrder, $limit);
-	}
+    /**
+     * @name  listNewsOfCategoriesWithStatuses ()
+     * @version 1.1.3
+     * @since 1.1.3
+     * @param array $categories
+     * @param array $statuses
+     * @param $sortOrder
+     * @param $limit
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     */
+    public function listNewsOfCategoriesWithStatuses($categories, $statuses, $sortOrder = null, $limit = 0)
+    {
+        $filter[] = array(
+            'glue' => 'and',
+            'condition' => array(
+                array(
+                    'glue' => 'and',
+                    'condition' => array(
+                        'column' => $this->entity['n']['alias'] . '.status',
+                        'comparison' => 'in', 'value' =>
+                            [implode(',', $statuses)]
+                    )
+                ),
+                array(
+                    'glue' => 'and',
+                    'condition' => array(
+                        'column' => $this->entity['ncl']['alias'] . '.url_key',
+                        'comparison' => 'in',
+                        'value' => [implode(',', $categories)])
+                )
+            )
+        );
+
+        return $this->listNewsCategories($filter, $sortOrder, $limit);
+    }
+
 	/**
 	 * @name listNewsItemsByDateColumnWhichBeforeGivenDate()
 	 * @author Said Imamoglu
